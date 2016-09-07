@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#ff7db2fd</item>
+        <item name="colorPrimaryDark">#ff7db2fd</item>
+        <item name="colorAccent">#999999</item>
+        <item name="android:windowAnimationStyle">@style/anim_activity</item>
+    </style>
+    <!--动画-->
+    <style name="anim_activity" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/activity_open_in_anim</item>
+        <item name="android:activityOpenExitAnimation">@anim/activity_open_out_anim</item>
+        <item name="android:activityCloseEnterAnimation">@anim/activity_close_in_anim</item>
+        <item name="android:activityCloseExitAnimation">@anim/activity_close_out_anim</item>
+    </style>
+</resources>
