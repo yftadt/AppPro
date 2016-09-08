@@ -1,4 +1,4 @@
-package com.app.utiles.other;
+package com.app.utiles.image;
 
 import android.annotation.SuppressLint;
 import android.content.res.Resources;
@@ -16,6 +16,8 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Shader.TileMode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+
+import com.app.utiles.other.DLog;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

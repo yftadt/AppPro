@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.ui.activity.R;
-import com.app.utiles.other.ImageUtile;
+import com.app.utiles.image.ImageUtile;
 
 
 /**
