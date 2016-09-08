@@ -37,6 +37,12 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/StyledIndicators"/>
+        <!-- 网络监听 -->
+        <receiver android:name="com.app.ui.receive.NetStateReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
