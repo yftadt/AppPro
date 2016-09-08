@@ -1,9 +1,11 @@
 package com.app.ui.activity.action;
 
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
 import com.app.ui.activity.R;
+import com.app.ui.manager.TextViewManager;
 
 
 /**
@@ -46,6 +48,9 @@ public class NormalActionBar extends BaseBarActivity implements View.OnClickList
         leftTv = (TextView) findViewById(R.id.bar_left_tv);
         titleTv = (TextView) findViewById(R.id.bar_title_tv);
         rightTv = (TextView) findViewById(R.id.bar_right_tv);
+        leftTv.setVisibility(View.GONE);
+        titleTv.setVisibility(View.GONE);
+        rightTv.setVisibility(View.GONE);
         setViewColor();
         setTvOnClick();
     }
@@ -83,6 +88,10 @@ public class NormalActionBar extends BaseBarActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         int id = v.getId();
+        onBarClick(id);
+    }
+
+    private void onBarClick(int id) {
         switch (id) {
             case R.id.bar_left_tv:
                 //返回
@@ -95,7 +104,6 @@ public class NormalActionBar extends BaseBarActivity implements View.OnClickList
                 onClick(id);
                 break;
         }
-
     }
 
     protected void onClick(int id) {
@@ -111,11 +119,13 @@ public class NormalActionBar extends BaseBarActivity implements View.OnClickList
     protected void setBarTvText(int type, String text) {
         TextView tv = getTv(type);
         tv.setText(text);
+        int isShow = TextUtils.isEmpty(text) ? View.GONE : View.VISIBLE;
+        tv.setVisibility(isShow);
     }
 
     protected void setBarTvText(int type, int iconId, String text, int iconLocation) {
         TextView tv = getTv(type);
-        setText(tv, iconId, text, iconLocation);
+        TextViewManager.setText(tv, iconId, text, iconLocation);
     }
 
     private TextView getTv(int type) {
