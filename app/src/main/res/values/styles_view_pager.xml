@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--以title为类型的tabtab页面，title字体样式TextAppearance-->
+    <style name="TitlePageIndicator" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">16sp</item>
+    </style>
+</resources>
