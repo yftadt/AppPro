@@ -8,7 +8,7 @@ import android.util.TypedValue;
 import android.widget.ImageView;
 
 import com.app.ui.activity.action.NormalActionBar;
-import com.app.ui.adapter.ViewPagesrAdapter;
+import com.app.ui.adapter.ViewPagerAdapter;
 import com.app.ui.pager.BaseViewPager;
 import com.app.ui.pager.main.TestPager;
 import com.app.ui.pager.main.TestTabPager;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class MainActivity extends NormalActionBar {
 
     private String[] title = new String[]{"首页", "资讯", "我的"};
-    private ViewPagesrAdapter adapter;
+    private ViewPagerAdapter adapter;
     private ViewPager viewPager;
 
     @Override
@@ -30,7 +30,7 @@ public class MainActivity extends NormalActionBar {
         setBarTvText(1, "主页");
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         TabLayout indicator = (TabLayout) findViewById(R.id.view_pager_indicator);
-        adapter = new ViewPagesrAdapter(getView());
+        adapter = new ViewPagerAdapter(getView());
         viewPager.setAdapter(adapter);
         indicator.setupWithViewPager(viewPager);
         setTadIcon(indicator);
