@@ -4,15 +4,15 @@ import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.app.ui.pager.BasePager;
+import com.app.ui.pager.BaseViewPager;
 
 import java.util.ArrayList;
 
 public class ViewPagerStringAdapter extends PagerAdapter {
-	public ArrayList<BasePager> listPager = new ArrayList<BasePager>();
+	public ArrayList<BaseViewPager> listPager = new ArrayList<BaseViewPager>();
 	public ArrayList<String> titls;
 
-	public ViewPagerStringAdapter(ArrayList<BasePager> listPager,
+	public ViewPagerStringAdapter(ArrayList<BaseViewPager> listPager,
 								  ArrayList<String> titls) {
 		this.listPager = listPager;
 		this.titls = titls;

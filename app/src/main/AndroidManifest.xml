@@ -36,7 +36,7 @@
             android:name=".MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/StyledIndicators"/>
+            android:theme="@style/NoActionBar"/>
         <!-- 网络监听 -->
         <receiver android:name="com.app.ui.receive.NetStateReceiver">
             <intent-filter>

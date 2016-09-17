@@ -1,5 +1,7 @@
 package com.app.utiles.other;
 
+import android.text.Html;
+import android.text.Spanned;
 import android.text.TextUtils;
 
 /**
@@ -60,5 +62,43 @@ public class StringUtile {
 		}
 		return ampm;
 	}
+	//n种颜色的字体 颜色加#
+	public static Spanned getColorHtml(String[] colors, String[] txts) {
+		String html = "<html><body>";
+		for (int i = 0; i < colors.length; i++) {
+			html += "<font color=\"" + colors[i] + "\">" + txts[i] + "</font>";
+		}
+		html += "</body></html>";
+		Spanned spanned = Html.fromHtml(html);
+		return spanned;
+	}
 
+	//normals： 正常字的字符  smalls：要缩小的字符
+	public static Spanned getSizeSmallHtml(String[] normals, String[] smalls) {
+		String html = "<html><body>";
+		for (int i = 0; i < normals.length; i++) {
+			html += "<font>" + normals[i] + "</font>";
+
+		}
+		for (int i = 0; i < smalls.length; i++) {
+			html += "<small><font>" + smalls[i] + "</font></small>";
+
+		}
+		html += "</body></html>";
+		Spanned spanned = Html.fromHtml(html);
+		return spanned;
+	}
+	//normals： 正常字的字符  smalls：要缩小的字符 colors:缩小字的颜色 颜色加#(#999999)
+	public static Spanned getHtml(String[] normals, String[] colors, String[] smalls) {
+		String html = "<html><body>";
+		for (int i = 0; i < normals.length; i++) {
+			html += "<font>" + normals[i] + "</font>";
+		}
+		for (int i = 0; i < smalls.length; i++) {
+			html += "<small><font color=\"" + colors[i] + "\">" + smalls[i] + "</font></small>";
+		}
+		html += "</body></html>";
+		Spanned spanned = Html.fromHtml(html);
+		return spanned;
+	}
 }

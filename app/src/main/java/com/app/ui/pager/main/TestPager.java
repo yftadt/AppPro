@@ -4,12 +4,12 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.app.ui.activity.base.BaseActivity;
-import com.app.ui.pager.BasePager;
+import com.app.ui.pager.BaseViewPager;
 
 /**
  * Created by Administrator on 2016/9/7.
  */
-public class TestPager extends BasePager {
+public class TestPager extends BaseViewPager {
     public TestPager(BaseActivity baseActivity) {
         super(baseActivity);
     }

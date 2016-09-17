@@ -2,35 +2,39 @@ package com.app.ui.activity;
 
 
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
+import android.widget.ImageView;
 
 import com.app.ui.activity.action.NormalActionBar;
-import com.app.ui.adapter.ViewPagerIconAdapter;
-import com.app.ui.pager.BasePager;
+import com.app.ui.adapter.ViewPagesrAdapter;
+import com.app.ui.pager.BaseViewPager;
 import com.app.ui.pager.main.TestPager;
+import com.app.ui.pager.main.TestTabPager;
 import com.app.utiles.other.ToastUtile;
-import com.viewpagerindicator.TabPageIndicator;
 
 import java.util.ArrayList;
 
 public class MainActivity extends NormalActionBar {
 
     private String[] title = new String[]{"首页", "资讯", "我的"};
-    private ViewPagerIconAdapter adapter;
+    private ViewPagesrAdapter adapter;
     private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
         setBarColor();
         setBarTvText(1, "主页");
         viewPager = (ViewPager) findViewById(R.id.view_pager);
-        TabPageIndicator indicator = (TabPageIndicator) findViewById(R.id.view_pager_indicator);
-        adapter = new ViewPagerIconAdapter(getView(), getIcon());
+        TabLayout indicator = (TabLayout) findViewById(R.id.view_pager_indicator);
+        adapter = new ViewPagesrAdapter(getView());
         viewPager.setAdapter(adapter);
-        indicator.setViewPager(viewPager);
-        indicator.setOnPageChangeListener(new OnPagerCahnge());
+        indicator.setupWithViewPager(viewPager);
+        setTadIcon(indicator);
+        viewPager.addOnPageChangeListener(new OnPagerChange());
     }
 
 
@@ -52,13 +56,31 @@ public class MainActivity extends NormalActionBar {
         //moveTaskToBack(true);
     }
 
+    private void setTadIcon(TabLayout indicator) {
+        ArrayList<Integer> icons = getIcon();
+        int minimumHeight = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
+        int minimumWidth = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
+        for (int i = 0; i < icons.size(); i++) {
+            indicator.newTab();
+            TabLayout.Tab tab = indicator.getTabAt(i);
+            ImageView iv = new ImageView(this);
+            iv.setMinimumHeight(minimumHeight);
+            iv.setMinimumWidth(minimumWidth);
+            iv.setImageResource(icons.get(i));
+            tab.setCustomView(iv);
+        }
+
+    }
+
     /**
      * 获取tab页
      */
-    private ArrayList<BasePager> getView() {
-        ArrayList<BasePager> listPager = new ArrayList<BasePager>();
+    private ArrayList<BaseViewPager> getView() {
+        ArrayList<BaseViewPager> listPager = new ArrayList<BaseViewPager>();
         listPager.add(new TestPager(this));
-        listPager.add(new TestPager(this));
+        listPager.add(new TestTabPager(this));
         listPager.add(new TestPager(this));
         return listPager;
     }
@@ -73,7 +95,8 @@ public class MainActivity extends NormalActionBar {
         listIcon.add(R.drawable.main_tab_icon_three);
         return listIcon;
     }
-    class OnPagerCahnge implements ViewPager.OnPageChangeListener {
+
+    class OnPagerChange implements ViewPager.OnPageChangeListener {
 
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
