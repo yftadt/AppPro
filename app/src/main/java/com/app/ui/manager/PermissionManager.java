@@ -64,6 +64,7 @@ public class PermissionManager {
             //是否要解释 为什么要用这个权限
         }
         if (state == PermissionChecker.PERMISSION_DENIED_APP_OP) {
+            //曾拒绝过授权
             startAccredit(activity);
             ToastUtile.showToast("此操作需要您的授权");
             return;
@@ -89,6 +90,9 @@ public class PermissionManager {
         DLog.e("权限请求结果", "requestCode:" + requestCode
                 + " 权限：" + permissionsStr
                 + " 结果：" + grantResultsStr);
+        if (onPermissionsListener != null) {
+            onPermissionsListener.onPermissions(requestCode, permissions, grantResults);
+        }
     }
 
     //到授权管理
@@ -104,5 +108,16 @@ public class PermissionManager {
         localIntent.setAction(action);
         localIntent.setData(Uri.fromParts("package", context.getPackageName(), ""));
         return localIntent;
+    }
+
+    private OnPermissionsListener onPermissionsListener;
+
+    public void setOnPermissionsListener(OnPermissionsListener onPermissionsListener) {
+        this.onPermissionsListener = onPermissionsListener;
+    }
+
+    //权限检查监听
+    public interface OnPermissionsListener {
+        void onPermissions(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults);
     }
 }

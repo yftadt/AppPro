@@ -1,5 +1,6 @@
 package com.app.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,6 +11,7 @@ import com.app.ui.dialog.CustomWaitingDialog;
 import com.app.utiles.image.ImageLoadingUtile;
 import com.app.utiles.other.ActivityUtile;
 import com.app.utiles.other.DLog;
+import com.app.utiles.photo.PhotoManager;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -23,6 +25,7 @@ public class TestActivity extends NormalActionBar {
     private String url = "http://d.hiphotos.baidu.com/image/h%3D200/" +
             "sign=5695f72692ef76c6cfd2fc2bad16fdf6/f9dcd100baa1cd11c1" +
             "c35727bb12c8fcc3ce2dbb.jpg";
+    private PhotoManager photoManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +36,8 @@ public class TestActivity extends NormalActionBar {
         setBarTvText(1, "测试网络交互");
         ButterKnife.bind(this);
         dialog = new CustomWaitingDialog(this);
-        ImageLoadingUtile.loadingCircle(this,url,R.mipmap.ic_launcher, testIv);
+        photoManager= new PhotoManager(this);
+        ImageLoadingUtile.loadingCircle(this, url, R.mipmap.ic_launcher, testIv);
     }
 
     private LoginManager manager;
@@ -46,7 +50,9 @@ public class TestActivity extends NormalActionBar {
         DLog.e("请求" + what, "返回-" + msg);
     }
 
-    @OnClick({R.id.login_btn, R.id.login_main_btn})
+    @OnClick({R.id.login_btn, R.id.login_main_btn,
+            R.id.image_select_one_btn, R.id.image_select_more_btn,
+            R.id.image_select_cop_btn, R.id.image_select_cops_btn})
     public void onClick(View view) {
         super.onClick(view);
         switch (view.getId()) {
@@ -62,6 +68,29 @@ public class TestActivity extends NormalActionBar {
                 ActivityUtile.startActivityCommon(MainActivity.class);
                 finish();
                 break;
+            case R.id.image_select_one_btn:
+                //选择一张
+                photoManager.selectOne();
+                break;
+            case R.id.image_select_more_btn:
+                //选择多张
+                photoManager.selecMmore();
+                break;
+            case R.id.image_select_cop_btn:
+                //按1:1裁剪
+                photoManager.corpSquare();
+                break;
+            case R.id.image_select_cops_btn:
+                //自由裁剪
+                photoManager.corpFreedom();
+                break;
         }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        photoManager.onActivityResult(requestCode, resultCode, data);
     }
 }
