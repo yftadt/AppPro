@@ -9,43 +9,75 @@ import android.text.TextUtils;
 
 import com.app.ui.activity.base.BaseApplication;
 
+import java.io.Serializable;
+
 
 public class ActivityUtile {
+
     /**
      * activity的通用跳转
      */
     public static void startActivityCommon(Class<?> activity) {
-        startActivityCommon(activity, "","", null);
+        startActivityBundle(activity, "", "", null);
     }
+//-------------------------------------String---------------------------------
+
     /**
      * activity的通用跳转
      */
-    public static void startActivityCommon(Class<?> activity, String arg0) {
-        startActivityCommon(activity, arg0,"", null);
-    }
-    /**
-     * activity的通用跳转
-     */
-    public static void startActivityCommon(Class<?> activity, String arg0, String arg1) {
-        startActivityCommon(activity, arg0,arg1, null);
-    }
-    /**
-     * activity的通用跳转
-     */
-    public static void startActivityCommon(Class<?> activity, Bundle bundle) {
-        startActivityCommon(activity, "","", bundle);
-    }
-    /**
-     * activity的通用跳转
-     */
-    public static void startActivityCommon(Class<?> activity, String arg0, Bundle bundle) {
-        startActivityCommon(activity, arg0,"", bundle);
+    public static void startActivityString(Class<?> activity, String arg0) {
+        startActivityBundle(activity, arg0, "", null);
     }
 
     /**
      * activity的通用跳转
      */
-    public static void startActivityCommon(Class<?> activity, String arg0, String arg1,
+    public static void startActivityString(Class<?> activity, String arg0, String arg1) {
+        startActivityBundle(activity, arg0, arg1, null);
+    }
+    //-----------------------------------Serializable--------------------------------------------
+
+    /**
+     * activity的通用跳转
+     */
+    public static void startActivitySerializable(Class<?> activity, Serializable serializable) {
+        startActivityBundle(activity, "", "",  getBundle(serializable));
+    }
+
+    /**
+     * activity的通用跳转
+     */
+    public static void startActivitySerializable(Class<?> activity, String arg0, Serializable serializable) {
+        startActivityBundle(activity, arg0, "", getBundle(serializable));
+    }
+
+    /**
+     * activity的通用跳转
+     */
+    public static void startActivitySerializable(Class<?> activity, String arg0, String arg1,
+                                                 Serializable serializable) {
+        startActivityBundle(activity, arg0, arg1,  getBundle(serializable));
+    }
+//--------------------------------------bundle------------------------------------------
+
+    /**
+     * activity的通用跳转
+     */
+    public static void startActivityBundle(Class<?> activity, Bundle bundle) {
+        startActivityBundle(activity, "", "", bundle);
+    }
+
+    /**
+     * activity的通用跳转
+     */
+    public static void startActivityBundle(Class<?> activity, String arg0, Bundle bundle) {
+        startActivityBundle(activity, arg0, "", bundle);
+    }
+
+    /**
+     * activity的通用跳转
+     */
+    public static void startActivityBundle(Class<?> activity, String arg0, String arg1,
                                            Bundle bundle) {
         Intent it = new Intent();
         if (bundle != null) {
@@ -71,6 +103,13 @@ public class ActivityUtile {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         activity.startActivity(intent);
     }
+
+    public static Bundle getBundle(Serializable value) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("bean", value);
+        return bundle;
+    }
+
     /**
      * 打开网络设置界面
      */
@@ -82,6 +121,7 @@ public class ActivityUtile {
         intent.setAction("android.intent.action.VIEW");
         activity.startActivityForResult(intent, 0);
     }
+
     /**
      * 拨号界面
      */
