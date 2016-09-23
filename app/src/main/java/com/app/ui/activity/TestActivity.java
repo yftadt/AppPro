@@ -48,9 +48,9 @@ public class TestActivity extends NormalActionBar {
         ImageLoadingUtile.clear(this,0);
         ImageLoadingUtile.clear(this,1);
         ImageLoadingUtile.loadingCircle(this, head, R.mipmap.ic_launcher, testIv);
-        ImageLoadingUtile.loadingChat(this, head, R.mipmap.default_image,
+        ImageLoadingUtile.loadImageChat(this, docHead, R.mipmap.default_image,
                 chatLeftIv, 0);
-        ImageLoadingUtile.loadingChat(this, head, R.mipmap.default_image,
+        ImageLoadingUtile.loadImageChat(this, docHead, R.mipmap.default_image,
                 chatRightIv, 1);
     }
 
