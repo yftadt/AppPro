@@ -1,8 +1,10 @@
 package com.app.net.common;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.app.net.res.BaseResult;
+import com.app.ui.dialog.DialogCustomWaiting;
 import com.app.utiles.other.DLog;
 import com.google.gson.Gson;
 
@@ -17,6 +19,22 @@ import retrofit2.Response;
  * Created by Administrator on 2016/9/7.
  */
 public abstract class AbstractManager {
+    private DialogCustomWaiting dialog;
+
+    public void setDialogShow(Context contex) {
+        if (dialog == null) {
+            dialog = new DialogCustomWaiting(contex);
+        }
+        dialog.show();
+    }
+
+    public void setDialogDismiss() {
+        if (dialog == null) {
+            return;
+        }
+        dialog.dismiss();
+    }
+
     SoftReference<RequestBack> requestBacks = null;
 
     public AbstractManager(RequestBack requestBack) {

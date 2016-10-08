@@ -7,7 +7,7 @@ import android.widget.ImageView;
 
 import com.app.net.manager.account.LoginManager;
 import com.app.ui.activity.action.NormalActionBar;
-import com.app.ui.dialog.CustomWaitingDialog;
+import com.app.ui.dialog.DialogCustomWaiting;
 import com.app.utiles.image.ImageLoadingUtile;
 import com.app.utiles.other.ActivityUtile;
 import com.app.utiles.other.DLog;
@@ -26,7 +26,7 @@ public class TestActivity extends NormalActionBar {
     @Bind(R.id.chat_right_iv)
     ImageView chatRightIv;
 
-    private CustomWaitingDialog dialog;
+    private DialogCustomWaiting dialog;
 
     public static String head = "http://img1.imgtn.bdimg.com/it/u=2633543122,1301516709&fm=11&gp=0.jpg";
     public static String docHead = "http://img3.imgtn.bdimg.com/it/u=2669114166,1444610691&fm=11&gp=0.jpg";
@@ -43,7 +43,7 @@ public class TestActivity extends NormalActionBar {
         setBarTvText(0, "返回");
         setBarTvText(1, "测试网络交互");
         ButterKnife.bind(this);
-        dialog = new CustomWaitingDialog(this);
+        dialog = new DialogCustomWaiting(this);
         photoManager = new PhotoManager(this);
         ImageLoadingUtile.clear(this,0);
         ImageLoadingUtile.clear(this,1);

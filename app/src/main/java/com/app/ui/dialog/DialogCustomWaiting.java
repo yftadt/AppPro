@@ -17,7 +17,7 @@ import com.app.utiles.image.ImageUtile;
 /**
  * 自定义进度条,当发起网络请求时显示该对话框，让用户等待
  */
-public class CustomWaitingDialog extends Dialog {
+public class DialogCustomWaiting extends Dialog {
     private ImageView imgProgress;
     /**
      * 当前百分数
@@ -26,7 +26,7 @@ public class CustomWaitingDialog extends Dialog {
     private Bitmap bmp;
     private int strID = 0;
 
-    public CustomWaitingDialog(Context context) {
+    public DialogCustomWaiting(Context context) {
         super(context, R.style.WaitingDialog);
     }
 
@@ -54,7 +54,7 @@ public class CustomWaitingDialog extends Dialog {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 1:
-                    boolean isShow = CustomWaitingDialog.this.isShowing();
+                    boolean isShow = DialogCustomWaiting.this.isShowing();
                     if (!isShow) {
                         break;
                     }
