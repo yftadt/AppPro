@@ -62,14 +62,16 @@ public abstract class AbstractManager {
 
     public class DataManagerListener<T> implements Callback<T> {
         private Object reqObj;
-
+        private String other;
         public DataManagerListener() {
         }
 
         public DataManagerListener(Object reqObj) {
             this.reqObj = reqObj;
         }
-
+        public void setOther(String other) {
+            this.other = other;
+        }
         //onResponse:此方法被调用 都是connectCode==200；
         @Override
         public void onResponse(Call<T> call, Response<T> response) {
