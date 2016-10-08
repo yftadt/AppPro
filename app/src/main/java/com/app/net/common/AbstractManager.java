@@ -3,9 +3,12 @@ package com.app.net.common;
 import android.text.TextUtils;
 
 import com.app.net.res.BaseResult;
+import com.app.utiles.other.DLog;
+import com.google.gson.Gson;
 
 import java.lang.ref.SoftReference;
 
+import okhttp3.HttpUrl;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -17,6 +20,9 @@ public abstract class AbstractManager {
     SoftReference<RequestBack> requestBacks = null;
 
     public AbstractManager(RequestBack requestBack) {
+        if (requestBack == null) {
+            return;
+        }
         requestBacks = new SoftReference<RequestBack>(requestBack);
     }
 
@@ -37,10 +43,24 @@ public abstract class AbstractManager {
     }
 
     public class DataManagerListener<T> implements Callback<T> {
+        private Object reqObj;
+
+        public DataManagerListener() {
+        }
+
+        public DataManagerListener(Object reqObj) {
+            this.reqObj = reqObj;
+        }
+
+        //onResponse:此方法被调用 都是connectCode==200；
         @Override
         public void onResponse(Call<T> call, Response<T> response) {
-            response.code();
+            // int connectCode = response.code();
+            //
             T body = response.body();
+            HttpUrl url = call.request().url();
+            String path = url.url().toString();
+            log(path, body, null);
             BaseResult baseResult = (BaseResult) body;
             //
             String responseMsg = baseResult.getMsg();
@@ -54,10 +74,33 @@ public abstract class AbstractManager {
             //业务请求 其他原因失败
             onBack(onDealFailed(WHAT_DEAL_FAILED), obj, responseMsg);
         }
-
+        //onResponse:此方法被调用 都是connectCode！=200；
         @Override
         public void onFailure(Call<T> call, Throwable t) {
-            onBack(onDealFailed(WHAT_DEAL_FAILED), null, t.getMessage());
+            onBack(onDealFailed(WHAT_LOCALITY_NET_WORK_ERROR), null, t.getMessage());
+            HttpUrl url = call.request().url();
+            String path = url.url().toString();
+            log(path, null, t.getMessage());
+        }
+
+        private void log(String url, T respBody, String error) {
+            if (!DLog.DBUG) {
+                return;
+            }
+            Gson gson = new Gson();
+            //
+            String resultMsg = gson.toJson(respBody);
+            if (respBody == null) {
+                resultMsg = error;
+            }
+            //
+            String reqMsg = "未设置打印";
+            if (reqObj != null) {
+                reqMsg = gson.toJson(reqObj);
+            }
+            DLog.e("url", url);
+            DLog.e("请求", reqMsg);
+            DLog.e("返回", resultMsg);
         }
 
         public Object getObject(Response<T> response) {
@@ -71,6 +114,7 @@ public abstract class AbstractManager {
         public int onDealFailed(int what) {
             return what;
         }
+
     }
 
     /**
@@ -99,4 +143,5 @@ public abstract class AbstractManager {
      * 网络错误
      */
     public static final int WHAT_LOCALITY_NET_WORK_ERROR = 101;
+    public static final int WHAT_OTHER = 100;
 }
