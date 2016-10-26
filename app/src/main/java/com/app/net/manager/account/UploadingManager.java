@@ -1,6 +1,6 @@
 package com.app.net.manager.account;
 
-import com.app.net.common.AbstractManager;
+import com.app.net.common.BaseManager;
 import com.app.net.common.NetSource;
 import com.app.net.common.RequestBack;
 import com.app.net.req.UploadingBeanReq;
@@ -19,7 +19,7 @@ import retrofit2.Response;
  * 上传文件
  * Created by Administrator on 2016/9/7.
  */
-public class UploadingManager extends AbstractManager {
+public class UploadingManager extends BaseManager {
 
 
     public UploadingManager(RequestBack requestBack) {

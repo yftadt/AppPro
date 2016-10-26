@@ -2,13 +2,15 @@ package com.app.net.res;
 
 import android.text.TextUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Administrator on 2016/4/8.
  */
-//@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SysUser implements Serializable {
     private Integer userId;
 
