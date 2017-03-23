@@ -73,7 +73,6 @@ public class MainActivity extends NormalActionBar {
         }
 
     }
-
     /**
      * 获取tab页
      */

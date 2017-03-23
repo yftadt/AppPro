@@ -20,7 +20,7 @@
         app:tabTextColor="#999999"
         />
 
-    <com.app.ui.view.ViewPagerNotSlide
+    <com.app.ui.pager.ViewPagerNotSlide
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

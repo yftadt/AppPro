@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.app.net.common.RequestBack;
-import com.app.ui.activity.R;
 
 import java.io.Serializable;
 
@@ -13,13 +12,17 @@ import java.io.Serializable;
  * Created by Administrator on 2016/9/7.
  */
 public class BaseActivity extends AppCompatActivity implements RequestBack {
+    private BaseApplication baseApplication;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        baseApplication = (BaseApplication) getApplication();
     }
+
     private Intent it;
     private Bundle bundle;
+
     //arg0,   arg1
     protected String getStringExtra(String key) {
         if (it == null) {
@@ -41,6 +44,7 @@ public class BaseActivity extends AppCompatActivity implements RequestBack {
         Serializable bean = bundle.getSerializable(key);
         return bean;
     }
+
     @Override
     public void OnBack(int what, Object obj, String msg, String other) {
 

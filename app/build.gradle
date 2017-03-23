@@ -3,13 +3,26 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.2"
-
+    aaptOptions.cruncherEnabled = false
+    aaptOptions.useNewCruncher = false
     defaultConfig {
         applicationId "com.app.ui.activity"
         minSdkVersion 15
-        targetSdkVersion 24
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
+        //个推说明
+        manifestPlaceholders = [
+                GETUI_APP_ID    : "pj6cfxTl686ilCvfQhEgB5",
+                //
+                GETUI_APP_KEY   : "BJ56LEFVoL80UncU9pw4m1",
+                GETUI_APP_SECRET: "Zla6WFDDpr8zX8Gn1w0916",
+                //${PCK}
+                PCK             : "com.app.ui.activity"
+        ]
+        ndk {
+            abiFilters "armeabi"
+        }
     }
     buildTypes {
         release {
@@ -45,6 +58,6 @@ dependencies {
     //
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.yancy.imageselector:imageselector:1.2.0'
+    compile 'com.guomin.image.option:option:1.1.4'
 
 }

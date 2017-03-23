@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.app.ui.activity.base.BaseActivity;
+import com.app.ui.activity.base.BaseApplication;
 import com.app.ui.view.LoadingView;
 
 /**
@@ -13,6 +14,7 @@ public abstract class BaseViewPager {
     protected BaseActivity baseActivity;
     private boolean isLoadingShow;
     private LoadingView loading;
+    private BaseApplication baseApplication;
 
     public BaseViewPager(BaseActivity baseActivity) {
         this.baseActivity = baseActivity;
@@ -21,6 +23,7 @@ public abstract class BaseViewPager {
     public BaseViewPager(BaseActivity baseActivity, boolean isLoadingShow) {
         this.baseActivity = baseActivity;
         this.isLoadingShow = isLoadingShow;
+        baseApplication = (BaseApplication) baseActivity.getApplication();
     }
 
     protected abstract View onViewCreated();

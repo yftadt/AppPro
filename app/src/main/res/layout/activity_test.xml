@@ -50,13 +50,13 @@
             android:id="@+id/image_select_cop_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="1:1裁剪"/>
+            android:text="拍照裁剪"/>
 
         <Button
             android:id="@+id/image_select_cops_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="自由裁剪"/>
+            android:text="选图裁剪"/>
 
         <com.app.ui.view.chat.ChatLeftText
             android:layout_width="wrap_content"

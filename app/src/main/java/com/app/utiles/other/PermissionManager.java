@@ -1,4 +1,4 @@
-package com.app.ui.manager;
+package com.app.utiles.other;
 
 import android.Manifest;
 import android.app.Activity;
@@ -13,22 +13,23 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
 
-import com.app.utiles.other.DLog;
-import com.app.utiles.other.ToastUtile;
-
 
 /**
  * Created by Administrator on 2016/7/19.
  */
 public class PermissionManager {
-    private static PermissionManager p;
+    private static  PermissionManager p;
     public static final String permission_record = Manifest.permission.RECORD_AUDIO;
     public static final String permission_location = Manifest.permission.ACCESS_FINE_LOCATION;
     public static final String permission_camera = Manifest.permission.CAMERA;
     private int targetSdkVersion;
 
-    private PackageManager pkm;
-    private String pakName;
+    public static PermissionManager getInstance() {
+        if (p == null) {
+            p = new  PermissionManager();
+        }
+        return p;
+    }
 
     private int getTargetSdkVersion(Context context) {
         int sdkVersion = 0;
@@ -58,20 +59,27 @@ public class PermissionManager {
 
     //请求权限
     public void requestPermissions(Activity activity, int state, String permission, int reqCode) {
+        //true:拒绝授权，并且选择了不要再次提示 ,然而，在实际开发中，需要注意的是，
+        // 很多手机对原生系统做了修改，比如小米，小米4的6.0,三星的1505-A01 6.0  就一直返回false，
+        // 而且在申请权限时，如果用户选择了拒绝，则不会再弹出对话框了
+        // false:拒绝了授权返回false
         boolean isShow = ActivityCompat.shouldShowRequestPermissionRationale(activity,
                 permission);
-        if (isShow) {
+        DLog.e("requestPermissions", "请求权限 isShow:" + isShow);
+        if (!isShow) {
             //是否要解释 为什么要用这个权限
+           /* startAccredit(activity);
+            ToastUtile.showToast("此操作需要您手动的授权");
+            return;*/
         }
         if (state == PermissionChecker.PERMISSION_DENIED_APP_OP) {
-            //曾拒绝过授权
             startAccredit(activity);
             ToastUtile.showToast("此操作需要您的授权");
             return;
         }
         //去授权
         ActivityCompat.requestPermissions(activity, new String[]{permission}, reqCode);
-        DLog.e("requestPermissions", "请求权限 isShow:" + isShow);
+
     }
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -87,12 +95,12 @@ public class PermissionManager {
                 grantResultsStr += grant + "\n";
             }
         }
+
         DLog.e("权限请求结果", "requestCode:" + requestCode
                 + " 权限：" + permissionsStr
                 + " 结果：" + grantResultsStr);
-        if (onPermissionsListener != null) {
-            onPermissionsListener.onPermissions(requestCode, permissions, grantResults);
-        }
+
+
     }
 
     //到授权管理
@@ -108,16 +116,5 @@ public class PermissionManager {
         localIntent.setAction(action);
         localIntent.setData(Uri.fromParts("package", context.getPackageName(), ""));
         return localIntent;
-    }
-
-    private OnPermissionsListener onPermissionsListener;
-
-    public void setOnPermissionsListener(OnPermissionsListener onPermissionsListener) {
-        this.onPermissionsListener = onPermissionsListener;
-    }
-
-    //权限检查监听
-    public interface OnPermissionsListener {
-        void onPermissions(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults);
     }
 }
