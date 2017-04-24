@@ -165,7 +165,14 @@ public class BaseBarActivity extends BaseActivity {
         loadingView.setLoadingSucceed();
         loadingView.setVisibility(View.GONE);
     }
-
+    //加载重新显示
+    protected void loadingViewShow() {
+        if (loadingView == null) {
+            return;
+        }
+        loadingView.startRest();
+        loadingView.setVisibility(View.VISIBLE);
+    }
     protected void initView() {
     }
 

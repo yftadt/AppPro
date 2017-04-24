@@ -37,6 +37,8 @@ public class LoadingView extends RelativeLayout {
     private ImageView loagdingTailorIv;
     private ImageView loagdingFailureIv;
     private int backgColor = 0xfff1f1f1;
+    //true : 正在加载
+    private boolean isloading;
 
     private void init(Context context) {
         setBackgroundColor(backgColor);
@@ -70,16 +72,19 @@ public class LoadingView extends RelativeLayout {
 
     //开始显示加载效果
     public void startLoading() {
+        isloading = true;
         handler.sendEmptyMessageDelayed(LOADING, 10);
     }
 
     //加载成功
     public void setLoadingSucceed() {
+        isloading = false;
         handler.removeMessages(LOADING);
     }
 
     //加载失败
     public void setLoadingFailed() {
+        isloading = false;
         if (loagdingFailureIv == null) {
             return;
         }
@@ -95,15 +100,24 @@ public class LoadingView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             //重新加载
-            if (loagdingFailureIv.getVisibility() == View.VISIBLE) {
-                loagdingFailureIv.setVisibility(View.GONE);
-            }
-            handler.sendEmptyMessageDelayed(LOADING, 5);
-            if (onResetLoagding == null) {
-                return;
-            }
-            onResetLoagding.onResetRequest();
+            startRest();
         }
+    }
+
+    //重新显示
+    public void startRest() {
+        if (isloading) {
+            return;
+        }
+        isloading = true;
+        if (loagdingFailureIv.getVisibility() == View.VISIBLE) {
+            loagdingFailureIv.setVisibility(View.GONE);
+        }
+        handler.sendEmptyMessageDelayed(LOADING, 5);
+        if (onResetLoagding == null) {
+            return;
+        }
+        onResetLoagding.onResetRequest();
     }
 
     // 加载中
