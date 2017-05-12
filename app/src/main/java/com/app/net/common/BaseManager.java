@@ -165,10 +165,25 @@ public class BaseManager {
 
         @Override
         public void onFailure(Call<T> call, Throwable t) {
-            onBack(onDealFailed(WHAT_LOCALITY_NET_WORK_ERROR), reqObj, t.toString(), other, isExchange);
+            String msg = t.toString();
+            String m = msg;
+            if (msg.contains("TimeoutException")) {
+                //m = "请求超时";
+                m = "网络出小差，请稍后重试";
+            }
+            if (msg.contains("Failed to connect to")) {
+                m = "无法连接服务器";
+            }
+            if (msg.contains("No address associated with hostname")) {
+                m = "网络连接失败";
+            }
+            if (msg.contains("JsonParseException")) {
+                m = "数据解析失败";
+            }
+            onBack(onDealFailed(WHAT_LOCALITY_NET_WORK_ERROR), reqObj, m, other, isExchange);
             HttpUrl url = call.request().url();
             String path = url.url().toString();
-            log(path, null, t.toString());
+            log(path, null, msg);
         }
 
         private void log(String url, T respBody, String error) {
