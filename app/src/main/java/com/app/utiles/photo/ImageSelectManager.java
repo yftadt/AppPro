@@ -195,7 +195,6 @@ public class ImageSelectManager {
             Glide.with(context)
                     .load(path)
                     .placeholder(R.mipmap.image_select_default)
-                    .centerCrop()
                     .into(imageView);
         }
     }
@@ -214,16 +213,14 @@ public class ImageSelectManager {
         Bundle bundle = data.getExtras();
         ArrayList<ImageEntity> images = (ArrayList<ImageEntity>) bundle.get(Configs.TASK_COMPLETE_RESULT);
         if (images == null || images.size() == 0) {
-            return null;
+            return images;
         }
         if (resultCode == Configs.TASK_CROP_COMPLETE) {
             return images;
         }
-        ArrayList<String> bitList = new ArrayList<>();
         for (ImageEntity image : images) {
             String path = image.imagePath;
             if (path.startsWith("http://")) {
-                bitList.add(path);
                 continue;
             }
             Bitmap bit = ImageUtile.getSmallBitmap(image.imagePath);
@@ -231,8 +228,8 @@ public class ImageSelectManager {
                 continue;
             }
             String bitPath = String.valueOf(new Date().getTime());
-            bitPath = FileUtile.saveBitmap(bit, bitPath);
-            bitList.add(bitPath);
+            bitPath = FileUtile.saveBitmap(bit, bitPath, false);
+            image.imagePath = bitPath;
             DLog.e("ImagePathList", image.imagePath);
         }
         return images;
