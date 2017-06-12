@@ -87,24 +87,19 @@ public class ActivityUtile {
     /**
      * 关闭activity
      */
-    public static void closeTopActivity(Activity activity, Class<?> cl) {
-        Intent intent = new Intent();
-        intent.setClass(activity, cl);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        activity.startActivity(intent);
+    public static void closeTopActivity(Class<?> cl) {
+        closeTopActivity(cl, "");
     }
 
-    /**
-     * 关闭activity
-     */
-    public static void closeTopActivity(Activity activity, Class<?> cl, String arg0) {
+    public static void closeTopActivity(Class<?> cl, String arg0) {
         Intent intent = new Intent();
         if (!TextUtils.isEmpty(arg0)) {
             intent.putExtra("arg0", arg0);
         }
-        intent.setClass(activity, cl);
+        intent.setClass(BaseApplication.context, cl);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        activity.startActivity(intent);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        BaseApplication.context.startActivity(intent);
     }
 
     public static Bundle getBundle(Serializable value) {

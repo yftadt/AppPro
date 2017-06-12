@@ -58,6 +58,6 @@ dependencies {
     //
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.guomin.image.option:option:1.1.4'
+    compile 'com.guomin.image.option:option:1.1.8'
 
 }

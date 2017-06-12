@@ -219,14 +219,14 @@ public class FileUtile {
     }
 
     //删除图片缓存目录
-    //删除图片目录
     public static void deleteFile() {
         NetSourceThreadPool.getInstance().execute(new Runnable() {
             @Override
             public void run() {
-                String fileName =  getImageCachePathPrivate();
+                String fileName = getImageCachePathPrivate();
                 FileUtile.deleteFile(new File(fileName));
             }
         });
     }
+
 }

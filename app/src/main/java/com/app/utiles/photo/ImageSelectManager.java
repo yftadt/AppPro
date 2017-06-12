@@ -195,6 +195,7 @@ public class ImageSelectManager {
             Glide.with(context)
                     .load(path)
                     .placeholder(R.mipmap.image_select_default)
+                    .centerCrop()
                     .into(imageView);
         }
     }
@@ -219,11 +220,12 @@ public class ImageSelectManager {
             return images;
         }
         for (ImageEntity image : images) {
-            String path = image.imagePath;
+            String path = image.imagePathSource;
             if (path.startsWith("http://")) {
+                image.imagePath = path;
                 continue;
             }
-            Bitmap bit = ImageUtile.getSmallBitmap(image.imagePath);
+            Bitmap bit = ImageUtile.getSmallBitmap(image.imagePathSource);
             if (bit == null) {
                 continue;
             }
