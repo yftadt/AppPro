@@ -1,13 +1,18 @@
 package com.app.net.common;
 
+import com.app.net.common.custom.JacksonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import retrofit2.Converter;
 import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 /**
  * Created by Administrator on 2016/9/7.
@@ -18,12 +23,24 @@ public class NetSource {
     public static Retrofit getRetrofit() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl(Constraint.TEST_SERVICE_URL_APP)
-                    .addConverterFactory(JacksonConverterFactory.create())
+                    .baseUrl(Constraint.SEARVICE_APP)
+                    .addConverterFactory(getJsonMapper())
                     .client(getOkHttpClient())
                     .build();
         }
         return retrofit;
+    }
+
+    public static void setRest() {
+        retrofit = null;
+    }
+
+    private static Converter.Factory getJsonMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+        // JacksonConverterFactory factory = JacksonConverterFactory.create(objectMapper);
+        JacksonFactory factory = JacksonFactory.create(objectMapper);
+        return factory;
     }
 
     //设置OkHttpClient
@@ -35,7 +52,7 @@ public class NetSource {
                 Request request = chain.request()
                         .newBuilder()
                         .addHeader("Content-Type", "application/json; charset=UTF-8")
-                        .addHeader("Accept-Encoding", "gzip, deflate")
+                        // .addHeader("Accept-Encoding", "gzip, deflate")
                         .addHeader("Connection", "keep-alive")
                         .addHeader("Accept", "*/*")
                         .addHeader("Cookie", "add cookies here")
@@ -45,8 +62,9 @@ public class NetSource {
 
         });
 
-        OkHttpClient okHttpClient = builder.build();
 
+        builder.connectTimeout(15, TimeUnit.SECONDS);
+        OkHttpClient okHttpClient = builder.build();
         return okHttpClient;
     }
 
