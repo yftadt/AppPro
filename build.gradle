@@ -1,23 +1,69 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+
+    ext {
+        versions = [
+                kotlin: "1.8.0"
+        ]
+    }
     repositories {
         jcenter()
+        mavenCentral()
+        google()
+        maven { url = (uri("https://maven.aliyun.com/nexus/content/repositories/google")) }
+        maven { url = (uri("https://maven.aliyun.com/repository/public")) }
+        maven { url = (uri("https://maven.aliyun.com/nexus/content/repositories/jcenter")) }
+
+        maven { url = (uri("https://maven.aliyun.com/nexus/content/groups/public/")) }
+
+        maven { url = (uri("https://maven.aliyun.com/nexus/content/repositories/gradle-plugin'")) }
+
+        maven { url = (uri("https://jitpack.io")) }
+
+
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        // 这个是gradle插件 要确保与gradle版本对应
+        classpath 'com.android.tools.build:gradle:7.4.2'
+        //它可以隐式依赖：要配置 id 'kotlin-android',插件会处理版本关系
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
     }
 }
 
 allprojects {
     repositories {
         jcenter()
+        mavenCentral()
+        google()
+
+        maven { url = (uri("https://maven.aliyun.com/nexus/content/repositories/google")) }
+        maven { url = (uri("https://maven.aliyun.com/repository/public")) }
+        maven { url = (uri("https://maven.aliyun.com/nexus/content/repositories/jcenter")) }
+
+        maven { url = (uri("https://maven.aliyun.com/nexus/content/groups/public/")) }
+
+        maven { url = (uri("https://maven.aliyun.com/nexus/content/repositories/gradle-plugin'")) }
+        maven { url = (uri("https://jitpack.io")) }
+    }
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.addStringOption('encoding', 'UTF-8')
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+ext {
+    compileSdkVersion = 34
+    buildToolsVersion = '34.0.0'
+    //华为推送 最小17 胎心监测最小 21
+    minSdkVersion = 26
+    targetSdkVersion = 28
+    //compose_version = '1.1.0-beta03'
+    //对应kotlin-gradle-plugin:1.9.25 版本
+    compose_version = '1.5.14'
+
 }

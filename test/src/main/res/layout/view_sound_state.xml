@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center">
+
+
+    <!-- 录制声音图 -->
+    <LinearLayout
+        android:id="@+id/sound_proceed_ll"
+        android:layout_width="wrap_content"
+        android:layout_height="140dip"
+        android:background="@drawable/sound_proceed_bg"
+        android:gravity="bottom|center"
+        android:minWidth="140.0dip"
+        android:orientation="horizontal"
+        android:paddingLeft="25.0dip">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15.0dip"
+            android:layout_marginRight="4.0dip"
+            android:src="@drawable/sound_proceed_phone"/>
+
+        <ImageView
+            android:id="@+id/sound_volume_iv"
+            android:layout_width="43sp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="10dip"
+            android:layout_marginTop="10dip"
+            android:src="@drawable/sound_volume_1"/>
+    </LinearLayout>
+
+    <!-- 取消声音图 -->
+
+    <LinearLayout
+        android:id="@+id/sound_cancel_ll"
+        android:layout_width="140.0dip"
+        android:layout_height="140.0dip"
+        android:alpha="0"
+        android:background="@drawable/sound_cancel_bg"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="取消"
+            android:textColor="#ffffff"
+            android:textSize="13.0dip"/>
+
+        <ImageView
+            android:layout_width="75.0dip"
+            android:layout_height="75.0dip"
+            android:layout_marginTop="12.0dip"
+            android:src="@drawable/sound_cancel"/>
+    </LinearLayout>
+
+</RelativeLayout>

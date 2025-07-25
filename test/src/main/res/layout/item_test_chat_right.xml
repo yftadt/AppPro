@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/action_margin"
+    android:paddingRight="@dimen/action_margin"
+    >
+    <!--发送时间，发送状态-->
+    <!--会话时间-->
+    <TextView
+        android:id="@+id/item_right_send_time_tv"
+        style="@style/chat_text_date_style"
+
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        >
+        <!--会话头像-->
+        <ImageView
+            android:id="@+id/item_right_hend_iv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="5dp"
+            android:src="@mipmap/default_head_doc"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/item_right_hend_iv"
+            android:gravity="right"
+            android:orientation="horizontal"
+            ><!--发送进度和重新发送-->
+            <RelativeLayout
+                android:id="@+id/item_right_progress_rl"
+                android:layout_width="80dp"
+                android:layout_height="14dp"
+                android:layout_toLeftOf="@+id/item_right_hend_iv"
+                >
+
+                <ProgressBar
+                    android:id="@+id/item_send_pb"
+                    style="?android:attr/progressBarStyleSmallTitle"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="20dp"
+                    />
+
+                <TextView
+                    android:id="@+id/item_right_send_fail_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="right"
+                    android:paddingRight="10dp"
+                    android:text="点击重试"
+                    android:textColor="#ff0000"
+                    android:textSize="10sp"
+                    />
+            </RelativeLayout>
+            <!--会话内容-->
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+                <!--文本-->
+                <TextView
+                    android:id="@+id/item_right_msg_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/chat_right"
+                    android:lineSpacingExtra="4dp"
+                    android:minWidth="30dp"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
+                    android:textColor="#ffffff"
+                    android:textSize="15sp"
+                    />
+
+
+                <ImageView
+                    android:id="@+id/item_right_voice_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/chat_right"
+                    android:gravity="center_vertical"
+                    android:minHeight="30dp"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="20dp"
+                    android:paddingTop="5dp"
+                    android:src="@mipmap/play_voice_right_3"
+                    />
+                <!--图片-->
+                <ImageView
+                    android:id="@+id/item_right_msg_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleType="centerInside"
+                    />
+            </RelativeLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

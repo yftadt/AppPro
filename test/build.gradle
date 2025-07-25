@@ -1,0 +1,50 @@
+plugins {
+    id 'com.android.library'// Android应用插件
+
+}
+apply from: "$rootDir/rely.gradle"
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+        //个推说明
+        manifestPlaceholders = [GETUI_APP_ID    : "pj6cfxTl686ilCvfQhEgB5",
+                                //
+                                GETUI_APP_KEY   : "BJ56LEFVoL80UncU9pw4m1",
+                                GETUI_APP_SECRET: "Zla6WFDDpr8zX8Gn1w0916",
+                                //${PCK}
+                                PCK             : "com.app.baseui"]
+        ndk {
+            abiFilters "armeabi", "x86"
+        }
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+    buildFeatures {
+        viewBinding = true
+        // compose true
+    }
+}
+
+dependencies {
+    api fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+    api project(':dimen')
+    api project(':baseui')
+}

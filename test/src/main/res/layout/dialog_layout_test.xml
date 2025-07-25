@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_bg"
+    android:orientation="vertical">
+    <!--顶层设置 LinearLayout 宽度会铺满-->
+    <!--顶层设置 RelativeLayout 只显示最大宽度（非铺满）-->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingTop="@dimen/dp_20"
+            android:text="post_save_title"
+            android:textColor="#181818"
+            android:textSize="@dimen/dp_25"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_6"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="@dimen/dp_0"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <!--<com.app.ui.view.sign.SignLayout
+                    android:id="@+id/sign_layout_5"
+                    android:layout_width="@dimen/dp_0"
+                    android:layout_height="@dimen/dp_77"
+                    android:layout_columnSpan="1"
+                    android:layout_weight="1" />-->
+
+                <View
+                    android:layout_width="@dimen/dp_6"
+                    android:layout_height="@dimen/dp_1" />
+
+               <!-- <com.app.ui.view.sign.SignLayout
+                    android:id="@+id/sign_layout_6"
+                    android:layout_width="@dimen/dp_0"
+                    android:layout_height="@dimen/dp_77"
+                    android:layout_columnSpan="1"
+                    android:layout_weight="1" />-->
+
+                <View
+                    android:layout_width="@dimen/dp_3"
+                    android:layout_height="@dimen/dp_1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="@dimen/dp_0"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <View
+                    android:layout_width="@dimen/dp_3"
+                    android:layout_height="@dimen/dp_1" />
+
+       <!--         <com.app.ui.view.sign.SignLayout
+                    android:id="@+id/sign_layout_7"
+                    android:layout_width="@dimen/dp_0"
+                    android:layout_height="@dimen/dp_77"
+                    android:layout_columnSpan="2"
+                    android:layout_weight="1" />-->
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</RelativeLayout>

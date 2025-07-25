@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        >
+
+
+        <Button
+            android:id="@+id/image_select_one_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="选择一张"/>
+
+        <Button
+            android:id="@+id/image_select_more_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="选择多张"/>
+
+        <Button
+            android:id="@+id/image_select_cop_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="拍照裁剪"/>
+
+        <Button
+            android:id="@+id/image_select_cops_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="选图裁剪"/>
+
+        <ImageView
+            android:id="@+id/image_1_iv"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            />
+
+        <ImageView
+            android:id="@+id/image_2_iv"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            />
+    </LinearLayout>
+</ScrollView>

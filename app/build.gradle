@@ -1,35 +1,33 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'// Android应用插件
 
+}
+apply from: "$rootDir/rely.gradle"
+def appName = new String(apkName.getBytes("iso8859-1"), "UTF-8")
+//测试环境地址
+def testUrl = "\"http://10.168.3.101\""
+def isLog=appIsLog
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
     aaptOptions.cruncherEnabled = false
     aaptOptions.useNewCruncher = false
     defaultConfig {
-        applicationId "com.app.ui.activity"
-        minSdkVersion 15
-        targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
-        //个推说明
-        manifestPlaceholders = [
-                GETUI_APP_ID    : "pj6cfxTl686ilCvfQhEgB5",
-                //
-                GETUI_APP_KEY   : "BJ56LEFVoL80UncU9pw4m1",
-                GETUI_APP_SECRET: "Zla6WFDDpr8zX8Gn1w0916",
-                //${PCK}
-                PCK             : "com.app.ui.activity"
-        ]
+        applicationId apklicationId
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode apkVesionCode.toInteger()
+        versionName apkVesionName
         ndk {
-            abiFilters "armeabi"
+            //abiFilters "armeabi"//bugly, "x86"
+            abiFilters "arm64-v8a", 'armeabi' // bugly
+
         }
+        //会被打入gradleResValues.xml
+        resValue "string", "app_name", appName.toString()
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
+
     packagingOptions {
         exclude 'META-INF/NOTICE' // will not include NOTICE file
         exclude 'META-INF/LICENSE' // will not include LICENSE file
@@ -44,20 +42,106 @@ android {
         exclude 'META-INF/dependencies.txt'
         exclude 'META-INF/LGPL2.1'
     }
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+    signingConfigs {
+        key {
+            storeFile file(signFile)
+            storePassword signPwd
+            keyAlias signAlias
+            keyPassword signPwd
+        }
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true//去掉不用资源
+            signingConfig signingConfigs.key
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue "string", "app_buildTypes", "release"
+            if("true".equals(isLog)){
+                //不允许网络抓包
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-nolog.pro'
+                manifestPlaceholders = [NETWORK_SECURITY_CONFIG: ""]
+            }else {
+                //允许网络抓包
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                manifestPlaceholders = [NETWORK_SECURITY_CONFIG: "@xml/network_security_config"]
+            }
+        }
+        debug {
+            minifyEnabled false
+            shrinkResources false//去掉不用资源
+            signingConfig signingConfigs.key
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue "string", "app_buildTypes", "debug"
+            //允许网络抓包
+            manifestPlaceholders = [NETWORK_SECURITY_CONFIG: "@xml/network_security_config"]
+
+        }
+    }
+
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+
+    buildFeatures {
+        viewBinding = true
+        // compose true
+    }
+    //多渠道打包
+    flavorDimensions = ["version"]
+    productFlavors {
+        //测试环境
+        trial {
+            dimension = 'version'
+            buildConfigField "String", "base_url", testUrl.toString()
+        }
+        //正式环境
+        dev {
+            dimension = 'version'
+            buildConfigField "String", "base_url", testUrl.toString()
+        }
+
+    }
+
+    applicationVariants.all { variant ->
+        def outputFileDir = "${project.projectDir.absolutePath}/${variant.buildType.name}"
+        def today = new Date()
+        def env = ""
+        variant.outputs.forEach {
+            variant.productFlavors.each { product ->
+                if (product.name == "trial") {
+                    env = "test_"
+                } else if (product.name == "dev") {
+                    env = "dev_"
+                }
+            }
+            def appNameData = appName
+            def  versionName=variant.versionName
+            def path = appNameData +"_"+ android.defaultConfig.applicationId+ "_V" + variant.versionName+ "_" + env +  "_" + today.format('yyyyMMddHHmm', TimeZone.getTimeZone("GMT+08:00"))+ "_" + variant.buildType.name + ".apk"
+            //def path=env+appNameData
+            it.outputFileName = path
+        }
+    }
 
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:24.0.0'
-    compile 'com.android.support:design:24.0.0'
+    api fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+    api project(':dimen')
+    //图片选择框架
+   /* implementation files('libs\\optionv12.aar')
+    //list
+    implementation files('libs\\list-library-v1.aar')*/
     //
-    //compile 'com.squareup.retrofit2:converter-gson:2.0.1'
-    compile 'com.squareup.retrofit2:converter-jackson:2.1.0'
-    //
-    compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.guomin.image.option:option:1.1.8'
-
+    api project(':test')
+    api project(':baseui')
 }

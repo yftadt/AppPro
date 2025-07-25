@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <LinearLayout
+        android:id="@+id/scan_start_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:id="@+id/scan_start_1_tv"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:background="#999999"
+            android:gravity="center"
+            android:text="扫描微信，QQ"
+            android:textSize="16sp"
+            />
+
+        <TextView
+            android:id="@+id/scan_start_2_tv"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:background="#999999"
+            android:gravity="center"
+            android:text="开始全部"
+            android:textSize="16sp"
+            />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv"
+        style="@style/ListView"
+        android:layout_above="@+id/scan_start_ll"
+        />
+
+    <TextView
+        android:id="@+id/scan_empty_tv"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_centerInParent="true"
+        android:background="#999999"
+        android:gravity="center"
+        android:text="没有视频"
+        android:textSize="16sp"
+        android:visibility="gone"
+        />
+
+    <TextView
+        android:id="@+id/scan_msg_tv"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentRight="true"
+        android:alpha="0.9"
+        android:background="#ffffff"
+        android:gravity="center"
+        android:visibility="gone"
+        />
+</RelativeLayout>

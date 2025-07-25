@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/root_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+
+    <Button
+        android:id="@+id/tets_1_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="播放本地声音"
+        />
+
+    <Button
+        android:id="@+id/tets_2_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tets_1_btn"
+        android:text="播放网络声音"
+        />
+
+    <TextView
+        android:id="@+id/test_ks_tv"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerVertical="true"
+        android:background="#999999"
+        android:gravity="center"
+        android:text="开始"
+        android:textSize="16sp"
+        />
+
+    <TextView
+        android:id="@+id/test_js_tv"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="#999999"
+        android:gravity="center"
+        android:text="结束"
+        android:textSize="16sp"
+        />
+
+    <TextView
+        android:id="@+id/test_zt_tv"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerInParent="true"
+        android:background="#999999"
+        android:gravity="center"
+        android:text="暂停/继续"
+        android:textSize="16sp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/test_ks_tv"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:id="@+id/msg_2_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/action_margin"
+            android:layout_marginRight="@dimen/action_margin"
+            android:background="#cccccc"
+            android:lineSpacingExtra="4dp"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            />
+
+        <test.app.ui.view.EepansionTextView
+            android:id="@+id/mdoc_good_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/action_margin"
+            android:layout_marginRight="@dimen/action_margin"
+            android:layout_marginTop="20dp"
+            android:background="#cccccc"
+            android:lineSpacingExtra="4dp"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/test_zt_tv"
+        >
+
+        <TextView
+            android:id="@+id/msg_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="4dp"
+            android:lines="2"
+            android:textSize="16sp"
+            />
+
+        <TextView
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="25dp"
+            android:background="#333333"
+            />
+    </RelativeLayout>
+
+    <test.app.ui.view.RecordTextView
+        android:id="@+id/chat_say_tv"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:background="#FFFFFF"
+        android:gravity="center"
+        android:longClickable="true"
+        android:text="按住说话"
+        />
+    <!-- 录音显示UI层 -->
+
+    <LinearLayout
+        android:id="@+id/chat_popup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <include
+            layout="@layout/view_sound_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+</RelativeLayout>

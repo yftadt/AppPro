@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/action_margin">
+
+
+    <ImageView
+        android:id="@+id/image_add_iv"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginRight="10dp"
+        android:src="@mipmap/default_image_add"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@+id/image_add_iv"
+        android:text="添加图片"
+        android:textColor="#333333"
+        android:textSize="14sp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/image_add_iv"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@+id/image_add_iv"
+        android:text="上传相关图片"
+        android:textColor="#999999"
+        android:textSize="14sp"
+        />
+</RelativeLayout>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:id="@+id/title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingBottom="20dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="20dp"
+            android:textColor="#333333"
+            android:textSize="17sp"
+            />
+
+        <TextView
+            android:id="@+id/msg_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="100dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:textColor="#666666"
+            android:textSize="15sp"
+            />
+
+        <View
+            style="@style/LineView"/>
+
+        <TextView
+            android:id="@+id/btn_all_tv"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:textSize="16sp"
+            />
+
+        <RelativeLayout
+            android:id="@+id/btn_tvs_rl"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            >
+
+            <View
+                android:id="@+id/temp"
+                style="@style/VerticalView"
+                android:layout_centerInParent="true"
+                />
+
+            <TextView
+                android:id="@+id/btn_right_tv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/temp"
+                android:gravity="center"
+                android:textSize="16sp"
+                />
+
+            <TextView
+                android:id="@+id/btn_left_tv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@+id/temp"
+                android:gravity="center"
+                android:textSize="16sp"
+                />
+
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

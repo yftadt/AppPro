@@ -1,1 +1,2 @@
-include ':app'
+include ':app', ':baseui',':log', ':dimen','test'
+

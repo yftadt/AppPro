@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--当activity 的them 从非Translucent 到Translucent 用-->
+<set xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <translate
+        android:duration="400"
+        android:fromXDelta="-50%p"
+        android:fromYDelta="0"
+        android:interpolator="@android:anim/decelerate_interpolator"
+        android:toXDelta="0"
+        android:toYDelta="0" />
+
+</set>

@@ -1,0 +1,12 @@
+<resources>
+    <!--中文简体-->
+    <string name="skill_support">杭州特杨网络科技有限公司提供技术支持</string>
+    <string name="password_input">
+    <![CDATA[
+    1234567890
+    qwertyuiopasdfghjklzxcvbnm
+    QWERTYUIOPASDFGHJKLZXCVBNM
+    !@#$%&*~]]>
+    </string>
+    <string name="message">切换后的多语言</string>
+</resources>

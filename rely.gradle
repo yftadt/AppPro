@@ -1,0 +1,59 @@
+// 引用  Kotlin 版本：
+apply plugin: 'kotlin-android'//kotlin-android是org.jetbrains.kotlin.android的简化版，用于简化配置。
+//kotlin 标准库 即implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+apply plugin: 'org.jetbrains.kotlin.android'// Kotlin Android插件的完整ID
+apply plugin: 'kotlin-kapt' // Kotlin注解处理插件
+
+
+dependencies {
+//打包突破64k
+    implementation("androidx.multidex:multidex:2.0.1")
+
+//网络请求
+    api 'com.github.AnUnyieldingFighter.networkaar:retrofit:1.2'
+
+//谷歌图片加载框架
+    api 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+    //picasso
+    api("com.squareup.picasso:picasso:2.8")
+    //api('com.squareup.picasso:picasso:3.0.0')
+
+
+//权限请求框架：https://github.com/getActivity/XXPermissions
+    implementation 'com.github.getActivity:XXPermissions:15.0'
+//----------------------------------
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+//TabLayout,可折叠状态栏
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.compose.ui:ui-text-android:1.7.8'//TabLayout
+    // room-runtime 和  room-compiler 是 Room 数据库库的两个核心依赖项。
+    def room_version = "2.3.0"
+    //Room 数据库的运行时库 它包含了 Room 在运行时所需的所有类和方法，用于处理数据库操作，如插入、查询、更新和删除数据
+    implementation "androidx.room:room-runtime:$room_version"
+    //这是一个注解处理器，用于在编译时处理 Room 相关的注解,Room 使用注解来定义实体类、DAO 接口和数据库类。room-compiler 会在编译时解析这些注解，并生成相应的代码，如数据库访问类、SQL 查询语句等
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    //------------kotlin--------------------------------------
+    //kotlin 拓展库(使用方法，方法调用之类的封装和拓展)
+    implementation 'androidx.core:core-ktx:1.13.1'
+    //统一管理 Kotlin 相关依赖的版本,
+    //当你在项目中引入 platform("org.jetbrains.kotlin:kotlin-bom:1.8.0") 后，
+    //所有 Kotlin 相关的依赖（如 kotlin-stdlib、kotlin-reflect 等）
+    //都会自动使用 BOM 中指定的版本（在这个例子中是 1.8.0）
+    //这意味着你不需要为每个 Kotlin 依赖显式指定版本号，从而简化了依赖配置并减少了版本冲突的风险。
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
+    //------------------kotlin结束---------------------------
+    //
+    implementation "org.greenrobot:eventbus:3.3.1"
+    //腾讯bug异常上报
+    implementation 'com.tencent.bugly:crashreport:4.1.9.3'
+    //
+    api "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01"
+    //适配器
+    api "com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4"
+    //LottieAnimationView 动画
+    api "com.airbnb.android:lottie:6.5.2"
+    //RootBeer检测设备是否已Root：
+    api 'com.scottyab:rootbeer-lib:0.1.0'
+
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/frame_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <Button
+        android:id="@+id/btn_geturl"
+        android:layout_width="160dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="20dp"
+        android:text="获取当前网址" />
+
+    <EditText
+        android:id="@+id/tv_url"
+        android:layout_width="@dimen/dp_100"
+        android:layout_height="match_parent"
+        android:background="#fff" />
+</RelativeLayout>

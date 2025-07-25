@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    >
+
+    <View
+        android:id="@+id/line"
+        style="@style/LineView"
+        />
+
+    <LinearLayout
+        android:id="@+id/chat_keyboard_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        >
+
+        <test.app.ui.view.key.ChatKeyboardLayout
+            android:id="@+id/chat_keyboard_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            />
+    </LinearLayout>
+
+
+    <com.list.library.view.refresh.head.RefreshCustomList
+        android:id="@+id/list_lv"
+        style="@style/ListView"
+        android:layout_above="@+id/chat_keyboard_ll"
+        android:layout_below="@+id/line"
+        />
+
+    <include
+        android:id="@+id/chat_popup_in"
+        layout="@layout/view_sound_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="140dp"
+        android:visibility="gone"/>
+</RelativeLayout>

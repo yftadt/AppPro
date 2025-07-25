@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#33000000"
+    android:orientation="vertical">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="【淘宝】http://e.tb.cn/h.TagvIFu?tk=GkxN3KRGC2b HU7632 「【双筋特厚】保鲜袋食品级」
+点击链接直接打开 或者 淘宝搜索直接打开" />
+
+
+
+
+
+
+
+
+
+
+
+            <Button
+                android:id="@+id/web_btn"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:text="新页面新webview" />
+
+            <Button
+                android:id="@+id/web_btn2"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:text="打开网页" />
+            <Button
+                android:id="@+id/nbc_btn"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:text="打开nbc" />
+
+            <Button
+                android:id="@+id/open_btn"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:text="打开淘宝" />
+
+            <Button
+                android:id="@+id/open_tkl_btn"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:text="使用淘口令打开淘宝" />
+
+            <Button
+                android:id="@+id/open_id_btn"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:text="打开京东" />
+
+            <Button
+                android:id="@+id/open_pdd_btn"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:text="拼多多" />
+            <Button
+                android:id="@+id/open_ks_btn"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:text="快手" />
+            <Button
+                android:id="@+id/open_dy_btn"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:text="抖音" />
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

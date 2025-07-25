@@ -1,0 +1,17 @@
+<manifest package="com.library.baseui"
+
+          xmlns:android="http://schemas.android.com/apk/res/android"
+>
+
+    <application android:allowBackup="true"
+                 android:supportsRtl="true"
+    >
+        <!-- 网络监听 -->
+        <receiver android:name=".receive.NetStateReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>
