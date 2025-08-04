@@ -75,7 +75,7 @@
             android:textSize="14sp"
             />
 
-        <test.app.ui.view.EepansionTextView
+        <test.app.ui.view.text.ExpansionTextView
             android:id="@+id/mdoc_good_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -46,6 +46,7 @@ import test.app.ui.activity.action.NormalActionBar;
 import test.app.ui.bean.Test;
 import test.app.ui.getui.PushIntentService;
 import test.app.ui.getui.PushService;
+import test.app.ui.view.text.ExpansionRl;
 import test.app.ui.view.down.CodeEditLayout;
 import test.app.utiles.WMViewMaanger;
 import test.app.utiles.other.DLog;
@@ -154,6 +155,11 @@ public class TestStartActivity extends NormalActionBar {
         }
         Logx.d("字体===》" + typeface.getStyle());
         test23();
+        String str = "qwertyuiopasdfghjklzxcvbnm789456123qwertyuiopasdfghjklzxcvbnm789456123qwertyuiopasdfghjklzxcvbnm789456123qwertyuiopasdfghjklzxcvbnm789456123qwer";
+        //
+        ExpansionRl tvTest3 = (ExpansionRl) findViewById(R.id.tv_test3);
+        tvTest3.setMsg(str);
+
     }
 
     //复制文件到sd卡

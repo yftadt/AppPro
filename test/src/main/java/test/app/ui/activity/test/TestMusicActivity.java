@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 import test.app.ui.activity.R;
 import test.app.ui.activity.action.NormalActionBar;
-import test.app.ui.view.EepansionTextView;
+import test.app.ui.view.text.ExpansionTextView;
 import test.app.ui.view.RecordTextView;
 import test.app.utiles.other.DLog;
 
@@ -66,7 +66,7 @@ public class TestMusicActivity extends NormalActionBar {
         TextView msg2tv = (TextView) findViewById(R.id.msg_2_tv);
         msg2tv.setText("肠镜检查及内镜下治疗、痔动脉结扎及肛门直肠测压肛45252525dgdfgdfgdfg");
         //msg2tv.setText("肠镜检查及内镜下治疗、痔动脉结扎及肛门直肠测压、肛门内窥镜下微创手术空肠镜检查及内镜下治疗、痔动脉结扎及肛门直肠测压、肛门内窥镜下微创手术空");
-        EepansionTextView etView = (EepansionTextView) findViewById(R.id.mdoc_good_view);
+        ExpansionTextView etView = (ExpansionTextView) findViewById(R.id.mdoc_good_view);
         //etView.setText("治疗、痔");
         etView.setText("肠镜检查及内镜下治疗、痔动脉结扎及肛门直肠测压、肛门内窥镜下微创手术空肠镜检查及内镜下治、疗、痔动脉结扎及肛门直肠测压、肛门内窥镜下微创手术空");
 

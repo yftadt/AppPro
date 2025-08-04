@@ -1,12 +1,10 @@
-package test.app.ui.view;
+package test.app.ui.view.text;
 
 import android.content.Context;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -22,22 +20,22 @@ import test.app.utiles.other.DLog;
  * Created by Administrator on 2017/10/25 0025.
  */
 
-public class EepansionTextView extends LinearLayout implements View.OnClickListener {
+public class ExpansionTextView extends LinearLayout implements View.OnClickListener {
 
     private TextView msgTv;
     private TextView tagTv;
 
-    public EepansionTextView(Context context) {
+    public ExpansionTextView(Context context) {
         super(context);
         init(context);
     }
 
-    public EepansionTextView(Context context, @Nullable AttributeSet attrs) {
+    public ExpansionTextView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public EepansionTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ExpansionTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }

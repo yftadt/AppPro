@@ -34,6 +34,13 @@
             android:hint="@string/message"
             android:text="https://nbc.vtnbo.com/nbc/msg/image/pro/17517100642845371.jpg" />
 
+
+
+        <test.app.ui.view.text.ExpansionRl
+            android:id="@+id/tv_test3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <test.app.ui.view.down.CodeEditLayout
             android:id="@+id/code_edit_layout"
             android:layout_width="match_parent"
