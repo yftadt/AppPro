@@ -26,7 +26,7 @@ import sj.mblog.Logx;
 public class ImageFile {
     private static String fileDir = "hn_earn";
 
-    //图片地址装 Uri 
+    //图片地址装 Uri
     public static Uri getFileUri(Context context, File file) {
         Uri uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID,
                 file);
