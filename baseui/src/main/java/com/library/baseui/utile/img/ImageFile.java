@@ -12,6 +12,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 
 
+import androidx.core.content.FileProvider;
+import androidx.multidex.BuildConfig;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,33 +23,48 @@ import java.util.Random;
 
 import sj.mblog.Logx;
 
-/**
- * 保持图片
- */
 public class ImageFile {
     private static String fileDir = "hn_earn";
 
+    //图片地址装 Uri 
+    public static Uri getFileUri(Context context, File file) {
+        Uri uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID,
+                file);
+        return uri;
+    }
+
+    //保存至相册、SD卡
     public static String saveBitmapFile(Context context, Bitmap bitmap) {
         String str = "";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             str = saveBitmapToMediaStore(context, bitmap);
         } else {
-            str = saveBitmapToFile(context, bitmap);
+            //保存在sd卡
+            File appDir = new File(Environment.getExternalStorageDirectory(),
+                    fileDir);
+            str = saveBitmapToFile(context, bitmap, appDir, true);
         }
+        return str;
+    }
+
+    //保存至私有目录
+    public static String saveBitmapFileToPri(Context context, Bitmap bitmap) {
+        File appDir = new File(context.getExternalCacheDir(), fileDir);
+        String str = saveBitmapToFile(context, bitmap, appDir, false);
         return str;
     }
 
     private static String saveBitmapToMediaStore(Context context, Bitmap bitmap) {
         Random random = new Random();
         int randomNumber = random.nextInt(90000);
-        String fileName = System.currentTimeMillis() + "_" + randomNumber ;//+ ".png";
+        String fileName = System.currentTimeMillis() + "_" + randomNumber;//+ ".png";
         String str = "";
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.DISPLAY_NAME, fileName);
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg"); //根据文件类型修改 MIME_TYPE
         String path = Environment.DIRECTORY_PICTURES + File.separator + fileDir;
         values.put(MediaStore.Images.Media.RELATIVE_PATH, path); //设置存储路径和文件夹名
-        ContentResolver contentResolver =context.getContentResolver();
+        ContentResolver contentResolver = context.getContentResolver();
         Uri uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         if (uri != null) {
             try (OutputStream fos = contentResolver.openOutputStream(uri)) {
@@ -69,25 +86,28 @@ public class ImageFile {
         return str;
     }
 
-
-    private static String saveBitmapToFile(Context context, Bitmap bmp) {
-        if (bmp == null) {
+    /**
+     * @param context       上下文
+     * @param bitmap        图片
+     * @param fileFolder    文件夹
+     * @param isUpdateAlbum true 更新相册
+     * @return
+     */
+    private static String saveBitmapToFile(Context context, Bitmap bitmap, File fileFolder, boolean isUpdateAlbum) {
+        if (bitmap == null) {
             return "";
         }
         Random random = new Random();
         int randomNumber = random.nextInt(90000);
         String fileName = System.currentTimeMillis() + "_" + randomNumber + ".png";
-        // 首先保存图片
-        File appDir = new File(Environment.getExternalStorageDirectory(),
-                fileDir);
-        if (!appDir.exists()) {
-            appDir.mkdir();
+        if (!fileFolder.exists()) {
+            fileFolder.mkdir();
         }
-        File file = new File(appDir, fileName);
+        File file = new File(fileFolder, fileName);
         boolean isSuccess;
         try {
             FileOutputStream fos = new FileOutputStream(file);
-            isSuccess = bmp.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            isSuccess = bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.flush();
             fos.close();
         } catch (IOException e) {
@@ -99,7 +119,6 @@ public class ImageFile {
             context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                     Uri.fromFile(new File(file.getPath()))));
         }
-
         return file.getAbsolutePath();
     }
 
