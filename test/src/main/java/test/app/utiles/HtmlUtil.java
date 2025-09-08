@@ -23,11 +23,19 @@ class HtmlUtil {
     public static String getHtmlData(String html) {
         //html = test;
         html = setImgClick(html);
-        String head = ("<head>" + "<meta name=\"viewport\" " + "content=\"width=device-width, " + "initial-scale=1.0, user-scalable=no\"> " + "<style>"
-                + "img{border-radius:4px!important;max-width: 100%; width:auto; height:auto;}"
-                + "video{border-radius:4px!important;max-width: 100%; width:auto; height:auto;}"
-                + "body{padding: 0;margin: 0;}" + "</style>" + "</head>");
-        return "<html>" + head + "<body>" + html + "<div class='bottom'></div>" + "</body></html>";
+        String head = ("<head>"
+                + "<meta name=viewport content=width=device-width,initial-scale=1.0," +
+                " maximum-scale=1.0,minimum-scale=1.0 user-scalable=no />"
+                + "<style>"
+                //+ "img{border-radius:4px!important;max-width: 100%; width:auto; height:auto;}"
+                //+ "video{border-radius:4px!important;max-width: 100%; width:auto; height:auto;}"
+                //+ "body{padding: 0;margin: 0;}"
+                + "body, img, iframe, video,p, h1, h2, h3, h4, h5, h6, span, div" +
+                " {border-radius:4px!important;max-width: 100% !important;height: auto !important;}"
+                + "</style>"
+                + "</head>");
+
+        return "<html>" + head + "<body>" + html + "</body></html>";
     }
 
     //设置点击事件

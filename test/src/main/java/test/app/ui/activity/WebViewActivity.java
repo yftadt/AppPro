@@ -3,6 +3,8 @@ package test.app.ui.activity;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -11,9 +13,13 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import com.library.baseui.utile.img.ImageBase64;
+import com.library.baseui.utile.img.ImageLoadingUtile;
+import com.library.baseui.utile.img.ImageUtile;
 import com.library.baseui.utile.toast.ToastUtile;
 
 import java.io.Serializable;
@@ -30,7 +36,8 @@ import test.app.utiles.other.DLog;
  */
 public class WebViewActivity extends NormalActionBar {
 
-
+    ImageView ivImg;
+    TextView tvImg, tvText;
     WebView webView;
     TextView webTitleTv;
     TextView webTv;
@@ -44,6 +51,10 @@ public class WebViewActivity extends NormalActionBar {
 
         setBarColor();
         setBarTvText(1, "详情");
+        ivImg = findViewById(R.id.iv_img);
+        tvImg = findViewById(R.id.tv_img);
+        tvText = findViewById(R.id.tv_text);
+
         webView = (WebView) findViewById(R.id.web_view);
         webTitleTv = (TextView) findViewById(R.id.web_title_tv);
         webTv = (TextView) findViewById(R.id.web_tv);
@@ -158,7 +169,28 @@ public class WebViewActivity extends NormalActionBar {
         if (!TextUtils.isEmpty(htmlData)) {
             webView.loadData(htmlData, "text/html; charset=UTF-8", null);
         }
+        setWebViewTest();
+    }
 
+    private String img = "https://ww2.sinaimg.cn/mw690/007ut4Uhly1hx4v37mpxcj30u017cgrv.jpg";
+
+    private void setWebViewTest() {
+        ImageLoadingUtile.loading(this, img, ivImg);
+        tvImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ivImg.buildDrawingCache();
+                Bitmap bit = ivImg.getDrawingCache();
+                String str = ImageBase64.convertBitmapToBase64Def(bit);
+                String body = "这里是邮件正文，并包含了一个图片：\n<img src=\"data:image/png;base64," + str + "\"/>";
+
+                webView.loadData(body, "text/html; charset=UTF-8", null);
+                String body1 = "这里是邮件正文，并包含了一个图片：\n<img src=\"" + str + "\"/>";
+
+                Spanned htmlData = Html.fromHtml(body1);//不支持base64字符串图片
+                tvText.setText(htmlData);
+            }
+        });
     }
 
     @Override

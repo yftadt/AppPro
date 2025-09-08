@@ -15,7 +15,12 @@ public class ImageBase64 {
         byte[] byteArray = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(byteArray, Base64.NO_WRAP);
     }
-
+    public static String convertBitmapToBase64Def(Bitmap bmp){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        return Base64.encodeToString(imageBytes, Base64.DEFAULT);
+    }
     public static Bitmap convertBase64ToBitmap(String temp) {
         Bitmap img = null;
         try {

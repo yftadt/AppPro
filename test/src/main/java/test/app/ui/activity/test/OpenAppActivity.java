@@ -108,7 +108,8 @@ public class OpenAppActivity extends NormalActionBar {
                 String u5 = urlJM(u4);
                 String nbcUrl = "nbcopen://m.nbc.com";
                 String u6 = " https://login.m.taobao.com/havanaone/login/login.htm?bizEntrance=taobao_h5&bizName=taobao&redirectURL=" + nbcUrl;
-                ActivityUtile.startActivityString(WebViewActivity.class, "测试", u6, html);
+                //ActivityUtile.startActivityString(WebViewActivity.class, "测试", u6, html);
+                ActivityUtile.startActivityString(WebViewActivity.class, "测试", "", "");
                 break;
             case "nbc_btn":
                  nbcUrl = "nbcopen://m.nbc.com";
