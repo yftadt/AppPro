@@ -17,159 +17,69 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
 import com.bumptech.glide.signature.ObjectKey;
+import com.library.baseui.utile.img.req.GlideBitReq;
+import com.library.baseui.utile.img.req.GlideGifReq;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
-import sj.mblog.Logx;
 
 /**
  * Created by Administrator on 2016/8/19.
  */
 public class ImageLoadingUtile {
-
     public static void loadImageTest(Context contxt, String loadingUrl, int defaultPng, ImageView iv) {
-
-
-        loadImageTestGlide(contxt, loadingUrl, defaultPng, iv);
-        //loadImageTestPicasso(contxt, loadingUrl, defaultPng, iv);
+        loadingGifAuto(contxt, loadingUrl, defaultPng, iv);
     }
 
-    public static void loadImageTestPicasso(Context contxt, String loadingUrl, int defaultPng, ImageView iv) {
-        if (defaultPng > 0) {
+    //加载图片
+    public static void loading(Context contxt, String loadingUrl, int defaultPng, ImageView iv) {
+        if (!isRun(contxt)) {
+            return;
+        }
+        if (TextUtils.isEmpty(loadingUrl)) {
             iv.setImageResource(defaultPng);
+            return;
         }
-        Picasso.get().setLoggingEnabled(true);
-        Picasso.get().load(loadingUrl)
-                .placeholder(defaultPng)
-                .into(iv);
+        Glide.with(contxt).setDefaultRequestOptions(new RequestOptions())//设置默认的请求项
+                .load(loadingUrl).diskCacheStrategy(DiskCacheStrategy.ALL)//将图片缓存到磁盘中
+                .format(DecodeFormat.PREFER_RGB_565)//解码为565格式，减小内存
+                .skipMemoryCache(true)//不将图片缓存到内存中
+                .placeholder(defaultPng).into(iv);
     }
 
-    public static void loadImageTestGlide(Context contxt, String loadingUrl, int defaultPng, ImageView iv) {
-        RequestListener<Drawable> requestListenerDrawable = new RequestListener<Drawable>() {
-            @Override
-            public boolean onLoadFailed(@androidx.annotation.Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                Logx.d("加载失败：" + "nmodel=" + model.toString() + " isFirstResource=" + isFirstResource + "\n" + e);
-                GlideException glideException = (GlideException) e;
-                glideException.logRootCauses("加载失败:");
-                return false; // 返回false以继续后续的失败处理（例如重试）或true以取消后续处理（例如不重试）
-            }
+    //加载图片 居中
+    public static void loadingCenterCrop(Context contxt, String loadingUrl, int defaultPng, ImageView iv) {
+        if (!isRun(contxt)) {
+            return;
+        }
+        if (TextUtils.isEmpty(loadingUrl)) {
+            iv.setImageResource(defaultPng);
+            return;
+        }
 
-            @Override
-            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                Logx.d("加载成功：Image loaded successfully");
-                return false; // 同上，返回false以继续后续处理或true以取消后续处理
-            }
-        };
-        RequestListener<Bitmap> requestListenerBit = new RequestListener<Bitmap>() {
-            @Override
-            public boolean onLoadFailed(@androidx.annotation.Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
-                Logx.d("加载失败：" + "nmodel=" + model.toString() + " isFirstResource=" + isFirstResource + "\n" + e);
-                GlideException glideException = (GlideException) e;
-                glideException.logRootCauses("加载失败:");
-                return false; // 返回false以继续后续的失败处理（例如重试）或true以取消后续处理（例如不重试）
-            }
-
-            @Override
-            public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-                Logx.d("加载成功：Image loaded successfully");
-                return false; // 同上，返回false以继续后续处理或true以取消后续处理
-            }
-        };
-        RequestListener<File> requestListenerFile = new RequestListener<File>() {
-            @Override
-            public boolean onLoadFailed(@androidx.annotation.Nullable GlideException e, Object model, Target<File> target, boolean isFirstResource) {
-                Logx.d("加载失败：" + "nmodel=" + model.toString() + " isFirstResource=" + isFirstResource + "\n" + e);
-                GlideException glideException = (GlideException) e;
-                glideException.logRootCauses("加载失败:");
-                return false; // 返回false以继续后续的失败处理（例如重试）或true以取消后续处理（例如不重试）
-            }
-
-            @Override
-            public boolean onResourceReady(File resource, Object model, Target<File> target, DataSource dataSource, boolean isFirstResource) {
-                Logx.d("加载成功：Image loaded successfully");
-                return false; // 同上，返回false以继续后续处理或true以取消后续处理
-            }
-        };
-        Glide.with(contxt).asFile().load(loadingUrl)
-                //.signature()
-                .addListener(requestListenerFile).placeholder(defaultPng)
-                .signature(new ObjectKey(System.currentTimeMillis())) // 或者使用其他唯一标识
-                //.skipMemoryCache(true)
-                //.skipMemoryCache(false)
-                //.diskCacheStrategy(DiskCacheStrategy.NONE)//不使用缓存
-                //.into(iv);
-                .into(new SimpleTarget<File>() {
-                    @Override
-                    public void onResourceReady(File resource, Transition<? super File> transition) {
-                        boolean isExists = resource.exists();
-                        // 这里resource就是图片的缓存文件
-                        String path = resource.getAbsolutePath();
-                        Logx.d("GlideCache", "图片路径: " + path);
-                        Drawable drawable = Drawable.createFromPath(path);
-
-                        //iv.setImageDrawable(drawable);
-                        //可用
-                        Uri imageUri = Uri.fromFile(resource);
-                        //iv.setImageURI(imageUri);
-                        byte[] imageData = null;
-                        try {
-                            imageData = readFileToByteArray(resource);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        if (imageData == null) {
-                            return;
-                        }
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
-                        iv.setImageBitmap(bitmap);
-
-
-                    }
-                });
+        Glide.with(contxt).setDefaultRequestOptions(new RequestOptions())//设置默认的请求项
+                .load(loadingUrl).diskCacheStrategy(DiskCacheStrategy.ALL)//将图片缓存到磁盘中
+                .format(DecodeFormat.PREFER_RGB_565)//解码为565格式，减小内存
+                .skipMemoryCache(true)//不将图片缓存到内存中
+                .placeholder(defaultPng).centerCrop().into(iv);
     }
 
-    public static byte[] readFileToByteArray(File file) throws IOException {
-        InputStream is = new FileInputStream(file);
-
-        // Get the size of the file
-        long length = file.length();
-
-        // You cannot create an array using a long type.
-        // It has to be an int type.
-        if (length > Integer.MAX_VALUE) {
-            throw new IOException("File is too large");
-        }
-
-        // Create the byte array to hold the data
-        byte[] bytes = new byte[(int) length];
-
-        // Read in the bytes
-        int offset = 0;
-        int numRead = 0;
-        while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-            offset += numRead;
-        }
-
-        if (offset < bytes.length) {
-            throw new IOException("Could not completely read the file " + file.getName());
-        }
-        is.close();
-
-        return bytes;
+    //加载本地图片
+    public static void loading(Context contxt, String loadingUrl, ImageView iv) {
+      /*  if (!isExistMainActivity(contxt.getClass(),contxt)){
+            return;
+        }*/
+        Glide.with(contxt).load(loadingUrl).into(iv);
     }
 
     //加载圆形图片
@@ -177,16 +87,21 @@ public class ImageLoadingUtile {
         if (!isRun(contxt)) {
             return;
         }
-        Glide.with(contxt).load(loadingUrl).placeholder(defaultPng).transform(new GlideCircleTransform(contxt)).into(iv);
+        Glide.with(contxt).setDefaultRequestOptions(new RequestOptions())//设置默认的请求项
+                .load(loadingUrl).diskCacheStrategy(DiskCacheStrategy.ALL)//将图片缓存到磁盘中
+                .format(DecodeFormat.PREFER_RGB_565)//解码为565格式，减小内存
+                .skipMemoryCache(true)//不将图片缓存到内存中
+                .placeholder(defaultPng).transform(new GlideCircleTransform(contxt)).into(iv);
     }
 
-    //加载圆形图片 没有默认头像
-    public static void loadingCircle(Context contxt, String loadingUrl, ImageView iv) {
-        if (!isRun(contxt)) {
-            return;
+    public static void loadImageTestPicasso(Context contxt, String loadingUrl, int defaultPng, ImageView iv) {
+        if (defaultPng > 0) {
+            iv.setImageResource(defaultPng);
         }
-        Glide.with(contxt).load(loadingUrl).transform(new GlideCircleTransform(contxt)).into(iv);
+        Picasso.get().setLoggingEnabled(true);
+        Picasso.get().load(loadingUrl).placeholder(defaultPng).into(iv);
     }
+
 
     //加载圆角图片
     public static void loadingCircularBead(Context contxt, String loadingUrl, int defaultPng, ImageView iv) {
@@ -199,47 +114,6 @@ public class ImageLoadingUtile {
         }
         Glide.with(contxt).load(loadingUrl).placeholder(defaultPng).transform(new GlideCircularBeadTransform(contxt, radius)).into(iv);
     }
-
-    //加载图片
-    public static void loading(Context contxt, String loadingUrl, int defaultPng, ImageView iv) {
-        if (TextUtils.isEmpty(loadingUrl)) {
-            iv.setImageResource(defaultPng);
-            return;
-        }
-        Glide.with(contxt).load(loadingUrl).placeholder(defaultPng).into(iv);
-    }
-
-    //加载本地图片
-    public static void loading(Context contxt, String loadingUrl, ImageView iv) {
-      /*  if (!isExistMainActivity(contxt.getClass(),contxt)){
-            return;
-        }*/
-        Glide.with(contxt).load(loadingUrl).into(iv);
-    }
-
-    public static void loading7N(Context contxt, String loadingUrl, int defaultPng, ImageView iv) {
-        loading(contxt, loadingUrl, defaultPng, iv);
-    }
-
-    //加载图片 居中显示
-    public static void loadingCenterCrop(Context contxt, String loadingUrl, int defaultPng, ImageView iv) {
-        loadingCenterCrop(contxt, loadingUrl, defaultPng, iv, false);
-    }
-
-    public static void loadingCenterCrop(Context contxt, String loadingUrl, int defaultPng, ImageView iv, boolean is7Nsmall) {
-        if (!isRun(contxt)) {
-            return;
-        }
-        if (TextUtils.isEmpty(loadingUrl)) {
-            iv.setImageResource(defaultPng);
-            return;
-        }
-        if (is7Nsmall) {
-            loadingUrl = loadingSmall7N(loadingUrl);
-        }
-        Glide.with(contxt).load(loadingUrl).placeholder(defaultPng).centerCrop().into(iv);
-    }
-
 
     //加载会话图片 type:三角形所在的边（0:左边；1:右边）
     public static void loadImageChat(Context contxt, String loadingUrl, int defaultPng, final ImageView iv, final int type) {
@@ -256,14 +130,47 @@ public class ImageLoadingUtile {
         });
     }
 
-
-    //加载7牛上的小图片
-    private static String loadingSmall7N(String loadingUrl) {
-        if (!TextUtils.isEmpty(loadingUrl) && loadingUrl.startsWith("http")) {
-            loadingUrl += "!avatar";
+    //====================================宽高按比例来显示
+    //加载图片
+    public static void loadingAuto(Context context, String loadingUrl, int defaultPng, ImageView iv) {
+        if (TextUtils.isEmpty(loadingUrl)) {
+            iv.setImageResource(defaultPng);
+            return;
         }
-        return loadingUrl;
+        if (!isRun(context)) {
+            return;
+        }
+        Glide.with(context).asBitmap().load(loadingUrl).override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).diskCacheStrategy(DiskCacheStrategy.ALL)//将图片缓存到磁盘中
+                .format(DecodeFormat.PREFER_RGB_565)//解码为565格式，减小内存
+                .skipMemoryCache(true)//不将图片缓存到内存中
+                .placeholder(defaultPng).listener(new GlideBitReq(context, iv, loadingUrl)).into(iv);
     }
+
+    public static void loadingAuto(Context context, File file, int defaultPng, ImageView iv) {
+        if (!isRun(context)) {
+            return;
+        }
+
+        Glide.with(context).asBitmap().load(file).override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).diskCacheStrategy(DiskCacheStrategy.ALL)//将图片缓存到磁盘中
+                .format(DecodeFormat.PREFER_RGB_565)//解码为565格式，减小内存
+                .skipMemoryCache(true)//不将图片缓存到内存中
+                .placeholder(defaultPng).listener(new GlideBitReq(context, iv, file)).into(iv);
+    }
+
+    public static void loadingGifAuto(Context context, String loadingUrl, int defaultPng, ImageView iv) {
+        if (TextUtils.isEmpty(loadingUrl)) {
+            iv.setImageResource(defaultPng);
+            return;
+        }
+        if (!isRun(context)) {
+            return;
+        }
+        Glide.with(context).asGif().load(loadingUrl).override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL).diskCacheStrategy(DiskCacheStrategy.ALL)//将图片缓存到磁盘中
+                .format(DecodeFormat.PREFER_RGB_565)//解码为565格式，减小内存
+                .skipMemoryCache(true)//不将图片缓存到内存中
+                .placeholder(defaultPng).listener(new GlideGifReq(context, iv, loadingUrl)).into(iv);
+    }
+
 
     private static boolean isRun(Context context) {
         if (context instanceof Activity) {
