@@ -78,7 +78,8 @@ public class TestStartActivity extends NormalActionBar {
     private String img4 = "https://raw.githubusercontent.com/PokeAPI/sprites/refs/heads/master/sprites/pokemon/other/official-artwork/1.png";
     //webp 动图
     private String img5 = "https://nbc.vtnbo.com/nbc/msg/image/pro/17585945529726711.webp";
-
+    //webp 静态图
+    private String img6 = "https://nbc.vtnbo.com/nbc/msg/image/pro/17585948352157095.webp";
     String img = img5;
 
     @Override
@@ -124,7 +125,7 @@ public class TestStartActivity extends NormalActionBar {
         // ImageLoadingUtile.loadImageChat(this, patHead, R.mipmap.default_image, chatRightIv, 1);
         //
         //
-         ImageLoadingUtile.loadImageTest(this, img, R.mipmap.ic_launcher, testIv);
+        ImageLoadingUtile.loadImageTest(this, img, R.mipmap.ic_launcher, testIv);
         testIv.setOnClickListener(this);
         //
         codeEditLayout = (CodeEditLayout) findViewById(R.id.code_edit_layout);

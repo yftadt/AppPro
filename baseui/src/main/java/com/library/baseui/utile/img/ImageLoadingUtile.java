@@ -27,12 +27,15 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
-import com.library.baseui.utile.img.req.GlideBitReq;
-import com.library.baseui.utile.img.req.GlideGifReq;
+import com.library.baseui.utile.img.req.BitReq;
+import com.library.baseui.utile.img.req.GifReq;
+import com.library.baseui.utile.img.req.WebPGifReq;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.lang.reflect.Field;
+
+import sj.mblog.Logx;
 
 
 /**
@@ -40,10 +43,9 @@ import java.lang.reflect.Field;
  */
 public class ImageLoadingUtile {
     public static void loadImageTest(Context contxt, String loadingUrl, int defaultPng, ImageView iv) {
-
         //loadingGifAuto(contxt, loadingUrl, defaultPng, iv);
         //loadingGif(contxt, loadingUrl, defaultPng, iv);
-        loadingGifWebP(contxt, loadingUrl, defaultPng, iv);
+        loadingGifWebP2(contxt, loadingUrl, defaultPng, iv);
     }
 
 
@@ -168,106 +170,31 @@ public class ImageLoadingUtile {
                 .format(DecodeFormat.PREFER_RGB_565)//解码为565格式，减小内存
                 .skipMemoryCache(true)//不将图片缓存到内存中
                 .placeholder(defaultPng)
-                .listener(new GlideGifReq(context, iv, loadingUrl))
+                .listener(new GifReq(context, iv, loadingUrl))
                 .into(iv);
     }
 
     //加载webp 动图
     public static void loadingGifWebP(Context context, String loadingUrl, int defaultPng, ImageView iv) {
-//        if(mWebpDrawable!=null&&!mWebpDrawable.isRunning()){
-//            mWebpDrawable.startFromFirstFrame();
-//            mWebpDrawable.stop();
-//        }
-
         //webp动图
         Transformation<Bitmap> transformation = new CenterInside();
         Glide.with(context)
                 .load(loadingUrl)//不是本地资源就改为url即可
                 .optionalTransform(transformation)
                 .optionalTransform(WebpDrawable.class, new WebpDrawableTransformation(transformation))
-                .addListener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        iv.setImageResource(defaultPng);
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-
-                        if (resource instanceof WebpDrawable) {
-                            WebpDrawable mWebpDrawable = (WebpDrawable) resource;
-                            try {
-                                //已知三方库的bug，webp的动图每一帧的时间间隔于实际的有所偏差，需要反射三方库去修改
-                                //https://github.com/zjupure/GlideWebpDecoder/issues/33
-                                Field gifStateField = mWebpDrawable.getClass().getDeclaredField("state");
-                                gifStateField.setAccessible(true);//开放权限
-                                Class gifStateClass = Class.forName("com.bumptech.glide.integration.webp.decoder.WebpDrawable$WebpState");
-                                Field gifFrameLoaderField = gifStateClass.getDeclaredField("frameLoader");
-                                gifFrameLoaderField.setAccessible(true);
-
-                                Class gifFrameLoaderClass = Class.forName("com.bumptech.glide.integration.webp.decoder.WebpFrameLoader");
-                                Field gifDecoderField = gifFrameLoaderClass.getDeclaredField("webpDecoder");
-                                gifDecoderField.setAccessible(true);
-
-                                WebpDecoder webpDecoder = (WebpDecoder) gifDecoderField.get(gifFrameLoaderField.get(gifStateField.get(resource)));
-                                Field durations = webpDecoder.getClass().getDeclaredField("mFrameDurations");
-                                durations.setAccessible(true);
-                                int[] args = (int[]) durations.get(webpDecoder);
-                                if (args.length > 0) {
-                                    for (int i = 0; i < args.length; i++) {
-                                        if (args[i] > 30) {
-                                            //加载glide会比ios慢 这边把gif的间隔减少15s
-                                            args[i] = args[i] - 15;
-                                        }
-                                    }
-                                }
-                                durations.set(webpDecoder, args);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                            //需要设置为循环1次才会有onAnimationEnd回调
-                            mWebpDrawable.setLoopCount(-1);
-                            mWebpDrawable.registerAnimationCallback(new Animatable2Compat.AnimationCallback() {
-                                @Override
-                                public void onAnimationStart(Drawable drawable) {
-                                    super.onAnimationStart(drawable);
-                                }
-
-                                @Override
-                                public void onAnimationEnd(Drawable drawable) {
-                                    super.onAnimationEnd(drawable);
-                                    //第二次播放webp动图的时候 会显示改webp动图最后一帧的图片 然后才能正常显示
-                                    if (mWebpDrawable != null && !mWebpDrawable.isRunning()) {
-                                        mWebpDrawable.startFromFirstFrame();
-                                        mWebpDrawable.stop();
-                                    }
-                                    mWebpDrawable.unregisterAnimationCallback(this);
-                                }
-                            });
-                        }
-
-                        return false;
-                    }
-                })
+                .addListener(new WebPGifReq(context, iv, loadingUrl, defaultPng))
 //                .skipMemoryCache(true)
                 .into(iv);
     }
 
-    public static void setCancelGifWebPOnResume(WebpDrawable mWebpDrawable) {
-        //解决使用webp动图播放一次的时候 页面重新显示之后 webp动图还会播放一次的问题
-        //在onresume调用即可
-        if (mWebpDrawable == null) {
-            return;
-        }
-        try {
-            Field isRunning = mWebpDrawable.getClass().getDeclaredField("isRunning");
-            isRunning.setAccessible(true);
-            isRunning.setBoolean(mWebpDrawable, true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+    //加载webp 动图
+    public static void loadingGifWebP2(Context context, String loadingUrl, int defaultPng, ImageView iv) {
+        //webp动图
+        Glide.with(context)
+                .load(loadingUrl)//不是本地资源就改为url即可
+                .addListener(new WebPGifReq(context, iv, loadingUrl, defaultPng))
+                .into(iv);
     }
 
     //====================================宽高按比例来显示
@@ -287,7 +214,7 @@ public class ImageLoadingUtile {
                 .format(DecodeFormat.PREFER_RGB_565)//解码为565格式，减小内存
                 .skipMemoryCache(true)//不将图片缓存到内存中
                 .placeholder(defaultPng)
-                .listener(new GlideBitReq(context, iv, loadingUrl))
+                .listener(new BitReq(context, iv, loadingUrl))
                 .into(iv);
     }
 
@@ -303,7 +230,7 @@ public class ImageLoadingUtile {
                 .format(DecodeFormat.PREFER_RGB_565)//解码为565格式，减小内存
                 .skipMemoryCache(true)//不将图片缓存到内存中
                 .placeholder(defaultPng)
-                .listener(new GlideBitReq(context, iv, file))
+                .listener(new BitReq(context, iv, file))
                 .into(iv);
     }
 
@@ -322,7 +249,7 @@ public class ImageLoadingUtile {
                 .format(DecodeFormat.PREFER_RGB_565)//解码为565格式，减小内存
                 .skipMemoryCache(true)//不将图片缓存到内存中
                 .placeholder(defaultPng)
-                .listener(new GlideGifReq(context, iv, loadingUrl))
+                .listener(new GifReq(context, iv, loadingUrl))
                 .into(iv);
     }
 

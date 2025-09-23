@@ -23,12 +23,12 @@ import java.io.File;
 import sj.mblog.Logx;
 
 //加载gif
-public class GlideGifReq implements RequestListener<GifDrawable> {
+public class GifReq implements RequestListener<GifDrawable> {
     private Context context;
     private String imgUrl;
     private ImageView imageView;
 
-    public GlideGifReq(Context context, ImageView imageView, String imgUrl) {
+    public GifReq(Context context, ImageView imageView, String imgUrl) {
         this.context = context;
         this.imageView = imageView;
         this.imgUrl = imgUrl;

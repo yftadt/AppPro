@@ -15,19 +15,19 @@ import com.bumptech.glide.request.target.Target;
 import java.io.File;
 
 //加载gif
-public class GlideBitReq implements RequestListener<Bitmap> {
+public class BitReq implements RequestListener<Bitmap> {
     private Context context;
     //
     private String imgUrl;
     private File file;
     private ImageView imageView;
 
-    public GlideBitReq(Context context, ImageView imageView, String imgUrl) {
+    public BitReq(Context context, ImageView imageView, String imgUrl) {
         this.context = context;
         this.imageView = imageView;
         this.imgUrl = imgUrl;
     }
-    public GlideBitReq(Context context, ImageView imageView, File file) {
+    public BitReq(Context context, ImageView imageView, File file) {
         this.context = context;
         this.imageView = imageView;
         this.file = file;
