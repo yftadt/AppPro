@@ -67,26 +67,31 @@ public class GlideGifReq implements RequestListener<GifDrawable> {
         params.width = newWidth;
         params.height = newHeight;
         imageView.setLayoutParams(params);
+        Logx.d("gif加载成功");
         return false;
     }
 
     private void checkFile() {
         try {
-            FutureTarget<File> futureTarget = Glide.with(context).asFile().load(imgUrl).submit();
+            FutureTarget<File> futureTarget = Glide.with(context)
+                    .asFile().load(imgUrl)
+                    .submit();
             // 正常获取缓存文件
             File cachedFile = futureTarget.get();
             boolean exists = cachedFile.exists();
             if (exists) {
+
                 //文件存在
                 HandlerUtil.runInMainThread(new Runnable() {
                     @Override
                     public void run() {
+                        Logx.d("gif加载失败 但是缓存文件存在");
                         ImageLoadingUtile.loadingAuto(context, cachedFile, 0, imageView);
                     }
                 });
             }
         } catch (Exception ex) {
-            Logx.d("gif取缓存文件失败 :" + ex.getMessage());
+            Logx.d("gif加载失败 gif取缓存文件失败 :" + ex.getMessage());
         }
     }
 }
