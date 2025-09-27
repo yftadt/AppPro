@@ -227,21 +227,6 @@ public class DateUtile {
         return state;
     }
 
-    //获取账号注册时长
-    public static int getRegisterDay(long time) {
-        long registerTime = DateZoneUtil.getUTCToLocalDate(time);
-        Date nowTime = new Date();
-        time = nowTime.getTime() - registerTime;
-        long second = 1000;
-        long minute1 = 60 * second;
-        long hour1 = 60 * minute1;
-        long hour24 = 24 * hour1;
-        int count = (int) (time / hour24);
-        if (count == 0) {
-            count = 1;
-        }
-        return count;
-    }
 
     public static String getTimeStr(int time) {
         return getTimeStr((long) time);
@@ -337,7 +322,8 @@ public class DateUtile {
      * @return 标准时间
      */
     public static String getUTCDateFormat(String type) {
-        return DateZoneUtil.getUTCDateFormat(type);
+        TimeBean timeBean = DateZoneUtil.getUTCDateFormatBean(type);
+        return timeBean.time;
     }
 
 
@@ -348,22 +334,10 @@ public class DateUtile {
      * @return 本地时间
      */
     public static long getUTCToLocalDateTimeStamp(long dateUCT) {
-        long dateLocal = DateZoneUtil.getUTCToLocalDate(dateUCT);
-        return dateLocal;
+        Date timeBean = getUTCToLocalDate(dateUCT);
+        return timeBean.getTime();
     }
 
-    /**
-     * 标准时间转本地时间
-     *
-     * @param dateUCT 标准时间
-     * @return 本地时间
-     */
-    public static Date getUTCToLocalDate(long dateUCT) {
-        //
-        long time = DateZoneUtil.getUTCToLocalDate(dateUCT);
-        Date date = new Date(time);
-        return date;
-    }
 
     /**
      * 标准时间转本地时间
@@ -374,10 +348,20 @@ public class DateUtile {
      */
     public static String getUTCToLocalDateStr(long dateUCT, String format) {
         //
-        long time = DateZoneUtil.getUTCToLocalDate(dateUCT);
-        Date date = new Date(time);
+        Date date = getUTCToLocalDate(dateUCT);
         String str = getDateFormat(date, format);
         return str;
+    }
+
+    /**
+     * 标准时间转本地时间
+     *
+     * @param dateUCT 标准时间
+     * @return 本地时间
+     */
+    public static Date getUTCToLocalDate(long dateUCT) {
+        Date date = DateZoneUtil.getUTCToLocal(dateUCT);
+        return date;
     }
 
     /**
@@ -387,93 +371,17 @@ public class DateUtile {
      * @return 标准时间
      */
     public static long getLocalToUTCDate(Date dateLocal) {
-        long dateUCT = DateZoneUtil.getLocalToUTCDate(dateLocal.getTime());
-        return dateUCT;
-    }
-
-
-    /**
-     * 时间转标准时间
-     * yyyy-MM-dd HH:mm:ss
-     *
-     * @param time
-     * @return 标准时间
-     */
-    public static String getTimeToTimeUct(String time) {
-        Date timeDate = DateUtile.stringToDate(time, new Date());
-        long times = timeDate.getTime();
-        String timeUct = DateZoneUtil.getLocalToUTCDateStr(times);
-        return timeUct;
+        TimeBean timeBean = DateZoneUtil.getLocalToUTCDateBean(dateLocal.getTime());
+        return timeBean.timeStamp;
     }
 
 
     public static void testLog() {
-        TimeBean utcTime = DateZoneUtil.getTimeZone("UTC", "yyyy-MM-dd HH:mm:ss");
-        Logx.d("====>获取一个标准时间：" + utcTime);
-        String str = DateZoneUtil.getZoneTime("UTC", utcTime.timeStamp, "yyyy-MM-dd HH:mm:ss");
-        Logx.d("====> 标准时间回转：" + str);
-        //
-        String time = getDateFormat(new Date(), "yyyy-MM-dd HH:mm:ss");
-        Logx.d("====> 本地时间2：" + time + " " + APKInfo.getInstance().getTimeZoneId());
-        //
-        long testTime = 1751001430000L;//2025-06-27 13:17:10
-        // testTime = 1751001970000L;//2025-06-27 13:26:10
-        Date date = new Date(testTime);
-        time = getDateFormat(date, "yyyy-MM-dd HH:mm:ss");
-        Logx.d("====>时间戳转直接转本地时间 " + testTime + "：" + time + "   " + date.getTime());
-        //
-        time = DateZoneUtil.getZoneTime("Asia/Shanghai", testTime, "yyyy-MM-dd HH:mm:ss");
-        Logx.d("====>时间戳转 Asia/Shanghai：" + time + "   " + testTime);
-        time = DateZoneUtil.getZoneTime("Atlantic/Bermuda", testTime, "yyyy-MM-dd HH:mm:ss");
-        Logx.d("====>时间戳转 Atlantic/Bermuda：" + time + "  " + testTime);
-
-        time = DateZoneUtil.getZoneTime("UTC", testTime, "yyyy-MM-dd HH:mm:ss");
-        Logx.d("====>时间戳转 UTC：" + time + "   " + testTime);
-        //
-        TimeBean zgTime = DateZoneUtil.getTimeZone("Asia/Shanghai", "yyyy-MM-dd HH:mm:ss");
-        Logx.d("====>中国时间：" + zgTime);
-        //test();
-        //test2();
-        //test3();
-        //test4();
-        test5();
+        test3();
+        test2();
+        test();
     }
 
-    private static void test5() {
-        //百慕大 2025-06-30 08:13
-        //中国   2025-06-30 11:13:06
-        long testTime = 1751253186000L;//
-        Date date = getUTCToLocalDate(testTime);
-        String time = getDateFormat(date, "yyyy-MM-dd HH:mm:ss");
-        Logx.d("test5====>本地时间：" + time);
-        Calendar calendar = DateZoneUtil.getUTCToCalendar("Asia/Shanghai", testTime);
-        time = DateZoneUtil.redCalendar(calendar);
-        Logx.d("test5====>Asia/Shanghai时间：" + time);
-        calendar = DateZoneUtil.getUTCToCalendar("UTC", testTime);
-        time = DateZoneUtil.redCalendar(calendar);
-        Logx.d("test5====>UTC时间：" + time);
-        //
-        date = DateZoneUtil.getUTCToLocal(testTime);
-        time = getDateFormat(date, "yyyy-MM-dd HH:mm:ss");
-        Logx.d("test5====>本地时间2：" + time);
-    }
-
-    //获取  utc时间戳转utc时间
-    private static void test4() {
-        long testTime = 1751001430000L;//2025-06-27 13:17:10
-        //testTime = 1751001970000L;//2025-06-27 13:26:10
-        // 获取当前系统时间戳（毫秒）
-        long currentTimeMillis = testTime;
-        TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
-        Calendar calendar = Calendar.getInstance(utcTimeZone);
-        //设置时间
-        calendar.setTimeInMillis(currentTimeMillis);
-        //获取 UTC 时间戳
-        long utcTimeMillis = calendar.getTimeInMillis();
-        //
-        String timeStr = DateZoneUtil.redCalendar(calendar);
-        Logx.d("====>测试3 utc时间戳：" + utcTimeMillis + " timeStr:" + timeStr);
-    }
 
     //获取utc时间戳 没有问题
     private static void test3() {

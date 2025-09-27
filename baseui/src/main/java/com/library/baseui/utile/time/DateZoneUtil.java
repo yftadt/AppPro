@@ -25,99 +25,8 @@ class DateZoneUtil {
      * @param type
      * @return 标准时间
      */
-    public static String getUTCDateFormat(String type) {
-        return getTimeZone("UTC", type).time;
-    }
-
-
-    /**
-     * 获取时区时间
-     *
-     * @param zoneId 时区id
-     * @param format 输出格式
-     * @return
-     */
-    public static TimeBean getTimeZone(String zoneId, String format) {
-        ZoneId id = ZoneId.of(zoneId);
-        ZonedDateTime utcTime = ZonedDateTime.now(id);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format).withZone(id);
-        String timeUTC = utcTime.format(formatter);
-        Instant instant = utcTime.toInstant();
-        //时间戳
-        long zoneTimeJab = instant.toEpochMilli();
-        Logx.d("获取时区时间 time=" + timeUTC + " 时间戳：" + zoneTimeJab + " 时区：" + utcTime + " utcTime:" + utcTime);
-        TimeBean bean = new TimeBean();
-        bean.time = timeUTC;
-        bean.timeStamp = zoneTimeJab;
-        bean.zoneId = utcTime.toString();
-        return bean;
-    }
-
-    /**
-     * 时间转化
-     *
-     * @param timeZone 时区 （UTC，Asia/Shanghai）
-     * @param times    要转的时间
-     * @param format   格式化（yyyy-MM-dd HH:mm:ss）
-     * @return 时间
-     */
-    public static String getZoneTime(String timeZone, long times, String format) {
-        Instant instant = Instant.ofEpochMilli(times);
-        ZoneId id = ZoneId.of(timeZone);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format).withZone(id);
-        String zoneTime = formatter.format(instant);
-        //Logx.d("====> 时间转换 时区（" + timeZone + "）：" + zoneTime + "  " + times);
-        return zoneTime;
-    }
-
-    private static Integer timeSpace;
-
-    /**
-     * 获取时差（本地时间-标准时间）
-     *
-     * @return
-     */
-    private static long getTimeDifference() {
-        if (timeSpace != null) {
-            return timeSpace;
-        }
-        //
-        String zoneId = APKInfo.getInstance().getTimeZoneId();
-        ZoneOffset offset = ZoneId.of(zoneId).getRules().getOffset(Instant.now());
-        //毫秒
-        int time = offset.getTotalSeconds();
-        timeSpace = time;
-        Logx.d(tag, "标准时间：" + time + " 时差:" + time);
-        return time;
-    }
-
-    //重置时差
-    public static void restTimeDifference() {
-        timeSpace = null;
-    }
-
-//
-
-    /**
-     * 标准时间转本地时间
-     *
-     * @param uctTime 时间戳（毫秒）
-     * @return 本地时间
-     */
-    public static long getUTCToLocalDate(Long uctTime) {
-        return getUTCToLocalDate(APKInfo.getInstance().getTimeZoneId(), uctTime);
-    }
-
-    /**
-     * 标准时间转本地时间
-     *
-     * @param uctTime 时间戳（毫秒）
-     * @return 本地时间
-     */
-    public static long getUTCToLocalDate(String zoneId, Long uctTime) {
-        Calendar calendar = getUTCToCalendar(zoneId, uctTime);
-        long utcTimeMillis = calendar.getTimeInMillis();
-        return utcTimeMillis;
+    public static TimeBean getUTCDateFormatBean(String type) {
+        return getTimeZone("UTC", type);
     }
 
     /**
@@ -132,27 +41,88 @@ class DateZoneUtil {
         //秒
         int time = offset.getTotalSeconds();
         long difference = time * 1000;
-        Logx.d(tag, "时差：" + time);
         //标准时间
-        Calendar calendar = getUTCToCalendar("Asia/Shanghai", timStamp + difference);
+        Calendar calendar = getZoneToCalendar("Asia/Shanghai", timStamp + difference);
         String str = redCalendar(calendar);
-        Logx.d(tag, "时间纠正为 Asia/Shanghai：" + str);
-        //转为本地时间 调用下面注释的方法也行
-       /* String zoneId = APKInfo.getInstance().getTimeZoneId();
-        calendar = getUTCToCalendar(zoneId, calendar.getTimeInMillis());
-        str = redCalendar(calendar);*/
-        // Logx.d(tag, "时间纠正为" + zoneId + "：" + str);
-        //转换为本地时间  可以用Date（calendar.getTime()），否因为时区的关系，Date 会自动转为本地时间
-        return calendar.getTime();
+        //Logx.d("日历时间：" + str);
+        //会有问题 不准
+        //Date date = calendar.getTime();
+        Date date = DateUtile.stringToDate(str, new Date());
+        return date;
     }
 
     /**
-     * 标准时间转本地时间
+     * 本地时间转标准时间
+     *
+     * @param dateLocal 本地时间戳
+     * @return 标准时间
+     */
+    public static TimeBean getLocalToUTCDateBean(Long dateLocal) {
+        long currentTimeMillis = dateLocal;
+        //
+        Calendar calendar = getZoneToCalendar("UTC", dateLocal);
+        //设置时间
+        calendar.setTimeInMillis(currentTimeMillis);
+        String utcTime = redCalendar(calendar);
+        //获取utc时间戳
+        ZoneOffset shOffset = ZoneId.of("Asia/Shanghai").getRules().getOffset(Instant.now());
+        int shTime = shOffset.getTotalSeconds();
+        long shDifference = shTime * 1000;
+        long shNewTime = dateLocal - shDifference;
+        Calendar shCalendar = getZoneToCalendar("Asia/Shanghai", shNewTime);
+        long times = shCalendar.getTime().getTime();
+        //
+        TimeBean bean = new TimeBean();
+        bean.time = utcTime;
+        bean.timeStamp = times;
+        bean.zoneId = utcTime.toString();
+        return bean;
+    }
+
+    /**
+     * 获取时区时间
+     *
+     * @param zoneId 时区id
+     * @param format 输出格式
+     * @return
+     */
+    private static TimeBean getTimeZone(String zoneId, String format) {
+        ZoneId id = ZoneId.of(zoneId);
+        ZonedDateTime utcTime = ZonedDateTime.now(id);
+        //
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format).withZone(id);
+        String timeUTC = utcTime.format(formatter);
+        //
+        Instant instant = utcTime.toInstant();
+        //时间戳 无用 会获取到本地的当前时间错
+        long zoneTimeJab = instant.toEpochMilli();
+        //转化时间戳
+        //时差
+        ZoneOffset shOffset = ZoneId.of("Asia/Shanghai").getRules().getOffset(Instant.now());
+        int shTime = shOffset.getTotalSeconds();
+        long shDifference = shTime * 1000;
+        long shNewTime = new Date().getTime() - shDifference;
+        //标准时间
+        Calendar shCalendar = getZoneToCalendar("Asia/Shanghai", shNewTime);
+        long times = shCalendar.getTime().getTime();
+        //Logx.d(" 时差3：" + times + "   testTime:" + testTime + " difference2=" + difference2);
+        TimeBean bean = new TimeBean();
+        bean.time = timeUTC;
+        bean.timeStamp = times;
+        bean.zoneId = utcTime.toString();
+        //
+        Logx.d(tag+"获取时区时间 time=" + timeUTC + " 时间戳：" + times + " 时区：" + utcTime + " utcTime:" + utcTime + " zoneId:" + zoneId + " 时差：" + shTime);
+
+        return bean;
+    }
+
+    /**
+     * 转成指定时区时间
      *
      * @param uctTime 时间戳（毫秒）
-     * @return 本地时间
+     * @return 指定时区时间
      */
-    public static Calendar getUTCToCalendar(String zoneId, Long uctTime) {
+    private static Calendar getZoneToCalendar(String zoneId, Long uctTime) {
         long currentTimeMillis = uctTime;
         //
         TimeZone utcTimeZone = TimeZone.getTimeZone(zoneId);
@@ -163,57 +133,11 @@ class DateZoneUtil {
     }
 
     /**
-     * 本地时间转标准时间
-     *
-     * @param dateLocal(本地时间戳)
-     * @return 标准时间
-     */
-    public static long getLocalToUTCDate(Long dateLocal) {
-        return getLocalToUTCDate("UTC", dateLocal);
-    }
-
-    /**
-     * 本地时间转标准时间
-     *
-     * @param dateLocal(本地时间戳)
-     * @return 标准时间
-     */
-    public static long getLocalToUTCDate(String zoneId, Long dateLocal) {
-        long currentTimeMillis = dateLocal;
-        //
-        TimeZone utcTimeZone = TimeZone.getTimeZone(zoneId);
-        Calendar calendar = Calendar.getInstance(utcTimeZone);
-        //设置时间
-        calendar.setTimeInMillis(currentTimeMillis);
-        //获取 UTC 时间戳
-        long utcTimeMillis = calendar.getTimeInMillis();
-        return utcTimeMillis;
-    }
-
-    /**
-     * 本地时间转标准时间
-     *
-     * @param dateLocal(本地时间戳)
-     * @return 标准时间 yyyy-MM-dd HH:mm:ss
-     */
-    public static String getLocalToUTCDateStr(Long dateLocal) {
-        long currentTimeMillis = dateLocal;
-        //
-        TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
-        Calendar calendar = Calendar.getInstance(utcTimeZone);
-        //设置时间
-        calendar.setTimeInMillis(currentTimeMillis);
-        String utcTime = redCalendar(calendar);
-        return utcTime;
-    }
-    //
-
-    /**
      * 读取日历
      *
      * @return yyyy-MM-dd HH:mm:ss
      */
-    public static String redCalendar(Calendar calendar) {
+    private static String redCalendar(Calendar calendar) {
         // 获取年、月、日、时、分、秒
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1; // 月份+1，因为0代表一月
