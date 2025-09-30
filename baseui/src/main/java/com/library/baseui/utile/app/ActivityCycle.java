@@ -1,8 +1,12 @@
 package com.library.baseui.utile.app;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Application;
+import android.content.ComponentName;
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
@@ -14,7 +18,16 @@ import sj.mblog.Logx;
 public class ActivityCycle {
     private int refCount = 0;
     private boolean isRegister;
-    private List<SoftReference<Activity>> activitys = new ArrayList<>();
+    private List<SoftReference<Activity>> acts = new ArrayList<>();
+    //当前的act
+    private Activity cursorAct;
+
+    public Activity getCursorAct() {
+        return cursorAct;
+    }
+
+    //true 在前台
+    private boolean isResumed;
 
     class ActivityLifecycleListener implements Application.ActivityLifecycleCallbacks {
 
@@ -22,30 +35,34 @@ public class ActivityCycle {
         @Override
         public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
             onActivityDestroyed(activity);
-            activitys.add(new SoftReference(activity));
+            acts.add(new SoftReference(activity));
+            isResumed = true;
         }
 
         @Override
         public void onActivityStarted(Activity activity) {
             refCount++;
-
+            isResumed = true;
         }
 
         @Override
         public void onActivityResumed(Activity activity) {
-
+            cursorAct = activity;
+            isResumed = true;
         }
 
         @Override
         public void onActivityPaused(Activity activity) {
-
+            isResumed = false;
         }
 
         @Override
         public void onActivityStopped(Activity activity) {
             refCount--;
-
-
+            Logx.d("===>isShow: " + isResumed);
+            if (!isResumed) {
+                APKInfo.getInstance().restTimeZone();
+            }
         }
 
         @Override
@@ -55,38 +72,50 @@ public class ActivityCycle {
 
         @Override
         public void onActivityDestroyed(Activity activity) {
-            int size = activitys.size();
+            int size = acts.size();
             if (size == 0) {
                 return;
             }
             for (int i = (size - 1); i >= 0; i--) {
-                SoftReference<Activity> r = activitys.get(i);
-                Activity a = r.get();
-                if (a == null) {
-                    activitys.remove(i);
+                SoftReference<Activity> sf = acts.get(i);
+                Activity act = sf.get();
+                if (act == null) {
+                    acts.remove(i);
                     continue;
                 }
-                // String a1 = a.getClass().getName();
-                // String a2 = activity.getClass().getName();
-                if (a.getClass().getName().equals(activity.getClass().getName())) {
-                    activitys.remove(i);
+                if (act == activity) {
+                    acts.remove(i);
                     break;
                 }
+
             }
         }
     }
 
+    public void isAppInForeground(Context context) {
+        boolean isShow = false;
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(1);
+        if (!tasks.isEmpty()) {
+            ComponentName topActivity = tasks.get(0).topActivity;
+            if (topActivity.getPackageName().equals(context.getPackageName())) {
+                isShow = true;
+            }
+        }
+        Logx.d("===>isShow: " + isShow);
+    }
+
     //获取要返回的上一个activity 要在非onCreate里调用
     public Activity getBackActivity() {
-        int size = activitys.size();
+        int size = acts.size();
         if (size < 2) {
             return null;
         }
-        return activitys.get(size - 2).get();
+        return acts.get(size - 2).get();
     }
 
     public int getBackActivitys() {
-        return activitys.size();
+        return acts.size();
     }
 
     /**
@@ -108,6 +137,73 @@ public class ActivityCycle {
         String hint = isBack ? "后" : "前";
         Logx.d("APKInfo", "------" + hint + refCount);
         return isBack;
+    }
+
+    public void setFinish(Class cls) {
+        String name = cls.getName();
+        for (int i = 0; i < acts.size(); i++) {
+            SoftReference<Activity> temp = acts.get(i);
+            if (temp == null) {
+                continue;
+            }
+            Activity act = temp.get();
+            if (act == null) {
+                continue;
+            }
+            String actName = act.getLocalClassName();
+            if (name.equals(actName)) {
+                act.finish();
+                return;
+            }
+        }
+    }
+
+
+    public void setFinishAll(Class cls) {
+        String name = cls.getName();
+        for (int i = 0; i < acts.size(); i++) {
+            SoftReference<Activity> temp = acts.get(i);
+            if (temp == null) {
+                continue;
+            }
+            Activity act = temp.get();
+            if (act == null) {
+                continue;
+            }
+            if (act.isDestroyed()) {
+                continue;
+            }
+            String actName = act.getLocalClassName();
+            if (name.equals(actName)) {
+                continue;
+            }
+            act.finish();
+        }
+    }
+
+    public boolean isActExist(Class cls) {
+        String name = cls.getName();
+        boolean isActExist = false;
+        for (int i = 0; i < acts.size(); i++) {
+            SoftReference<Activity> temp = acts.get(i);
+            if (temp == null) {
+                continue;
+            }
+            Activity act = temp.get();
+            if (act == null) {
+                continue;
+            }
+            if (act.isDestroyed()) {
+                continue;
+            }
+            String actName = act.getLocalClassName();
+            if (name.equals(actName)) {
+                isActExist = true;
+                break;
+            }
+
+        }
+        return isActExist;
     }
 
     private static ActivityCycle instance;

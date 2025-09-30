@@ -80,7 +80,9 @@ public class TestStartActivity extends NormalActionBar {
     private String img5 = "https://nbc.vtnbo.com/nbc/msg/image/pro/17585945529726711.webp";
     //webp 静态图
     private String img6 = "https://nbc.vtnbo.com/nbc/msg/image/pro/17585948352157095.webp";
-    String img = img5;
+    //虽然是gif 但是手机上 没有正常显示动图，只是静态图
+    private String ing7="https://nbc.vtnbo.com/nbc/msg/image/pro/17578323960027349.gif";
+    String img = ing7;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

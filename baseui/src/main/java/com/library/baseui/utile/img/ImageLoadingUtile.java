@@ -3,26 +3,21 @@ package com.library.baseui.utile.img;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.integration.webp.decoder.WebpDecoder;
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable;
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation;
-import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.bitmap.CenterInside;
-import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
@@ -33,7 +28,7 @@ import com.library.baseui.utile.img.req.WebPGifReq;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.lang.reflect.Field;
+import java.util.Objects;
 
 import sj.mblog.Logx;
 
@@ -45,7 +40,9 @@ public class ImageLoadingUtile {
     public static void loadImageTest(Context contxt, String loadingUrl, int defaultPng, ImageView iv) {
         //loadingGifAuto(contxt, loadingUrl, defaultPng, iv);
         //loadingGif(contxt, loadingUrl, defaultPng, iv);
-        loadingGifWebP2(contxt, loadingUrl, defaultPng, iv);
+        //loadingGifWebP2(contxt, loadingUrl, defaultPng, iv);
+        loadingFileType(contxt, loadingUrl, defaultPng, iv);
+        loadingBitType(contxt, loadingUrl, defaultPng, iv);
     }
 
 
@@ -66,6 +63,93 @@ public class ImageLoadingUtile {
                 .skipMemoryCache(true)//不将图片缓存到内存中
                 .placeholder(defaultPng)
                 .into(iv);
+    }
+
+
+    public static void loadingFileType(Context contxt, String loadingUrl, int defaultPng, final ImageView iv) {
+        iv.setImageResource(defaultPng);
+        Glide.with(contxt).asFile()
+                .load(loadingUrl)
+                .placeholder(defaultPng)
+                .into(new SimpleTarget<File>() {
+                    @Override
+                    public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
+                        ImageFile.redImgFileType(resource);
+                    }
+
+                });
+    }
+
+    public static void loadingBitType(Context contxt, String loadingUrl, int defaultPng, final ImageView iv) {
+        iv.setImageResource(defaultPng);
+        Glide.with(contxt).asBitmap()
+                .load(loadingUrl)
+                .placeholder(defaultPng)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        ImageFile.redImgBitType(resource);
+                    }
+
+                });
+    }
+
+    /***
+     * 下载文件 要在子线程里远行
+     * @param context
+     * @param imgUrl
+     * @return
+     */
+    public static File downLoadImageFile(Context context, String imgUrl) {
+        File imageFile = null;
+        FutureTarget<File> target = Glide.with(context)
+                .asFile()
+                .load(imgUrl)
+                .submit();
+        try {
+            imageFile = target.get();
+        } catch (Exception e) {
+            Logx.d("文件下载出错：" + e.getMessage());
+        }
+        return imageFile;
+    }
+
+    /**
+     * 下载图片 要在子线程里远行
+     *
+     * @param context
+     * @param imgUrl
+     * @return
+     */
+    public static Bitmap downLoadImageBit(Context context, String imgUrl) {
+        Bitmap bitmap = null;
+        try {
+            FutureTarget<Bitmap> glide = Glide.with(context).asBitmap().load(imgUrl)
+                    .into(480, 800);
+            if (glide.isCancelled()) {
+                return null;
+            }
+            bitmap = glide.get();
+        } catch (Exception e) {
+            Logx.d("图片下载出错：" + e.getMessage());
+        }
+
+        return bitmap;
+    }
+
+    /**
+     * 停止下载
+     *
+     * @param glide
+     */
+    public static void downStop(FutureTarget<Objects> glide) {
+        if (glide == null) {
+            return;
+        }
+        if (!glide.isDone()) {
+            glide.onStop();
+            glide.onDestroy();
+        }
     }
 
     //加载图片 居中
@@ -142,16 +226,19 @@ public class ImageLoadingUtile {
     //加载会话图片 type:三角形所在的边（0:左边；1:右边）
     public static void loadImageChat(Context contxt, String loadingUrl, int defaultPng, final ImageView iv, final int type) {
         iv.setImageResource(defaultPng);
-        Glide.with(contxt).asBitmap().load(loadingUrl).placeholder(defaultPng).into(new SimpleTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                ChatTransform chatTransform = new ChatTransform(type);
-                resource = chatTransform.drawBitmap(resource, 200);
-                iv.setImageBitmap(resource);
-            }
+        Glide.with(contxt).asBitmap()
+                .load(loadingUrl)
+                .placeholder(defaultPng)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        ChatTransform chatTransform = new ChatTransform(type);
+                        resource = chatTransform.drawBitmap(resource, 200);
+                        iv.setImageBitmap(resource);
+                    }
 
 
-        });
+                });
     }
 
     //加载gif
