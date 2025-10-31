@@ -4,17 +4,15 @@ package test.app.ui.activity.test;
 import android.app.Instrumentation;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import test.app.ui.activity.R;
 import test.app.ui.activity.action.NormalActionBar;
-import test.app.ui.activity.databinding.ActivityElementAnimation2Binding;
 import test.app.ui.activity.databinding.ActivityElementAnimation3Binding;
-import test.app.ui.pages.frg.FragmentTest;
-import test.app.ui.pages.frg.FragmentTest2;
+import test.app.ui.pages.frg.FragmentTest3;
+import test.app.ui.pages.frg.FragmentTest4;
 
 
 //元素动画 （frg）
@@ -42,7 +40,7 @@ public class ElementAnimation3Activity extends NormalActionBar {
 
     private void setView() {
 
-        FragmentTest2 frg = new FragmentTest2();
+        FragmentTest3 frg = new FragmentTest3();
         //
         FragmentManager manager = this.getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();

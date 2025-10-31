@@ -10,7 +10,7 @@
         android:layout_centerInParent="true"
         android:background="#ccc"
         android:gravity="center"
+        android:transitionName="shared_iv"
         android:textColor="#181818"
-        android:textSize="@dimen/dp_20"
-        android:transitionName="shared_iv" />
+        android:textSize="@dimen/dp_20" />
 </RelativeLayout>

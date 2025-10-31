@@ -12,46 +12,51 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 import test.app.ui.activity.R;
-import test.app.ui.activity.test.ElementAnimation4Activity;
-import test.app.ui.pages.BaseFragmentViewPage;
-import test.app.utiles.other.DLog;
 
 
-public class FragmentTest2 extends Fragment {
+public class FragmentTest4 extends Fragment {
     private View root;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (root == null) {
-            root = inflater.inflate(R.layout.frg_element_animation, container, false);
+            root = inflater.inflate(R.layout.frg_element_animation4, container, false);
         }
         return root;
     }
-private TextView tvMsg;
+
+    private TextView tvMsg;
+    private int index;
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        FragmentActivity activity = getActivity();
-        tvMsg=view.findViewById(R.id.tv_msg);
-        tvMsg .setOnClickListener(new View.OnClickListener() {
+        Bundle arguments = getArguments();
+        index = arguments.getInt("arg0");
+        tvMsg = view.findViewById(R.id.tv_msg);
+        tvMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //
+                tvMsg.setTransitionName("shared_iv");
                 FragmentActivity activity = getActivity();
                 activity.finishAfterTransition();
             }
         });
+        //
+        if (index == 0) {
+            tvMsg.setTransitionName("shared_iv");
+        }
+        tvMsg.setText("" + index);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        FragmentActivity activity = getActivity();
-        ElementAnimation4Activity act = ((ElementAnimation4Activity) activity);
-        int index = act.getIndex();
-        tvMsg.setText(""+index);
+        tvMsg.setTransitionName("");
     }
+
 
 /*  @Override
     protected void onViewCreated() {
@@ -66,5 +71,11 @@ private TextView tvMsg;
         });
     }*/
 
-
+    public static FragmentTest4 getFragmentTest2(int index) {
+        FragmentTest4 fragment = new FragmentTest4();
+        Bundle args = new Bundle();
+        args.putInt("arg0", index);
+        fragment.setArguments(args);
+        return fragment;
+    }
 }
