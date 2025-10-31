@@ -1,10 +1,4 @@
-package com.app.ui;
-
-import android.app.ActivityManager;
-import android.app.Application;
-import android.content.Context;
-
-import androidx.multidex.MultiDex;
+package com.app.ui.activity;
 
 
 import com.library.baseui.activity.BaseApplication;

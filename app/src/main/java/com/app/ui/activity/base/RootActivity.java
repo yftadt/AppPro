@@ -15,7 +15,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewbinding.ViewBinding;
 
 
-import com.app.ui.MainApplication;
+import com.app.ui.activity.MainApplication;
 import com.app.ui.activity.R;
 
 import com.app.ui.view.CustomizeLoadMoreView;
