@@ -12,4 +12,11 @@
         android:gravity="center"
         android:textColor="#181818"
         android:textSize="@dimen/dp_20" />
+    <ImageView
+        android:id="@+id/iv_img"
+        android:layout_width="@dimen/dp_400"
+        android:layout_height="@dimen/dp_400"
+        android:layout_centerInParent="true"
+        android:src="@mipmap/base_loading_up_true"
+        />
 </RelativeLayout>

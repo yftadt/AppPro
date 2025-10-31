@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,7 @@ public class FragmentTest4 extends Fragment {
     }
 
     private TextView tvMsg;
+    private ImageView ivImg;
     private int index;
 
     @Override
@@ -35,6 +37,7 @@ public class FragmentTest4 extends Fragment {
         Bundle arguments = getArguments();
         index = arguments.getInt("arg0");
         tvMsg = view.findViewById(R.id.tv_msg);
+        ivImg = view.findViewById(R.id.iv_img);
         tvMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -44,11 +47,21 @@ public class FragmentTest4 extends Fragment {
                 activity.finishAfterTransition();
             }
         });
+        ivImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //
+                ivImg.setTransitionName("shared_iv");
+                FragmentActivity activity = getActivity();
+                activity.finishAfterTransition();
+            }
+        });
+
         //
         if (index == 0) {
-            tvMsg.setTransitionName("shared_iv");
+            //tvMsg.setTransitionName("shared_iv");
         }
-        tvMsg.setText("" + index);
+        //tvMsg.setText("" + index);
     }
 
     @Override

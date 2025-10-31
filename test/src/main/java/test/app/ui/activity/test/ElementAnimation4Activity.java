@@ -46,6 +46,7 @@ public class ElementAnimation4Activity extends NormalActionBar {
         PagerAdapter2 adapter = new PagerAdapter2(this, frgs);
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(frgs.size());
+        viewPager.setTransitionName("shared_iv");
     }
 
     private ArrayList<Fragment> frgs = new ArrayList();
@@ -68,5 +69,11 @@ public class ElementAnimation4Activity extends NormalActionBar {
             new Instrumentation().callActivityOnSaveInstanceState(this, new Bundle());
         }
         super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        viewPager.setTransitionName("");
     }
 }
