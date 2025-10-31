@@ -1,0 +1,1 @@
+ ./gradlew assembleOppoRelease assembleVivoRelease assembleSamsungRelease assembleXiaomiRelease
