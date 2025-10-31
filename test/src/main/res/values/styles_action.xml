@@ -7,6 +7,11 @@
         <item name="colorAccent">#999999</item>
         <item name="android:windowAnimationStyle">@style/anim_activity</item>
     </style>
+    <style name="NoActionBarAndAnim" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#ff7db2fd</item>
+        <item name="colorPrimaryDark">#ff7db2fd</item>
+        <item name="colorAccent">#999999</item>
+    </style>
     <!--动画-->
     <style name="anim_activity" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@anim/activity_right_in_anim</item>

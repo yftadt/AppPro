@@ -192,6 +192,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="剪贴板权限获取" />
-
+        <Button
+            android:id="@+id/ys_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="元素动画" />
     </LinearLayout>
 </ScrollView>

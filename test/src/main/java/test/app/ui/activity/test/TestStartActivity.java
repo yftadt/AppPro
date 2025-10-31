@@ -81,7 +81,7 @@ public class TestStartActivity extends NormalActionBar {
     //webp 静态图
     private String img6 = "https://nbc.vtnbo.com/nbc/msg/image/pro/17585948352157095.webp";
     //虽然是gif 但是手机上 没有正常显示动图，只是静态图
-    private String ing7="https://nbc.vtnbo.com/nbc/msg/image/pro/17578323960027349.gif";
+    private String ing7 = "https://nbc.vtnbo.com/nbc/msg/image/pro/17578323960027349.gif";
     String img = ing7;
 
     @Override
@@ -149,6 +149,8 @@ public class TestStartActivity extends NormalActionBar {
         findViewById(R.id.canvas_btn).setOnClickListener(this);
         findViewById(R.id.open_app_btn).setOnClickListener(this);
         findViewById(R.id.delineate_btn).setOnClickListener(this);
+        findViewById(R.id.ys_btn).setOnClickListener(this);
+
         //
         DateUtile.testLog();
         TextView tv = findViewById(R.id.btn_3d_tv);
@@ -273,7 +275,11 @@ public class TestStartActivity extends NormalActionBar {
             ActivityUtile.startActivityCommon(TestChatActivity.class);
             return;
         }
-
+        if (id == R.id.ys_btn) {
+            //元素动画
+            ActivityUtile.startActivityCommon(ElementAnimationActivity.class);
+            return;
+        }
 
     }
 
