@@ -1,4 +1,4 @@
-package test.app.ui.pages.fragment;
+package test.app.ui.pages.frg;
 
 
 

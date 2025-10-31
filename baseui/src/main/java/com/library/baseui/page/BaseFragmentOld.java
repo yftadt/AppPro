@@ -3,7 +3,15 @@ package com.library.baseui.page;
 
 import androidx.fragment.app.Fragment;
 
-abstract class BaseFragment extends Fragment {
+public abstract class BaseFragmentOld extends Fragment {
+    private long id = 0;
+
+    public long getId(int index) {
+        if (id == 0) {
+            id = System.currentTimeMillis();
+        }
+        return id + index;
+    }
     //
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {

@@ -18,9 +18,9 @@ import java.util.ArrayList;
 
 import test.app.ui.activity.action.NormalActionBar;
 import test.app.ui.adapter.FragmentViewPagerAdapter;
-import test.app.ui.pages.fragment.FragmentTest;
-import test.app.ui.pages.fragment.TestListFragment;
-import test.app.ui.pages.fragment.TestTabFragement;
+import test.app.ui.pages.frg.FragmentTest;
+import test.app.ui.pages.frg.TestListFragment;
+import test.app.ui.pages.frg.TestTabFragement;
 
 public class MainFragmentActivity extends NormalActionBar {
 

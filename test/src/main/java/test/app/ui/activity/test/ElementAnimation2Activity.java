@@ -25,7 +25,7 @@ public class ElementAnimation2Activity extends NormalActionBar {
         setContentView(binding.getRoot());
         setBarColor();
         setBarTvText(0, "返回");
-        setBarTvText(1, "元素动画");
+        setBarTvText(1, "元素动画2");
         findViewById(R.id.tv_msg).setOnClickListener(new View.OnClickListener() {
 
             @Override

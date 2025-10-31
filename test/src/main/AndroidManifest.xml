@@ -102,6 +102,17 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
+            android:name=".test.ElementAnimation3Activity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".test.ElementAnimation4Activity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+
+        <activity
             android:name=".test.TestMusicActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />

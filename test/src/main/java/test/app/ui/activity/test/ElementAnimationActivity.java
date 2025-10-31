@@ -40,7 +40,7 @@ public class ElementAnimationActivity extends NormalActionBar {
 
     //共享元素动画
     private void startAnimation(View view) {
-        Intent intent = new Intent(this, ElementAnimation2Activity.class);
+        Intent intent = new Intent(this, ElementAnimation4Activity.class);
         Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(
                 this, view, "shared_iv"
         ).toBundle();

@@ -17,13 +17,12 @@ import com.library.baseui.view.loading.LoadingLayout;
 /**
  * Created by Administrator on 2016/8/15.
  */
-public abstract class BaseCompatPageFragment extends BaseFragment {
+public abstract class BaseCompatPageFragment extends BaseFragmentOld {
     //
     protected BaseLoadingLayout loadingView;
     private boolean isLoadingShow;
     protected View rootView;
     private LayoutInflater inflater;
-    private ViewGroup container;
     protected Context context;
 
     @Nullable
@@ -31,8 +30,7 @@ public abstract class BaseCompatPageFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (rootView == null) {
             this.inflater = inflater;
-            this.container = container;
-            context = container.getContext();
+            context = getContext();
             rootView = getFragmentView();
         }
         return rootView;
@@ -45,7 +43,7 @@ public abstract class BaseCompatPageFragment extends BaseFragment {
 
     protected void setContentView(int layoutResID, boolean isLoadingShow) {
         this.isLoadingShow = isLoadingShow;
-        rootView = inflater.inflate(layoutResID, container, false);
+        rootView = inflater.inflate(layoutResID, null);
     }
 
     protected void setContentView(View view) {
@@ -79,7 +77,7 @@ public abstract class BaseCompatPageFragment extends BaseFragment {
         if (!isLoadingShow) {
             return;
         }
-        RelativeLayout relativeView = new RelativeLayout(container.getContext());
+        RelativeLayout relativeView = new RelativeLayout(context);
         RelativeLayout.LayoutParams contextRl = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
         rootView.setLayoutParams(contextRl);
         relativeView.addView(rootView);
