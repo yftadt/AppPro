@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="status_bar_height_view" type="id" />
+    <item name="wr_refresh_view" type="id" />
+    <item name="rl_loading_view" type="id" />
+
+
+    <item name="url_load" type="id" />
+    <item name="url_load_success" type="id" />
+ </resources>

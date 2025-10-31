@@ -17,6 +17,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.library.baseui.key.KeyboardManager2;
@@ -35,6 +36,18 @@ public class BaseCompatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initHandler();
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                onActBackPressed();
+
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
+    }
+
+    public void onActBackPressed() {
+        finish();
     }
 
     @Override
@@ -58,11 +71,22 @@ public class BaseCompatActivity extends AppCompatActivity {
             window.setAttributes(lp);
         }
     }
+
     private boolean setImmersion;
+
     //设置沉浸式
     protected void setImmersion() {
-        StatusBarUtile.setStatusBarColor(this,true, Color.parseColor("#00000000"),false);
+        setImmersion(true);
     }
+
+    protected void setImmersion(boolean lightMode) {
+        StatusBarUtile.setStatusBarColor(this, true, Color.parseColor("#00000000"), lightMode);
+    }
+
+    protected void setBarColor(String color, boolean lightMode) {
+        StatusBarUtile.setStatusBarColor(this, false, Color.parseColor(color), lightMode);
+    }
+
     protected void setEventBusRegistered() {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
@@ -96,7 +120,11 @@ public class BaseCompatActivity extends AppCompatActivity {
         if (it == null) {
             it = getIntent();
         }
-        return it.getStringExtra(key);
+        String str = it.getStringExtra(key);
+        if (str == null) {
+            str = "";
+        }
+        return str;
     }
 
     protected Serializable getObjectExtra(String key) {
@@ -165,7 +193,7 @@ public class BaseCompatActivity extends AppCompatActivity {
     }
 
     //==============================Handler====================
-    private Handler uiHandler;
+    protected Handler uiHandler;
 
     protected Handler getHandler() {
         if (uiHandler == null) {
@@ -182,6 +210,9 @@ public class BaseCompatActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            if (isDestroyed() || isFinishing()) {
+                return;
+            }
             BaseCompatActivity.this.handleMessage(msg);
         }
     }
@@ -225,5 +256,26 @@ public class BaseCompatActivity extends AppCompatActivity {
             keyboardManager2.dismiss();
         }
 
+    }
+    //========================
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isResume = false;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        isResume = false;
+    }
+
+    protected boolean isResume;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isResume = true;
     }
 }
