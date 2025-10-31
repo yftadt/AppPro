@@ -5,7 +5,10 @@ import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
 
+import com.library.baseui.utile.app.ActivityUtile;
+
 import test.app.ui.activity.R;
+import test.app.ui.activity.test.ElementAnimation2Activity;
 import test.app.ui.pages.BaseFragmentViewPage;
 import test.app.utiles.other.DLog;
 
@@ -22,7 +25,8 @@ public class FragmentTest3 extends BaseFragmentViewPage {
             public void onClick(View v) {
                 //
                 FragmentActivity activity = getActivity();
-                activity.finishAfterTransition();
+
+                ActivityUtile.finishActivityElement(activity);
             }
         });
         //

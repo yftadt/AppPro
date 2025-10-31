@@ -28,14 +28,13 @@ public class ElementAnimation4Activity extends NormalActionBar {
         setContentView(binding.getRoot());
         setBarColor();
         setBarTvText(0, "返回");
-        setBarTvText(1, "元素动画5");
+        setBarTvText(1, "元素动画4");
         setPage();
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finishAfterTransition();
     }
 
     private ViewPager2 viewPager;

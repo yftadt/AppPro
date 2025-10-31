@@ -35,7 +35,7 @@ public class ElementAnimation3Activity extends NormalActionBar {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finishAfterTransition();
+
     }
 
     private void setView() {

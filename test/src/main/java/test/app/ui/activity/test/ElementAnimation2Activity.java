@@ -7,6 +7,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
+import com.library.baseui.utile.app.ActivityUtile;
+
 import test.app.ui.activity.R;
 import test.app.ui.activity.action.NormalActionBar;
 import test.app.ui.activity.databinding.ActivityElementAnimation2Binding;
@@ -32,7 +34,7 @@ public class ElementAnimation2Activity extends NormalActionBar {
             public void onClick(View v) {
                 //调用this.finish()不会有共享元素转场退出效果
                 //onBackPressed();
-                finishAfterTransition();
+                ActivityUtile.finishActivityElement(ElementAnimation2Activity.this);
             }
         });
     }

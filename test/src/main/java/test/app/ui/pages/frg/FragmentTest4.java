@@ -12,6 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+import com.library.baseui.utile.app.ActivityUtile;
+
 import test.app.ui.activity.R;
 
 
@@ -42,18 +44,16 @@ public class FragmentTest4 extends Fragment {
             @Override
             public void onClick(View v) {
                 //
-                tvMsg.setTransitionName("shared_iv");
                 FragmentActivity activity = getActivity();
-                activity.finishAfterTransition();
+                ActivityUtile.finishActivityElement(activity, v, "shared_iv");
             }
         });
         ivImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //
-                ivImg.setTransitionName("shared_iv");
                 FragmentActivity activity = getActivity();
-                activity.finishAfterTransition();
+                ActivityUtile.finishActivityElement(activity, v, "shared_iv");
             }
         });
 

@@ -1,16 +1,19 @@
 package com.library.baseui.utile.app;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
+
+import androidx.core.view.ViewCompat;
 
 import com.library.baseui.activity.BaseApplication;
 
 import java.io.Serializable;
-
 
 
 public class ActivityUtile {
@@ -20,6 +23,7 @@ public class ActivityUtile {
     public static void startActivityCommon(Class<?> activity) {
         startActivityBundle(activity, "", "", "", null);
     }
+
     //-------------------------------------String---------------------------------
     public static void startActivityString(Class<?> activity, String arg0) {
         startActivityBundle(activity, arg0, "", "", null);
@@ -81,6 +85,60 @@ public class ActivityUtile {
         it.setClass(BaseApplication.context, activity);
         it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         BaseApplication.context.startActivity(it);
+    }
+
+    public static void startActivityElement(Activity activity, Class<?> actCls,
+                                            View view, String elementShareName) {
+        startActivityElement(activity, actCls, null, view, elementShareName);
+    }
+    /**
+     * 启动共享元素动画
+     *
+     * @param view             共享元素View
+     * @param elementShareName 共享元素名称 比如 shared_iv
+     */
+    /**
+     * @param activity
+     * @param dataBundle       要传递的数据
+     * @param view             共享元素View
+     * @param elementShareName 共享元素名称 比如 shared_iv
+     */
+    public static void startActivityElement(Activity activity, Class<?> actCls, Bundle dataBundle,
+                                            View view, String elementShareName) {
+        if (view != null) {
+            String name = view.getTransitionName();
+            if (TextUtils.isEmpty(name)) {
+                view.setTransitionName(elementShareName);
+            }
+        }
+        Intent intent = new Intent(activity, actCls);
+        Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(
+                activity, view, elementShareName
+        ).toBundle();
+        if (dataBundle != null) {
+            intent.putExtras(dataBundle);
+        }
+        activity.startActivity(intent, bundle);
+        ViewCompat.setTransitionName(view, elementShareName);
+    }
+    public static void finishActivityElement(Activity activity) {
+        finishActivityElement(activity,null,"");
+    }
+    /**
+     * 返回上一个页面 共享元素动画
+     *
+     * @param activity
+     * @param view             共享元素View
+     * @param elementShareName 共享元素名称 比如 shared_iv
+     */
+    public static void finishActivityElement(Activity activity, View view, String elementShareName) {
+        if (view != null) {
+            String name = view.getTransitionName();
+            if (TextUtils.isEmpty(name)) {
+                view.setTransitionName(elementShareName);
+            }
+        }
+        activity.finishAfterTransition();
     }
 
     /**
