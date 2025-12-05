@@ -206,7 +206,8 @@ public class TestStartActivity extends NormalActionBar {
         }
         if (id == R.id.open_app_btn) {
             //打开第三方应用
-            ActivityUtile.startActivityCommon(OpenAppActivity.class);
+            ActivityUtile.startNBC(this);
+            //ActivityUtile.startActivityCommon(OpenAppActivity.class);
             return;
         }
         if (id == R.id.canvas_btn) {

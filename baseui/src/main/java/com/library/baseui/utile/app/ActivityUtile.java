@@ -3,6 +3,7 @@ package com.library.baseui.utile.app;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -121,9 +122,11 @@ public class ActivityUtile {
         activity.startActivity(intent, bundle);
         ViewCompat.setTransitionName(view, elementShareName);
     }
+
     public static void finishActivityElement(Activity activity) {
-        finishActivityElement(activity,null,"");
+        finishActivityElement(activity, null, "");
     }
+
     /**
      * 返回上一个页面 共享元素动画
      *
@@ -202,5 +205,17 @@ public class ActivityUtile {
         intent = Intent.createChooser(intent, chooserName);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         BaseApplication.context.startActivity(intent);
+    }
+
+    /**
+     * 打开nbc 应用
+     */
+    public static void startNBC(Context context) {
+        String pckName = "com.xbkj.nbc";
+        Intent intent = context.getPackageManager().getLaunchIntentForPackage(pckName);
+        //Intent intent = new Intent();
+        intent.setData(Uri.parse("https://baidu.com?guom=1&utm_source=2&utm_campaign=3"));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 }
