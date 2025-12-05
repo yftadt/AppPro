@@ -6,9 +6,10 @@
     android:layout_height="match_parent"
     android:background="#F6F6F6">
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/view_pager_vertical"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" />
+        android:gravity="center"
+        android:text="竖1"
+        android:textSize="@dimen/dp_30" />
 </RelativeLayout>

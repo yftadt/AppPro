@@ -45,10 +45,6 @@ public class TestPageActivity extends NormalActionBar {
     private ArrayList<Fragment> frgs = new ArrayList<>();
 
     private void addFrg() {
-        FragmentTest4 frg = FragmentTest4.getFragmentTest2(0);
-        frgs.add(frg);
-        frg = FragmentTest4.getFragmentTest2(1);
-        frgs.add(frg);
         frgs.add(new TestMain1Frg());
         frgs.add(new TestMain2Frg());
     }
