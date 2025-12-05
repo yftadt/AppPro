@@ -197,5 +197,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="元素动画" />
+        <Button
+            android:id="@+id/pageview_2_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PageView研究" />
     </LinearLayout>
 </ScrollView>

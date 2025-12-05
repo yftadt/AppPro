@@ -150,6 +150,7 @@ public class TestStartActivity extends NormalActionBar {
         findViewById(R.id.open_app_btn).setOnClickListener(this);
         findViewById(R.id.delineate_btn).setOnClickListener(this);
         findViewById(R.id.ys_btn).setOnClickListener(this);
+        findViewById(R.id.pageview_2_btn).setOnClickListener(this);
 
         //
         DateUtile.testLog();
@@ -279,6 +280,11 @@ public class TestStartActivity extends NormalActionBar {
         if (id == R.id.ys_btn) {
             //元素动画
             ActivityUtile.startActivityCommon(ElementAnimationActivity.class);
+            return;
+        }
+        if(id==R.id.pageview_2_btn){
+            //ViewPage 研究
+            ActivityUtile.startActivityCommon(TestPageActivity.class);
             return;
         }
 

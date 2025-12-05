@@ -79,6 +79,10 @@
             android:name=".test.TestStartActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".test.TestPageActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait" />
         <activity
