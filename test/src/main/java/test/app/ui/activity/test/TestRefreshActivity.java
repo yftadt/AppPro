@@ -33,9 +33,9 @@ public class TestRefreshActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(adapter);
         //
-        mSwipeLoadLayout.setOnLoadingListener(new SwipeLoadLayout.OnLoadingListener() {
+        mSwipeLoadLayout.setMoreListener(new SwipeLoadLayout.OnMoreListener() {
             @Override
-            public void onLoading() {
+            public void onMore() {
                 Logx.d("刷新-->加载更多");
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -51,7 +51,7 @@ public class TestRefreshActivity extends AppCompatActivity {
                 Logx.d("刷新-->onPullingUp 上拉");
             }
         });
-        mSwipeLoadLayout.setOnRefreshListener(new SwipeLoadLayout.OnRefreshListener() {
+        mSwipeLoadLayout.setRefreshListener(new SwipeLoadLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 Logx.d("刷新-->刷新数据");

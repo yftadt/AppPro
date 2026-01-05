@@ -3,7 +3,6 @@ package test.app.ui.view.scroll;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.os.Handler;
 
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -35,8 +34,8 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
     private final int[] mParentScrollConsumed = new int[2];
     private final int[] mParentOffsetInWindow = new int[2];
     private boolean mNestedScrollInProgress;
-    private OnRefreshListener onRefreshListener;
-    private OnLoadingListener onLoadingListener;
+    private OnRefreshListener refreshListener;
+    private OnMoreListener moreListener;
     private ViewParent mNestedScrollAcceptedParent;
 
     private View mHeaderView,mFooterView;
@@ -441,8 +440,8 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
             @Override
             public void onAnimationEnd(Animator animation) {
                 mRefreshing = false;
-                if (onRefreshListener != null) {
-                    onRefreshListener.onRefresh();
+                if (refreshListener != null) {
+                    refreshListener.onRefresh();
                 }
             }
         });
@@ -509,8 +508,8 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
             @Override
             public void onAnimationEnd(Animator animation) {
                 mRefreshing = false;
-                if (onLoadingListener != null) {
-                    onLoadingListener.onLoading();
+                if (moreListener != null) {
+                    moreListener.onMore();
                 }
             }
         });
@@ -576,12 +575,12 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
         return ViewCompat.canScrollVertically(mRecyclerView, 1);
     }
 
-    public void setOnLoadingListener(OnLoadingListener onLoadingListener) {
-        this.onLoadingListener = onLoadingListener;
+    public void setMoreListener(OnMoreListener moreListener) {
+        this.moreListener = moreListener;
     }
 
-    public void setOnRefreshListener(OnRefreshListener onRefreshListener) {
-        this.onRefreshListener = onRefreshListener;
+    public void setRefreshListener(OnRefreshListener refreshListener) {
+        this.refreshListener = refreshListener;
     }
 
     @SuppressWarnings("unused")
@@ -649,9 +648,9 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
     /**
      * On loadmore Callback, call on start loadmore
      */
-    public interface OnLoadingListener {
+    public interface OnMoreListener {
 
-        void onLoading();
+        void onMore();
 
         void onPullingUp(float dy, int pullOutDistance, float viewHeight);
     }
