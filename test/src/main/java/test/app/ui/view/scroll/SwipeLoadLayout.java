@@ -179,30 +179,11 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
 
     /*********************************** NestedScrollParent *************************************/
 
-
-    @Override
-    public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
-        if (isNestedScrollingEnabled()) {
-            return dispatchNestedPreFling(velocityX, velocityY);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
-        if (isNestedScrollingEnabled()) {
-            return dispatchNestedFling(velocityX, velocityY, consumed);
-        }
-        return false;
-    }
-
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
         boolean result = isEnabled() && !mRefreshing && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
-
         return result;
     }
-
     @Override
     public void onNestedScrollAccepted(View child, View target, int axes) {
         mNestedScrollingParentHelper.onNestedScrollAccepted(child, target, axes);
@@ -211,7 +192,35 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
             mNestedScrollInProgress = true;
         }
     }
+    /**
+     * Callback on TouchEvent.ACTION_CANCLE or TouchEvent.ACTION_UP
+     * handler : refresh or loading
+     *
+     * @param child : child view of SwipeLayout,RecyclerView or Scroller
+     */
+    @Override
+    public void onStopNestedScroll(View child) {
+        mNestedScrollingParentHelper.onStopNestedScroll(child);
+        handlerAction();
+        if (isNestedScrollingEnabled()) {
+            mNestedScrollInProgress = true;
+            stopNestedScroll();
+        }
+    }
 
+    @Override
+    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+        if (isNestedScrollingEnabled()) {
+            dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, mParentOffsetInWindow);
+        }
+    }
+    @Override
+    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
+        if (isNestedScrollingEnabled()) {
+            return dispatchNestedFling(velocityX, velocityY, consumed);
+        }
+        return false;
+    }
 
     /**
      * With child view to processing move events
@@ -284,33 +293,16 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
     }
 
     @Override
+    public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
+        if (isNestedScrollingEnabled()) {
+            return dispatchNestedPreFling(velocityX, velocityY);
+        }
+        return false;
+    }
+
+    @Override
     public int getNestedScrollAxes() {
         return mNestedScrollingParentHelper.getNestedScrollAxes();
-    }
-
-
-    /**
-     * Callback on TouchEvent.ACTION_CANCLE or TouchEvent.ACTION_UP
-     * handler : refresh or loading
-     *
-     * @param child : child view of SwipeLayout,RecyclerView or Scroller
-     */
-    @Override
-    public void onStopNestedScroll(View child) {
-        mNestedScrollingParentHelper.onStopNestedScroll(child);
-        handlerAction();
-        if (isNestedScrollingEnabled()) {
-            mNestedScrollInProgress = true;
-            stopNestedScroll();
-        }
-    }
-
-
-    @Override
-    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-        if (isNestedScrollingEnabled()) {
-            dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, mParentOffsetInWindow);
-        }
     }
 
     //------------------------------结束-----------------------------------------------------------
@@ -330,9 +322,9 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
      * @param distanceY move distance of Y
      */
     private boolean moveSpinner(float distanceY) {
-        if (mRefreshing) {
+        /*if (mRefreshing) {
             return false;
-        }
+        }*/
         if (!canChildScrollUp() && mCurrentAction == LOAD_REFRESH) {
             if (!isOpenRefresh) {
                 return false;
@@ -434,7 +426,9 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
         }
 
     }
-//======================刷新数据=================================
+
+    //======================刷新数据=================================
+    private boolean isDataRefresh;//true 数据刷新中
 
     /**
      * Start Refresh
@@ -443,6 +437,7 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
      */
     private void startRefresh(int headerViewHeight) {
         mRefreshing = true;
+        isDataRefresh = true;
         ValueAnimator animator = ValueAnimator.ofFloat(headerViewHeight, refreshViewHeight);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
