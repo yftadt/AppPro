@@ -40,7 +40,7 @@ public class TestRefreshActivity extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mSwipeLoadLayout.finishPullLoad();
+                        mSwipeLoadLayout.setMoreEnd();
                         Logx.d("刷新-->加载更多完成");
                     }
                 }, 10 * 1000);
@@ -58,7 +58,7 @@ public class TestRefreshActivity extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mSwipeLoadLayout.finishPullRefresh();
+                        mSwipeLoadLayout.setRefreshEnd();
                         Logx.d("刷新-->刷新数据 完成");
                     }
                 }, 10 * 1000);

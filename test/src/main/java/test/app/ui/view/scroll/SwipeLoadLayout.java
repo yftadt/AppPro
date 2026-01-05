@@ -71,6 +71,8 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
         super(context, attrs, defStyleAttr);
     }
 
+    //onFinishInflate 是添加在layout xml里面的view 被LayoutInflater 解析完
+    // addview 之后再回调的onFinishInflate 方法。
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -94,14 +96,14 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
         if (!isEnabled() || canChildScrollUp()
                 || mRefreshing || mNestedScrollInProgress) {
             // Fail fast if we're not in a state where a swipe is possible
+            //当前状态还不具备进行滑动操作的条件
             return false;
         }
-
         return super.onInterceptTouchEvent(ev);
     }
 
-    // NestedScrollingChild
 
+    /*********************************** NestedScrollingChild *************************************/
     @Override
     public void setNestedScrollingEnabled(boolean enabled) {
         mNestedScrollingChildHelper.setNestedScrollingEnabled(enabled);
@@ -314,7 +316,7 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
         }
     }
 
-
+    //------------------------------结束-----------------------------------------------------------
     private double calculateDistanceY(View target, int dy) {
         int viewHeight = target.getMeasuredHeight();
         double ratio = (viewHeight - Math.abs(target.getY())) / 1.0d / viewHeight * DAMPING;
@@ -334,7 +336,6 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
         if (mRefreshing) {
             return false;
         }
-
         if (!canChildScrollUp() && mCurrentAction == LOAD_REFRESH) {
             if (!isOpenRefresh) {
                 return false;
@@ -412,7 +413,7 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
                     startRefresh(lp.height);
                 } else if (lp.height > 0) {
                     //回弹动画
-                    resetHeaderView(lp.height);
+                    resetRefreshView(lp.height);
                 } else {
                     resetRefreshState();
                 }
@@ -428,14 +429,15 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
                     startMore(lp.height);
                 } else if (lp.height > 0) {
                     //回弹动画
-                    resetFootView(lp.height);
+                    resetMoreView(lp.height);
                 } else {
-                    resetLoadmoreState();
+                    resetMoreState();
                 }
                 break;
         }
 
     }
+//======================刷新数据=================================
 
     /**
      * Start Refresh
@@ -474,7 +476,7 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
      *
      * @param headerViewHeight
      */
-    private void resetHeaderView(int headerViewHeight) {
+    private void resetRefreshView(int headerViewHeight) {
         ValueAnimator animator = ValueAnimator.ofFloat(headerViewHeight, 0);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -504,6 +506,8 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
         isConfirm = false;
         mCurrentAction = -1;
     }
+
+//==================刷新加载更多=====================
 
     /**
      * 开始加载更多内容
@@ -539,7 +543,7 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
      *
      * @param headerViewHeight
      */
-    private void resetFootView(int headerViewHeight) {
+    private void resetMoreView(int headerViewHeight) {
         ValueAnimator animator = ValueAnimator.ofFloat(headerViewHeight, 0);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -553,7 +557,7 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
         animator.addListener(new WXRefreshAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                resetLoadmoreState();
+                resetMoreState();
 
             }
         });
@@ -561,7 +565,7 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
         animator.start();
     }
 
-    private void resetLoadmoreState() {
+    private void resetMoreState() {
         mRefreshing = false;
         isConfirm = false;
         mCurrentAction = -1;
@@ -570,6 +574,7 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
     /**
      * Whether child view can scroll up
      * 子视图是否可以向上滚动
+     * true 能继续下滑动
      *
      * @return
      */
@@ -582,6 +587,7 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
 
     /**
      * Whether child view can scroll down
+     * true 能继续上滑动
      *
      * @return
      */
@@ -632,19 +638,21 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
 
     /**
      * Callback on refresh finish
+     * 数据刷新结束
      */
-    public void finishPullRefresh() {
+    public void setRefreshEnd() {
         if (mCurrentAction == LOAD_REFRESH) {
-            resetHeaderView(mHeaderView == null ? 0 : mHeaderView.getMeasuredHeight());
+            resetRefreshView(mHeaderView == null ? 0 : mHeaderView.getMeasuredHeight());
         }
     }
 
     /**
      * Callback on loadmore finish
+     * 数据加载更多结束
      */
-    public void finishPullLoad() {
+    public void setMoreEnd() {
         if (mCurrentAction == LOAD_MORE) {
-            resetFootView(mFooterView == null ? 0 : mFooterView.getMeasuredHeight());
+            resetMoreView(mFooterView == null ? 0 : mFooterView.getMeasuredHeight());
         }
     }
 
