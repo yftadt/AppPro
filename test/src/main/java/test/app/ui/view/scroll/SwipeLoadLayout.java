@@ -411,7 +411,7 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
                 Logx.d(tag + " 加载更多：height=" + lp.height + " 阈值=" + refreshViewHeight);
                 if (lp.height >= loadingViewHeight) {
                     //去加载更多数据
-                    startLoadmore(lp.height);
+                    startMore(lp.height);
                 } else if (lp.height > 0) {
                     //回弹动画
                     resetFootView(lp.height);
@@ -444,7 +444,6 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
         animator.addListener(new WXRefreshAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                mRefreshing = false;
                 if (refreshListener != null) {
                     refreshListener.onRefresh();
                 }
@@ -497,7 +496,7 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
      *
      * @param headerViewHeight
      */
-    private void startLoadmore(int headerViewHeight) {
+    private void startMore(int headerViewHeight) {
         mRefreshing = true;
         ValueAnimator animator = ValueAnimator.ofFloat(headerViewHeight, loadingViewHeight);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -512,7 +511,6 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
         animator.addListener(new WXRefreshAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                mRefreshing = false;
                 if (moreListener != null) {
                     moreListener.onMore();
                 }
