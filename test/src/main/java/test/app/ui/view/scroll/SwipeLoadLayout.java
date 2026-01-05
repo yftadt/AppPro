@@ -56,6 +56,8 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
     // Drag Action
     private int mCurrentAction = -1;
     private boolean isConfirm = false;
+    //true 开启刷新数据，加载更多数据
+    private boolean isOpenRefresh, isOpenMore;
 
     public SwipeLoadLayout(@NonNull Context context) {
         super(context);
@@ -334,6 +336,9 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
         }
 
         if (!canChildScrollUp() && mCurrentAction == LOAD_REFRESH) {
+            if (!isOpenRefresh) {
+                return false;
+            }
             // Pull Refresh
             LayoutParams lp = (LayoutParams) mHeaderView.getLayoutParams();
             lp.height += distanceY;
@@ -352,6 +357,9 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
             moveTargetView(lp.height);
             return true;
         } else if (!canChildScrollDown() && mCurrentAction == LOAD_MORE) {
+            if (!isOpenMore) {
+                return false;
+            }
             // Load more
             LayoutParams lp = (LayoutParams) mFooterView.getLayoutParams();
             lp.height -= distanceY;
@@ -394,6 +402,9 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
         LayoutParams lp;
         switch (mCurrentAction) {
             case LOAD_REFRESH:
+                if (!isOpenRefresh) {
+                    break;
+                }
                 lp = (LayoutParams) mHeaderView.getLayoutParams();
                 Logx.d(tag + " 刷新数据：height=" + lp.height + " 阈值=" + refreshViewHeight);
                 if (lp.height >= refreshViewHeight) {
@@ -407,6 +418,9 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
                 }
                 break;
             case LOAD_MORE:
+                if (!isOpenMore) {
+                    break;
+                }
                 lp = (LayoutParams) mFooterView.getLayoutParams();
                 Logx.d(tag + " 加载更多：height=" + lp.height + " 阈值=" + refreshViewHeight);
                 if (lp.height >= loadingViewHeight) {
