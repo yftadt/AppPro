@@ -91,10 +91,17 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
         loadingViewHeight = context.getResources().getDimensionPixelOffset(R.dimen.dp_50);
     }
 
+    public void setOpenRefresh(boolean isOpenRefresh) {
+        this.isOpenRefresh = isOpenRefresh;
+    }
+
+    public void setOpenMore(boolean isOpenMore) {
+        this.isOpenMore = isOpenMore;
+    }
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (!isEnabled() || canChildScrollUp()
-                || mRefreshing || mNestedScrollInProgress) {
+        if (!isEnabled() || canChildScrollUp() || mRefreshing || mNestedScrollInProgress) {
             // Fail fast if we're not in a state where a swipe is possible
             //当前状态还不具备进行滑动操作的条件
             return false;
@@ -150,16 +157,13 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
     }
 
     @Override
-    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed,
-                                        int dyUnconsumed, int[] offsetInWindow) {
-        return mNestedScrollingChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed,
-                dxUnconsumed, dyUnconsumed, offsetInWindow);
+    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int[] offsetInWindow) {
+        return mNestedScrollingChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow);
     }
 
     @Override
     public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow) {
-        return mNestedScrollingChildHelper.dispatchNestedPreScroll(
-                dx, dy, consumed, offsetInWindow);
+        return mNestedScrollingChildHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow);
     }
 
 
@@ -177,8 +181,7 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
 
 
     @Override
-    public boolean onNestedPreFling(View target, float velocityX,
-                                    float velocityY) {
+    public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
         if (isNestedScrollingEnabled()) {
             return dispatchNestedPreFling(velocityX, velocityY);
         }
@@ -186,8 +189,7 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
     }
 
     @Override
-    public boolean onNestedFling(View target, float velocityX, float velocityY,
-                                 boolean consumed) {
+    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
         if (isNestedScrollingEnabled()) {
             return dispatchNestedFling(velocityX, velocityY, consumed);
         }
@@ -196,8 +198,7 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
 
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-        boolean result = isEnabled() && !mRefreshing
-                && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
+        boolean result = isEnabled() && !mRefreshing && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
 
         return result;
     }
@@ -272,13 +273,9 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
         }
 
         if (moveSpinner(-spinnerDy)) {
-            if (!canChildScrollUp()
-                    && mRecyclerView.getTranslationY() > 0
-                    && dy > 0) {
+            if (!canChildScrollUp() && mRecyclerView.getTranslationY() > 0 && dy > 0) {
                 consumed[1] += dy;
-            } else if (!canChildScrollDown()
-                    && mRecyclerView.getTranslationY() < 0
-                    && dy < 0) {
+            } else if (!canChildScrollDown() && mRecyclerView.getTranslationY() < 0 && dy < 0) {
                 consumed[1] += dy;
             } else {
                 consumed[1] += spinnerDy;

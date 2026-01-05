@@ -33,6 +33,7 @@ public class TestRefreshActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(adapter);
         //
+        mSwipeLoadLayout.setOpenMore(true);
         mSwipeLoadLayout.setMoreListener(new SwipeLoadLayout.OnMoreListener() {
             @Override
             public void onMore() {
@@ -51,17 +52,19 @@ public class TestRefreshActivity extends AppCompatActivity {
                 Logx.d("刷新-->onPullingUp 上拉");
             }
         });
+
+        mSwipeLoadLayout.setOpenRefresh(true);
         mSwipeLoadLayout.setRefreshListener(new SwipeLoadLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 Logx.d("刷新-->刷新数据");
-                new Handler().postDelayed(new Runnable() {
+                /*new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         mSwipeLoadLayout.setRefreshEnd();
                         Logx.d("刷新-->刷新数据 完成");
                     }
-                }, 10 * 1000);
+                }, 10 * 1000);*/
             }
 
             @Override
