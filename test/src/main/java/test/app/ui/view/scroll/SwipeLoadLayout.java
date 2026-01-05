@@ -38,14 +38,14 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
     private OnMoreListener moreListener;
     private ViewParent mNestedScrollAcceptedParent;
 
-    private View mHeaderView,mFooterView;
+    private View mHeaderView, mFooterView;
     private RecyclerView mRecyclerView;
     private String tag = "刷新";
     private static final int INVALID = -1;
-    private static final int PULL_REFRESH = 0;
-    private static final int LOAD_MORE = 1;
+    private static final int LOAD_REFRESH = 0;//刷新
+    private static final int LOAD_MORE = 1;//加载更多
 
-    // Is Refreshing
+    //true 正在加载中
     volatile private boolean mRefreshing = false;
 
     // RefreshView Height
@@ -259,7 +259,7 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
 
         if (!isConfirm) {
             if (spinnerDy < 0 && !canChildScrollUp()) {
-                mCurrentAction = PULL_REFRESH;
+                mCurrentAction = LOAD_REFRESH;
                 isConfirm = true;
             } else if (spinnerDy > 0 && !canChildScrollDown() && (!mRefreshing)) {
                 mCurrentAction = LOAD_MORE;
@@ -333,7 +333,7 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
             return false;
         }
 
-        if (!canChildScrollUp() && mCurrentAction == PULL_REFRESH) {
+        if (!canChildScrollUp() && mCurrentAction == LOAD_REFRESH) {
             // Pull Refresh
             LayoutParams lp = (LayoutParams) mHeaderView.getLayoutParams();
             lp.height += distanceY;
@@ -387,35 +387,40 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
      * 决定采取“刷新”或“加载更多”操作。
      */
     private void handlerAction() {
-
         if (isRefreshing()) {
             return;
         }
         isConfirm = false;
         LayoutParams lp;
-        if (mCurrentAction == PULL_REFRESH) {
-            lp = (LayoutParams) mHeaderView.getLayoutParams();
-            Logx.d(tag + " 刷新数据：height=" + lp.height + " 阈值=" + refreshViewHeight);
-            if (lp.height >= refreshViewHeight) {
-                startRefresh(lp.height);
-            } else if (lp.height > 0) {
-                resetHeaderView(lp.height);
-            } else {
-                resetRefreshState();
-            }
+        switch (mCurrentAction) {
+            case LOAD_REFRESH:
+                lp = (LayoutParams) mHeaderView.getLayoutParams();
+                Logx.d(tag + " 刷新数据：height=" + lp.height + " 阈值=" + refreshViewHeight);
+                if (lp.height >= refreshViewHeight) {
+                    //去刷新数据
+                    startRefresh(lp.height);
+                } else if (lp.height > 0) {
+                    //回弹动画
+                    resetHeaderView(lp.height);
+                } else {
+                    resetRefreshState();
+                }
+                break;
+            case LOAD_MORE:
+                lp = (LayoutParams) mFooterView.getLayoutParams();
+                Logx.d(tag + " 加载更多：height=" + lp.height + " 阈值=" + refreshViewHeight);
+                if (lp.height >= loadingViewHeight) {
+                    //去加载更多数据
+                    startLoadmore(lp.height);
+                } else if (lp.height > 0) {
+                    //回弹动画
+                    resetFootView(lp.height);
+                } else {
+                    resetLoadmoreState();
+                }
+                break;
         }
 
-        if (mCurrentAction == LOAD_MORE) {
-            lp = (LayoutParams) mFooterView.getLayoutParams();
-            Logx.d(tag + " 加载更多：height=" + lp.height + " 阈值=" + refreshViewHeight);
-            if (lp.height >= loadingViewHeight) {
-                startLoadmore(lp.height);
-            } else if (lp.height > 0) {
-                resetFootView(lp.height);
-            } else {
-                resetLoadmoreState();
-            }
-        }
     }
 
     /**
@@ -617,7 +622,7 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
      * Callback on refresh finish
      */
     public void finishPullRefresh() {
-        if (mCurrentAction == PULL_REFRESH) {
+        if (mCurrentAction == LOAD_REFRESH) {
             resetHeaderView(mHeaderView == null ? 0 : mHeaderView.getMeasuredHeight());
         }
     }
