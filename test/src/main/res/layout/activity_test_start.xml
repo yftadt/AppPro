@@ -36,7 +36,7 @@
 
 
 
-        <test.app.ui.view.text.ExpansionRl
+        <test.app.ui.view.text.video.ExpansionRlVideo
             android:id="@+id/tv_test3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

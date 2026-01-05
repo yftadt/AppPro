@@ -9,6 +9,22 @@ import android.text.TextUtils;
  */
 public class StringUtile {
     /**
+     * 去调换行符
+     *
+     * @param str
+     * @return
+     */
+    public static String setDelLine(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return "";
+        }
+        str = str.replace("<p>", "");
+        str = str.replace("</p>", "");
+        str = str.replace("<br>", "");
+        str = str.replace("\n", "");
+        return str;
+    }
+    /**
      * 验证手机号的合法性
      *
      * @param phone 手机号

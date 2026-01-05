@@ -22,7 +22,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-
 import com.igexin.sdk.PushManager;
 import com.library.baseui.utile.HandlerUtil;
 import com.library.baseui.utile.app.ActivityUtile;
@@ -31,6 +30,7 @@ import com.library.baseui.utile.file.FileTypeUtil2;
 import com.library.baseui.utile.file.FileUtile;
 import com.library.baseui.utile.img.ImageLoadingUtile;
 import com.library.baseui.utile.time.DateUtile;
+import com.library.baseui.utile.toast.ToastUtile;
 
 import sj.mblog.Logx;
 import test.app.ui.activity.R;
@@ -46,8 +46,8 @@ import test.app.ui.activity.action.NormalActionBar;
 import test.app.ui.bean.Test;
 import test.app.ui.getui.PushIntentService;
 import test.app.ui.getui.PushService;
-import test.app.ui.view.text.ExpansionRl;
 import test.app.ui.view.down.CodeEditLayout;
+import test.app.ui.view.text.video.ExpansionRlVideo;
 import test.app.utiles.WMViewMaanger;
 import test.app.utiles.other.DLog;
 
@@ -165,7 +165,14 @@ public class TestStartActivity extends NormalActionBar {
         test23();
         String str = "qwertyuiopasdfghjklzxcvbnm789456123qwertyuiopasdfghjklzxcvbnm789456123qwertyuiopasdfghjklzxcvbnm789456123qwertyuiopasdfghjklzxcvbnm789456123qwer";
         //
-        ExpansionRl tvTest3 = (ExpansionRl) findViewById(R.id.tv_test3);
+        ExpansionRlVideo tvTest3 = (ExpansionRlVideo) findViewById(R.id.tv_test3);
+        tvTest3.setOnExpandClick(new ExpansionRlVideo.OnExpandClick() {
+            @Override
+            public void onExpandClick() {
+                ToastUtile.showToast("点击");
+            }
+        });
+        tvTest3.setExtra("展开", "关闭");
         tvTest3.setMsg(str);
 
     }
@@ -282,7 +289,7 @@ public class TestStartActivity extends NormalActionBar {
             ActivityUtile.startActivityCommon(ElementAnimationActivity.class);
             return;
         }
-        if(id==R.id.pageview_2_btn){
+        if (id == R.id.pageview_2_btn) {
             //ViewPage 研究
             ActivityUtile.startActivityCommon(TestPageActivity.class);
             return;
