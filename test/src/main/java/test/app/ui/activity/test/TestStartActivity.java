@@ -151,6 +151,7 @@ public class TestStartActivity extends NormalActionBar {
         findViewById(R.id.delineate_btn).setOnClickListener(this);
         findViewById(R.id.ys_btn).setOnClickListener(this);
         findViewById(R.id.pageview_2_btn).setOnClickListener(this);
+        findViewById(R.id.refresh_btn).setOnClickListener(this);
 
         //
         DateUtile.testLog();
@@ -202,6 +203,11 @@ public class TestStartActivity extends NormalActionBar {
     public void onClick(View v) {
         super.onClick(v);
         int id = v.getId();
+        if (id == R.id.refresh_btn) {
+            //刷新
+            ActivityUtile.startActivityCommon(TestRefreshActivity.class);
+            return;
+        }
         if (id == R.id.test_iv) {
             //重新加载图‘
             ImageLoadingUtile.loadImageTest(this, img, R.mipmap.ic_launcher, testIv);

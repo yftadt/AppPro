@@ -88,7 +88,11 @@
             android:text="123\njljlkjlkjlk"
             android:textColor="#333333"
             android:textSize="14sp" />
-
+        <Button
+            android:id="@+id/refresh_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="刷新" />
         <Button
             android:id="@+id/delineate_btn"
             android:layout_width="match_parent"

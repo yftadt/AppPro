@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test.app.ui.view.scroll.SwipeLoadLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe_load_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/refresh_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+        <TextView
+            android:id="@+id/tv"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_50"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="refreshing"
+            android:textColor="@color/colorAccent"
+            android:textSize="18dp" />
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:id="@+id/load_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="bottom">
+
+        <TextView
+            android:id="@+id/tv_2"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_50"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="loading_more"
+            android:textColor="@color/colorAccent"
+            android:textSize="18dp" />
+    </RelativeLayout>
+
+</test.app.ui.view.scroll.SwipeLoadLayout>
