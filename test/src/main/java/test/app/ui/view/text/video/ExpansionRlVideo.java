@@ -271,6 +271,7 @@ public class ExpansionRlVideo extends RelativeLayout {
         setReset();
         Spanned html2 = Html.fromHtml(msg, Html.FROM_HTML_MODE_LEGACY);
         tvMsgM.setText(html2);
+        //test(msg);
         tvMsgM.post(new Runnable() {
             @Override
             public void run() {
@@ -295,19 +296,21 @@ public class ExpansionRlVideo extends RelativeLayout {
         void onExpandClick();
     }
 
-    private void test(){
-        SpannableString spannableString = new SpannableString("你的文本内容");
+    private void test(String msg) {
+        SpannableString spannableString = new SpannableString(msg);
         StaticLayout staticLayout = new StaticLayout(spannableString,
                 new TextPaint(), tvMsgText.getWidth(),
                 Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f,
                 false);
 
         int lineCount = staticLayout.getLineCount();
+        Logx.d("文案 test", lineCount);
         if (lineCount > 0) {
-            int lastLineStart = staticLayout.getLineStart(lineCount - 1);
-            int lastLineEnd = staticLayout.getLineEnd(lineCount - 1);
+            int lineLast = lineCount - 1;
+            int lastLineStart = staticLayout.getLineStart(lineLast );
+            int lastLineEnd = staticLayout.getLineEnd(lineLast);
             String lastLineText = spannableString.toString().substring(lastLineStart, lastLineEnd);
-            Logx.d("LastLine", lastLineText);
+            Logx.d("文案 test最后一行", lastLineText);
         }
 
     }
