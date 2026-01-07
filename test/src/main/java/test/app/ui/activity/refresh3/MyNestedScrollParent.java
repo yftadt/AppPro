@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.core.view.NestedScrollingParent;
 import androidx.core.view.NestedScrollingParentHelper;
 
+import sj.mblog.Logx;
+
 /**
  * Created by wangjitao on 2017/2/14 0014.
  * E-Mail：543441727@qq.com
@@ -85,10 +87,11 @@ public class MyNestedScrollParent extends LinearLayout implements NestedScrollin
     }
 
     //先于child滚动
-    //前3个为输入参数，最后一个是输出参数
+    //前3个为输入参数，最后一个是输出参数  (dy<0 手指向上滑动)  (dy>0 手指向下滑动)
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         if (showImg(dy) || hideImg(dy)) {//如果需要显示或隐藏图片，即需要自己(parent)滚动
+            //dy：垂直滚动偏移量（规则：正数 = 内容向上滚，负数 = 内容向下滚）
             scrollBy(0, -dy);//滚动
             consumed[1] = dy;//告诉child我消费了多少
         }
@@ -120,7 +123,10 @@ public class MyNestedScrollParent extends LinearLayout implements NestedScrollin
     //下拉的时候是否要向下滚动以显示图片
     public boolean showImg(int dy) {
         if (dy > 0) {
-            if (getScrollY() > 0 && myNestedScrollChild.getScrollY() == 0) {
+            int scrollY = getScrollY();
+            int childScrollY = myNestedScrollChild.getScrollY();
+            Logx.d("下拉滚动位置：scrollY=" + scrollY + " childScrollY=" + childScrollY);
+            if (scrollY > 0 && childScrollY == 0) {
                 return true;
             }
         }
@@ -131,7 +137,9 @@ public class MyNestedScrollParent extends LinearLayout implements NestedScrollin
     //上拉的时候，是否要向上滚动，隐藏图片
     public boolean hideImg(int dy) {
         if (dy < 0) {
-            if (getScrollY() < imgHeight) {
+            int scrollY = getScrollY();
+            Logx.d("上拉滚动位置：scrollY=" + scrollY + " imgHeight=" + imgHeight);
+            if (scrollY < imgHeight) {
                 return true;
             }
         }
