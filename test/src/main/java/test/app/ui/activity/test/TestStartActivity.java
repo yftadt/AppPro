@@ -44,6 +44,7 @@ import test.app.net.socket.TcpTimeoutExample;
 import test.app.ui.activity.MainActivity;
 import test.app.ui.activity.action.NormalActionBar;
 import test.app.ui.activity.refresh3.TestRefreshActivity3;
+import test.app.ui.activity.refresh4.TestRefreshActivity4;
 import test.app.ui.bean.Test;
 import test.app.ui.getui.PushIntentService;
 import test.app.ui.getui.PushService;
@@ -208,7 +209,8 @@ public class TestStartActivity extends NormalActionBar {
             //刷新
             // ActivityUtile.startActivityCommon(TestRefreshActivity.class);
             //ActivityUtile.startActivityCommon(TestRefreshActivity2.class);
-            ActivityUtile.startActivityCommon(TestRefreshActivity3.class);
+            //ActivityUtile.startActivityCommon(TestRefreshActivity3.class);
+            ActivityUtile.startActivityCommon(TestRefreshActivity4.class);
 
             return;
         }
