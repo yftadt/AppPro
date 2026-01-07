@@ -91,6 +91,9 @@
         <activity
             android:name=".test.TestRefreshActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".refresh.TestRefreshActivity2"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".test.Test3DActivity"
