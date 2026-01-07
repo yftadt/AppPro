@@ -61,18 +61,10 @@ public class ElemeDetailView extends LinearLayout implements NestedScrollingPare
         super.onMeasure(widthMeasureSpec, newHeightMeasureSpec);
     }
 
-    public void setListener(Listener listener) {
-        this.listener = listener;
-    }
-
-    public interface Listener {
-        void onContentPostionChanged(float fraction);
-    }
-
-//以下：NestedScrollingParent接口------------------------------
-
+    //以下：NestedScrollingParent接口------------------------------
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
+        //返回true 表示要配合子view做出响应
         return true;
     }
 
@@ -80,7 +72,6 @@ public class ElemeDetailView extends LinearLayout implements NestedScrollingPare
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         float supposeY = contentView.getY() - dy;//希望edv_content移动到的位置
-
         //往上滑,y的边界为titleHeight
         if (dy > 0) {
             if (supposeY >= titleHeight) {
@@ -112,10 +103,10 @@ public class ElemeDetailView extends LinearLayout implements NestedScrollingPare
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
 
+
     }
 
-//以下：NestedScrollingParent接口的其他方法
-
+    //以下：NestedScrollingParent接口的其他方法
     @Override
     public void onNestedScrollAccepted(View child, View target, int nestedScrollAxes) {
         helper.onNestedScrollAccepted(child, target, nestedScrollAxes);
@@ -139,5 +130,14 @@ public class ElemeDetailView extends LinearLayout implements NestedScrollingPare
     @Override
     public int getNestedScrollAxes() {
         return helper.getNestedScrollAxes();
+    }
+
+    //
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
+
+    public interface Listener {
+        void onContentPostionChanged(float fraction);
     }
 }
