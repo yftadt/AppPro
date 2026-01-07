@@ -1,4 +1,4 @@
-package test.app.ui.activity.test;
+package test.app.ui.activity.refresh;
 
 
 import android.os.Bundle;
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import sj.mblog.Logx;
 import test.app.ui.activity.R;
 import test.app.ui.adapter.test.TestRefreshAdapter;
-import test.app.ui.view.scroll.SwipeLoadLayout;
 
 //刷新
 public class TestRefreshActivity extends AppCompatActivity {

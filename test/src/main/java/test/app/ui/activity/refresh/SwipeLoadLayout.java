@@ -1,4 +1,4 @@
-package test.app.ui.view.scroll;
+package test.app.ui.activity.refresh;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;

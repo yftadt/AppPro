@@ -1,4 +1,4 @@
-package test.app.ui.activity.refresh;
+package test.app.ui.activity.refresh2;
 
 
 import android.os.Bundle;

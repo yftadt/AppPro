@@ -89,10 +89,13 @@
             android:name=".test.TestVideoScanActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".test.TestRefreshActivity"
+            android:name=".refresh.TestRefreshActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".refresh.TestRefreshActivity2"
+            android:name=".refresh2.TestRefreshActivity2"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".refresh3.TestRefreshActivity3"
             android:screenOrientation="portrait"/>
 
         <activity
