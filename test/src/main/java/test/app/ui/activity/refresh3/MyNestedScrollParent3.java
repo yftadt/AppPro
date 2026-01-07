@@ -20,19 +20,19 @@ import sj.mblog.Logx;
  * 嵌套滑动机制父View
  */
 
-public class MyNestedScrollParent extends LinearLayout implements NestedScrollingParent {
+public class MyNestedScrollParent3 extends LinearLayout implements NestedScrollingParent {
     private ImageView imgView;
     private TextView tvView;
-    private MyNestedScrollChild myNestedScrollChild;
+    private MyNestedScrollChild3 myNestedScrollChild;
     private NestedScrollingParentHelper mNestedScrollingParentHelper;
     private int imgHeight;
     private int tvHeight;
 
-    public MyNestedScrollParent(Context context) {
+    public MyNestedScrollParent3(Context context) {
         super(context);
     }
 
-    public MyNestedScrollParent(Context context, AttributeSet attrs) {
+    public MyNestedScrollParent3(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
@@ -47,7 +47,7 @@ public class MyNestedScrollParent extends LinearLayout implements NestedScrollin
         super.onFinishInflate();
         imgView = (ImageView) getChildAt(0);
         tvView = (TextView) getChildAt(1);
-        myNestedScrollChild = (MyNestedScrollChild) getChildAt(2);
+        myNestedScrollChild = (MyNestedScrollChild3) getChildAt(2);
         imgView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -69,7 +69,7 @@ public class MyNestedScrollParent extends LinearLayout implements NestedScrollin
     //在此可以判断参数target是哪一个子view以及滚动的方向，然后决定是否要配合其进行嵌套滚动
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-        if (target instanceof MyNestedScrollChild) {
+        if (target instanceof MyNestedScrollChild3) {
             return true;
         }
         return false;

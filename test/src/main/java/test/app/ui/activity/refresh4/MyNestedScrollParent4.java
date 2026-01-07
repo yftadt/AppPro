@@ -15,10 +15,6 @@ import android.widget.TextView;
 
 import androidx.core.view.NestedScrollingParent;
 import androidx.core.view.NestedScrollingParentHelper;
-
-import test.app.ui.activity.refresh3.MyNestedScrollChild;
-
-
 /**
  * Created by wangjitao on 2017/2/14 0014.
  * E-Mail：543441727@qq.com
@@ -91,7 +87,7 @@ public class MyNestedScrollParent4 extends LinearLayout implements NestedScrolli
     //在此可以判断参数target是哪一个子view以及滚动的方向，然后决定是否要配合其进行嵌套滚动
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-        if (target instanceof MyNestedScrollChild) {
+        if (target instanceof MyNestedScrollChild4) {
             return true;
         }
         return false;

@@ -20,16 +20,16 @@ import sj.mblog.Logx;
  * E-Mil：543441727@qq.com
  */
 
-public class MyNestedScrollChild extends LinearLayout implements NestedScrollingChild {
+public class MyNestedScrollChild3 extends LinearLayout implements NestedScrollingChild {
     private NestedScrollingChildHelper mNestedScrollingChildHelper;
 
 
 
-    public MyNestedScrollChild(Context context) {
+    public MyNestedScrollChild3(Context context) {
         super(context);
     }
 
-    public MyNestedScrollChild(Context context, AttributeSet attrs) {
+    public MyNestedScrollChild3(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
     private int showHeight;
