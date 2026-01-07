@@ -182,19 +182,28 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
     }
 
     //----
+    /**
+     * @param dx       水平滑动距离
+     * @param dy       垂直滑动距离
+     * @param consumed 父类消耗掉的距离
+     *@param   offsetInWindow    父 view 位置的偏移量
+     * @return
+     */
     @Override
     public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow) {
         //触摸滚动之前
         //在滑动事件产生但是子 view 还没处理前可以调用
         //这个方法把事件传给父 view 这样父 view 就能在onNestedPreScroll 方法里面收到子 view 的滑动信息，
         //然后做出相应的处理把处理完后的结果通过 consumed 传给子 view。
+        //true :表示父view消费了滚动
         Logx.d(tag + "6-->dispatchNestedPreScroll 触摸滚动之前");
         return mNestedScrollingChildHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow);
     }
-
+    //前四个参数为输入参数，用于告诉父view已经消费和尚未消费的距离，最后一个参数为输出参数，用于子view获取父view位置的偏移量
     @Override
     public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int[] offsetInWindow) {
         //触摸滚动
+        //在子 view 自己进行滚动之后调用此方法，询问父view是否还要进行余下 (unconsumed) 的滚动。
         Logx.d(tag + "7-->dispatchNestedScroll 触摸滚动");
         return mNestedScrollingChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow);
     }
