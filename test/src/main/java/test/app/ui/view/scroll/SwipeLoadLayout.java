@@ -27,6 +27,13 @@ import java.util.List;
 import sj.mblog.Logx;
 import test.app.ui.activity.R;
 
+/**
+ * 嵌套滚动（子 -> 父）
+ * 1.startNestedScroll       ->  onStartNestedScroll,onNestedScrollAccepted
+ * 2.dispatchNestedPreScroll ->  onNestedPreScroll
+ * 3.dispatchNestedScroll    ->  onNestedScroll
+ * 4.stopNestedScroll        ->  onStopNestedScroll
+ */
 public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParent, NestedScrollingChild {
 
     private NestedScrollingParentHelper mNestedScrollingParentHelper;
@@ -104,26 +111,22 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
         if (!isEnabled() || canChildScrollUp() || mRefreshing || mNestedScrollInProgress) {
             // Fail fast if we're not in a state where a swipe is possible
             //当前状态还不具备进行滑动操作的条件
+            // Logx.d(tag + " onInterceptTouchEvent false");
             return false;
         }
+        //Logx.d(tag + " onInterceptTouchEvent super");
         return super.onInterceptTouchEvent(ev);
     }
 
 
     /*********************************** NestedScrollingChild *************************************/
     @Override
-    public void setNestedScrollingEnabled(boolean enabled) {
-        mNestedScrollingChildHelper.setNestedScrollingEnabled(enabled);
-    }
-
-    @Override
-    public boolean isNestedScrollingEnabled() {
-        return mNestedScrollingChildHelper.isNestedScrollingEnabled();
-    }
-
-    @Override
     public boolean startNestedScroll(int axes) {
+        //开始一个嵌套滚动。如果当前视图可以处理嵌套滚动，则返回true
+        //实质上是寻找能够配合 child 进行嵌套滚动的 parent
+        //父 view 会收到,会执行 onStartNestedScroll
         boolean result = mNestedScrollingChildHelper.startNestedScroll(axes);
+        Logx.d(tag + "1-->startNestedScroll axes=" + axes, "开始一个嵌套滚动。如果当前视图可以处理嵌套滚动，则返回true");
         if (result) {
             if (mNestedScrollAcceptedParent == null) {
                 ViewParent parent = this.getParent();
@@ -140,58 +143,100 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
                 }
             }
         }
+        //在子 view 需要滑动的时候例如 ACTION_DOWN 的时候就要调用
         return result;
     }
 
     @Override
     public void stopNestedScroll() {
+        //停止嵌套滚动
+        Logx.d(tag + "2-->stopNestedScroll 停止嵌套滚动");
         mNestedScrollingChildHelper.stopNestedScroll();
         if (mNestedScrollAcceptedParent != null) {
             mNestedScrollAcceptedParent = null;
         }
     }
 
+    //-----
+    @Override
+    public void setNestedScrollingEnabled(boolean enabled) {
+        //设置是否能够滑动
+        Logx.d(tag + "3-->setNestedScrollingEnabled enabled=" + enabled + " 设置是否能够滑动");
+        mNestedScrollingChildHelper.setNestedScrollingEnabled(enabled);
+    }
+
+    @Override
+    public boolean isNestedScrollingEnabled() {
+        //返回是否能够滑动
+        boolean isEnabled = mNestedScrollingChildHelper.isNestedScrollingEnabled();
+        Logx.d(tag + "4-->isNestedScrollingEnabled enabled=" + isEnabled + " 返回是否能够滑动");
+        return isEnabled;
+    }
+
+    //-----
     @Override
     public boolean hasNestedScrollingParent() {
-        return mNestedScrollingChildHelper.hasNestedScrollingParent();
+        boolean hasParent = mNestedScrollingChildHelper.hasNestedScrollingParent();
+        Logx.d(tag + "5-->hasNestedScrollingParent hasParent=" + hasParent);
+        return hasParent;
+    }
+
+    //----
+    @Override
+    public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow) {
+        //触摸滚动之前
+        //在滑动事件产生但是子 view 还没处理前可以调用
+        //这个方法把事件传给父 view 这样父 view 就能在onNestedPreScroll 方法里面收到子 view 的滑动信息，
+        //然后做出相应的处理把处理完后的结果通过 consumed 传给子 view。
+        Logx.d(tag + "6-->dispatchNestedPreScroll 触摸滚动之前");
+        return mNestedScrollingChildHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow);
     }
 
     @Override
     public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int[] offsetInWindow) {
+        //触摸滚动
+        Logx.d(tag + "7-->dispatchNestedScroll 触摸滚动");
         return mNestedScrollingChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow);
     }
 
+    //----
     @Override
-    public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow) {
-        return mNestedScrollingChildHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow);
+    public boolean dispatchNestedPreFling(float velocityX, float velocityY) {
+        //惯性滚动之前
+        Logx.d(tag + "8-->dispatchNestedPreFling 惯性滚动之前");
+        return mNestedScrollingChildHelper.dispatchNestedPreFling(velocityX, velocityY);
     }
-
 
     @Override
     public boolean dispatchNestedFling(float velocityX, float velocityY, boolean consumed) {
+        //惯性滚动
+        Logx.d(tag + "9-->dispatchNestedFling 惯性滚动");
         return mNestedScrollingChildHelper.dispatchNestedFling(velocityX, velocityY, consumed);
     }
 
-    @Override
-    public boolean dispatchNestedPreFling(float velocityX, float velocityY) {
-        return mNestedScrollingChildHelper.dispatchNestedPreFling(velocityX, velocityY);
-    }
 
     /*********************************** NestedScrollParent *************************************/
 
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
+        //开始嵌套滚动的回调
         boolean result = isEnabled() && !mRefreshing && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
+        Logx.d(tag + "100===onStartNestedScroll result=" + result + " 开始嵌套滚动的回调");
+        //返回true 表示要配合子view做出响应
         return result;
     }
+
     @Override
     public void onNestedScrollAccepted(View child, View target, int axes) {
+        //接受滚动
+        Logx.d(tag + "101===onNestedScrollAccepted 接受滚动");
         mNestedScrollingParentHelper.onNestedScrollAccepted(child, target, axes);
         if (isNestedScrollingEnabled()) {
             startNestedScroll(axes & ViewCompat.SCROLL_AXIS_VERTICAL);
             mNestedScrollInProgress = true;
         }
     }
+
     /**
      * Callback on TouchEvent.ACTION_CANCLE or TouchEvent.ACTION_UP
      * handler : refresh or loading
@@ -200,6 +245,8 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
      */
     @Override
     public void onStopNestedScroll(View child) {
+        //本次滑动结束
+        Logx.d(tag + "102===onStopNestedScroll 本次滑动结束");
         mNestedScrollingParentHelper.onStopNestedScroll(child);
         handlerAction();
         if (isNestedScrollingEnabled()) {
@@ -208,19 +255,8 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
         }
     }
 
-    @Override
-    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-        if (isNestedScrollingEnabled()) {
-            dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, mParentOffsetInWindow);
-        }
-    }
-    @Override
-    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
-        if (isNestedScrollingEnabled()) {
-            return dispatchNestedFling(velocityX, velocityY, consumed);
-        }
-        return false;
-    }
+    //---------
+
 
     /**
      * With child view to processing move events
@@ -232,6 +268,9 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
      */
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
+        //在子视图消费滚动之前调用
+        //做出相应的处理把处理完后的结果通过 consumed 传给子 view。
+        Logx.d(tag + "103===onNestedPreScroll ：在子视图消费滚动之前调用");
         // Now let our nested parent consume the leftovers
         final int[] parentConsumed = mParentScrollConsumed;
         if (isNestedScrollingEnabled()) {
@@ -293,7 +332,19 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
     }
 
     @Override
+    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+        //处理嵌套滚动事件。
+        Logx.d(tag + "104===onNestedScroll  处理嵌套滚动事件。");
+        if (isNestedScrollingEnabled()) {
+            dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, mParentOffsetInWindow);
+        }
+    }
+    //------------
+
+    @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
+        //当惯性嵌套滚动时被调用之前
+        Logx.d(tag + "105onNestedPreFling 当惯性嵌套滚动时被调用之前");
         if (isNestedScrollingEnabled()) {
             return dispatchNestedPreFling(velocityX, velocityY);
         }
@@ -301,7 +352,19 @@ public class SwipeLoadLayout extends FrameLayout implements NestedScrollingParen
     }
 
     @Override
+    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
+        //当惯性嵌套滚动时被调用
+        Logx.d(tag + "106===onNestedFling 当惯性嵌套滚动时被调用");
+        if (isNestedScrollingEnabled()) {
+            return dispatchNestedFling(velocityX, velocityY, consumed);
+        }
+        return false;
+    }
+
+
+    @Override
     public int getNestedScrollAxes() {
+        Logx.d(tag + "107getNestedScrollAxes ");
         return mNestedScrollingParentHelper.getNestedScrollAxes();
     }
 
