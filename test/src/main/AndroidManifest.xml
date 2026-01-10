@@ -101,7 +101,11 @@
             android:name=".refresh4.TestRefreshActivity4"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".refresh.TestRefreshActivity5"
+            android:name=".refresh5.TestRefreshActivity5"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".refresh.TestRefreshActivity1"
             android:screenOrientation="portrait"/>
 
         <activity

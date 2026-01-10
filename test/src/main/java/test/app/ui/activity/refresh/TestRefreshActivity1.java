@@ -16,14 +16,14 @@ import test.app.ui.activity.R;
 import test.app.ui.adapter.test.TestRefreshAdapter;
 
 //刷新
-public class TestRefreshActivity5 extends AppCompatActivity {
+public class TestRefreshActivity1 extends AppCompatActivity {
     private RecyclerView mRecyclerView;
      private RefreshLayoutRl refreshLayoutRl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_refresh_5);
+        setContentView(R.layout.activity_test_refresh_1);
         View swipeLoadView = findViewById(R.id.swipe_load_layout);
 
         if (swipeLoadView instanceof RefreshLayoutRl) {
