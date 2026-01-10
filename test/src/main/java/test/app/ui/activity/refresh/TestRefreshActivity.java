@@ -3,6 +3,7 @@ package test.app.ui.activity.refresh;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,14 +24,28 @@ public class TestRefreshActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_refresh);
-        mSwipeLoadLayout = (SwipeLoadLayout) findViewById(R.id.swipe_load_layout);
-        mRecyclerView = mSwipeLoadLayout.findViewById(R.id.recyler_view);
+        View swipeLoadView = findViewById(R.id.swipe_load_layout);
+        if (swipeLoadView instanceof SwipeLoadLayout) {
+            mSwipeLoadLayout = (SwipeLoadLayout) swipeLoadView;
+        }
+
+        mRecyclerView = findViewById(R.id.recyler_view);
         //
         TestRefreshAdapter adapter = new TestRefreshAdapter(getItems());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(adapter);
+        //
+        setSwipeLoad();
+
+    }
+
+    private void setSwipeLoad() {
+        //下拉刷新和加载更多
+        if (mSwipeLoadLayout == null) {
+            return;
+        }
         //
         mSwipeLoadLayout.setOpenMore(true);
         mSwipeLoadLayout.setMoreListener(new SwipeLoadLayout.OnMoreListener() {
@@ -51,7 +66,7 @@ public class TestRefreshActivity extends AppCompatActivity {
                 Logx.d("刷新-->onPullingUp 上拉");
             }
         });
-
+        //
         mSwipeLoadLayout.setOpenRefresh(true);
         mSwipeLoadLayout.setRefreshListener(new SwipeLoadLayout.OnRefreshListener() {
             @Override
@@ -72,6 +87,8 @@ public class TestRefreshActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     private ArrayList<String> getItems() {
         ArrayList<String> datas = new ArrayList<String>();
