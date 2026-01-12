@@ -9,7 +9,10 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.Size;
 import androidx.core.view.NestedScrollingChild;
+import androidx.core.view.NestedScrollingChildHelper;
 import androidx.core.view.NestedScrollingParent;
 import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
@@ -17,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import sj.mblog.Logx;
 import test.app.ui.activity.R;
+import test.app.ui.activity.refresh6.qrefreshlayout.listener.TargetHandler;
 
 /**
  * 嵌套滚动（子 -> 父）
@@ -25,7 +29,7 @@ import test.app.ui.activity.R;
  * 3.dispatchNestedScroll    ->  onNestedScroll
  * 4.stopNestedScroll        ->  onStopNestedScroll
  */
-public class MyNestedScrollParent51 extends LinearLayout implements NestedScrollingParent {
+public class MyNestedScrollParent51 extends LinearLayout implements NestedScrollingChild, NestedScrollingParent {
     public MyNestedScrollParent51(Context context) {
         super(context);
     }
@@ -38,9 +42,11 @@ public class MyNestedScrollParent51 extends LinearLayout implements NestedScroll
     private int mTouchSlop;
 
     private NestedScrollingParentHelper mNestedScrollingParentHelper;
+    private NestedScrollingChildHelper mNestedChildHelper;
 
     private void init() {
         mNestedScrollingParentHelper = new NestedScrollingParentHelper(this);
+        mNestedChildHelper = new NestedScrollingChildHelper(this);
         mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
         //true 启用联动
         setNestedScrollingEnabled(true);
@@ -82,6 +88,7 @@ public class MyNestedScrollParent51 extends LinearLayout implements NestedScroll
 
     private RecyclerView recyclerView;
 
+    //##==========================NestedScrollingParent=======================
     //
     //在此可以判断参数target是哪一个子view以及滚动的方向，然后决定是否要配合其进行嵌套滚动
     //返回true 表示要配合子view做出响应
@@ -96,10 +103,11 @@ public class MyNestedScrollParent51 extends LinearLayout implements NestedScroll
         return result;
     }
 
-    //接受滚动
+    // 接受滚动
     @Override
     public void onNestedScrollAccepted(View child, View target, int nestedScrollAxes) {
         mNestedScrollingParentHelper.onNestedScrollAccepted(child, target, nestedScrollAxes);
+        startNestedScroll(nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL);
     }
 
     //本次滑动结束
@@ -142,9 +150,10 @@ public class MyNestedScrollParent51 extends LinearLayout implements NestedScroll
         if (newHeight > headViewHeight) {
             newHeight = headViewHeight;
         }
-        lp.height = newHeight;
-        rlLoad.setLayoutParams(lp);
+        /*lp.height = newHeight;
+        rlLoad.setLayoutParams(lp);*/
         consumed[1] = dy;//告诉child我消费了多少
+        setTargetViewOffset(newHeight);
         Logx.d("父类:" + " 1向下滑动 tempHeight=" + tempHeight + " dy=" + dy + " newHeight=" + newHeight + " headViewHeight=" + headViewHeight);
     }
 
@@ -164,12 +173,20 @@ public class MyNestedScrollParent51 extends LinearLayout implements NestedScroll
         if (newHeight < 0) {
             newHeight = 0;
         }
-        lp.height = newHeight;
-        rlLoad.setLayoutParams(lp);
+        /*lp.height = newHeight;
+        rlLoad.setLayoutParams(lp);*/
         consumed[1] = dy;//告诉child我消费了多少
+        setTargetViewOffset(newHeight);
         Logx.d("父类:" + " 2向上滑动 tempHeight=" + tempHeight + " dy=" + dy + " newHeight=" + newHeight);
     }
 
+    //设置偏移，否则会出现抖动
+    private void setTargetViewOffset(float dis) {
+        if (recyclerView != null) {
+            recyclerView.setTranslationY(dis);
+        }
+
+    }
     // scrollBy内部会调用scrollTo
     // 限制滚动范围
     //y：垂直滚动偏移量（规则：正数 = 内容向上滚，负数 = 内容向下滚）
@@ -205,5 +222,54 @@ public class MyNestedScrollParent51 extends LinearLayout implements NestedScroll
     public int getNestedScrollAxes() {
         return mNestedScrollingParentHelper.getNestedScrollAxes();
     }
+    //##==========================NestedScrollingParent  结束=======================
+
+    //##==========================NestedScrollingChild  结束=======================
+
+    @Override
+    public void setNestedScrollingEnabled(boolean enabled) {
+        mNestedChildHelper.setNestedScrollingEnabled(enabled);
+    }
+
+    @Override
+    public boolean isNestedScrollingEnabled() {
+        return mNestedChildHelper.isNestedScrollingEnabled();
+    }
+
+    @Override
+    public boolean startNestedScroll(int axes) {
+        return mNestedChildHelper.startNestedScroll(axes);
+    }
+
+    @Override
+    public void stopNestedScroll() {
+        mNestedChildHelper.stopNestedScroll();
+    }
+
+    @Override
+    public boolean hasNestedScrollingParent() {
+        return mNestedChildHelper.hasNestedScrollingParent();
+    }
+
+    @Override
+    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, @Nullable @Size(value = 2) int[] offsetInWindow) {
+        return mNestedChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow);
+    }
+
+    @Override
+    public boolean dispatchNestedPreScroll(int dx, int dy, @Nullable @Size(value = 2) int[] consumed, @Nullable @Size(value = 2) int[] offsetInWindow) {
+        return mNestedChildHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow);
+    }
+
+    @Override
+    public boolean dispatchNestedFling(float velocityX, float velocityY, boolean consumed) {
+        return mNestedChildHelper.dispatchNestedFling(velocityX, velocityY, consumed);
+    }
+
+    @Override
+    public boolean dispatchNestedPreFling(float velocityX, float velocityY) {
+        return mNestedChildHelper.dispatchNestedPreFling(velocityX, velocityY);
+    }
+    //##==========================NestedScrollingChild  结束=======================
 
 }

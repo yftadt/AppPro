@@ -32,7 +32,7 @@ import test.app.ui.activity.refresh6.qrefreshlayout.widget.classics.HeaderView;
  * @author chqiu
  *         Email:qstumn@163.com
  */
-public class QRefreshLayout extends FrameLayout implements NestedScrollingChild, NestedScrollingParent {
+public class QRefreshLayout extends FrameLayout implements   NestedScrollingParent {
     private RefreshHandler mHandler;
     protected ILoadView mHeaderView;
     protected ILoadView mFooterView;
