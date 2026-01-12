@@ -42,7 +42,8 @@ public class MyNestedScrollParent51 extends LinearLayout implements NestedScroll
     private void init() {
         mNestedScrollingParentHelper = new NestedScrollingParentHelper(this);
         mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
-        setNestedScrollingEnabled(false);
+        //true 启用联动
+        setNestedScrollingEnabled(true);
     }
 
 

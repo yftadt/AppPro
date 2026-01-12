@@ -23,6 +23,16 @@ public class TestRefreshAdapter extends RecyclerView.Adapter<TestRefreshViewHold
         this.items = items;
     }
 
+    public void addData(String data) {
+        items.add(data);
+        notifyDataSetChanged();
+    }
+
+    public void addHead(String data) {
+        items.add(0, data);
+        notifyDataSetChanged();
+    }
+
     @Override
     public TestRefreshViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_test_refresh, parent, false);

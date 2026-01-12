@@ -46,6 +46,9 @@ import test.app.ui.activity.action.NormalActionBar;
 import test.app.ui.activity.refresh3.TestRefreshActivity3;
 import test.app.ui.activity.refresh4.TestRefreshActivity4;
 import test.app.ui.activity.refresh5.TestRefreshActivity5;
+import test.app.ui.activity.refresh6.qrefreshlayoutdemo.TestRefreshActivity61;
+import test.app.ui.activity.refresh6.qrefreshlayoutdemo.TestRefreshActivity62;
+import test.app.ui.activity.refresh6.qrefreshlayoutdemo.TestRefreshActivity63;
 import test.app.ui.bean.Test;
 import test.app.ui.getui.PushIntentService;
 import test.app.ui.getui.PushService;
@@ -211,9 +214,11 @@ public class TestStartActivity extends NormalActionBar {
             // ActivityUtile.startActivityCommon(TestRefreshActivity.class);
             //ActivityUtile.startActivityCommon(TestRefreshActivity1.class);
             //ActivityUtile.startActivityCommon(TestRefreshActivity2.class);
-           // ActivityUtile.startActivityCommon(TestRefreshActivity3.class);
+            // ActivityUtile.startActivityCommon(TestRefreshActivity3.class);
             //ActivityUtile.startActivityCommon(TestRefreshActivity4.class);
-            ActivityUtile.startActivityCommon(TestRefreshActivity5.class);
+             ActivityUtile.startActivityCommon(TestRefreshActivity5.class);
+            //ActivityUtile.startActivityCommon(TestRefreshActivity61.class);
+
 
             return;
         }
