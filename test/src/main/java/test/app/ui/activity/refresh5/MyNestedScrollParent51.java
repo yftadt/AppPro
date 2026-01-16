@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.Size;
@@ -21,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import sj.mblog.Logx;
 import test.app.ui.activity.R;
-import test.app.ui.activity.refresh6.qrefreshlayout.listener.TargetHandler;
 
 /**
  * 嵌套滚动（子 -> 父）
@@ -54,7 +52,7 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
     }
 
 
-    private View rlLoad;
+    private View rlRootLoad;
     //头部高度
     private int headViewHeight = 0;
     private View ivLoad;
@@ -63,7 +61,7 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        rlLoad = findViewById(R.id.rl_load);
+        rlRootLoad = findViewById(R.id.rl_root_load);
         headViewHeight = getContext().getResources().getDimensionPixelSize(R.dimen.dp_80);
         ivLoad = findViewById(R.id.iv_load);
     }
@@ -98,7 +96,7 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
 
     private RecyclerView recyclerView;
 
-    //##==========================NestedScrollingParent=======================
+    //##==========================NestedScrollingParent 开始=======================
     //
     //在此可以判断参数target是哪一个子view以及滚动的方向，然后决定是否要配合其进行嵌套滚动
     //返回true 表示要配合子view做出响应
@@ -155,17 +153,10 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
             consumed[1] = dy;
             return;
         }*/
-        ViewGroup.LayoutParams lp = rlLoad.getLayoutParams();
-        int tempHeight = lp.height;
-        int newHeight = tempHeight + Math.abs(dy);
-        if (newHeight > headViewHeight) {
-            newHeight = headViewHeight;
-        }
-        lp.height = newHeight;
-        rlLoad.setLayoutParams(lp);
+        int newHeight = setViewParams(-dy);
         consumed[1] = dy;//告诉child我消费了多少
-        setTargetViewOffset(newHeight);
-        Logx.d("父类:" + " 1向下滑动 tempHeight=" + tempHeight + " dy=" + dy + " newHeight=" + newHeight + " headViewHeight=" + headViewHeight);
+        //setTargetViewOffset(newHeight);
+        Logx.d("父类:" + " 1向下滑动 "  + " dy=" + dy + " newHeight=" + newHeight + " headViewHeight=" + headViewHeight);
     }
 
     //手指上划 dy >0
@@ -178,23 +169,33 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
             consumed[1] = dy;
             return;
         }*/
-        ViewGroup.LayoutParams lp = rlLoad.getLayoutParams();
+
+        int newHeight = setViewParams(-dy);
+        consumed[1] = dy;//告诉child我消费了多少
+        //setTargetViewOffset(newHeight);
+        Logx.d("父类:" + " 2向上滑动 " + " dy=" + dy + " newHeight=" + newHeight);
+    }
+
+    private int setViewParams(int dy) {
+        ViewGroup.LayoutParams lp = rlRootLoad.getLayoutParams();
         int tempHeight = lp.height;
-        int newHeight = tempHeight - Math.abs(dy);
+        int newHeight = tempHeight + (dy);
         if (newHeight < 0) {
             newHeight = 0;
         }
+        if (newHeight > headViewHeight) {
+            newHeight = headViewHeight;
+        }
         lp.height = newHeight;
-        rlLoad.setLayoutParams(lp);
-        consumed[1] = dy;//告诉child我消费了多少
+        rlRootLoad.setLayoutParams(lp);
         setTargetViewOffset(newHeight);
-        Logx.d("父类:" + " 2向上滑动 tempHeight=" + tempHeight + " dy=" + dy + " newHeight=" + newHeight);
+        return newHeight;
     }
 
     //设置偏移，否则会出现抖动
     private void setTargetViewOffset(float dis) {
         if (recyclerView != null) {
-             recyclerView.setTranslationY(dis);
+            recyclerView.setTranslationY(dis);
         }
 
     }
@@ -225,12 +226,16 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
     //当惯性嵌套滚动时被调用之前
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
+        // 返回 true 表示父 View 处理了，子 View 不应再处理
+        /*if () {
+        }*/
         return dispatchNestedPreFling(velocityX, velocityY);
     }
 
     //当惯性嵌套滚动时被调用
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
+        // 只有子 View 消耗了 Fling（consumed=true），且有剩余滑动时，父 View 才处理
         return dispatchNestedFling(velocityX, velocityY, consumed);
     }
 
@@ -279,11 +284,13 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
 
     @Override
     public boolean dispatchNestedFling(float velocityX, float velocityY, boolean consumed) {
+        //子 View 处理 Fling 前先问父 View 是否要处理，父 View 处理了则子 View 放弃。
         return mNestedChildHelper.dispatchNestedFling(velocityX, velocityY, consumed);
     }
 
     @Override
     public boolean dispatchNestedPreFling(float velocityX, float velocityY) {
+        //子 View 处理完 Fling 后，把剩余事件交给父 View 处理
         return mNestedChildHelper.dispatchNestedPreFling(velocityX, velocityY);
     }
     //##==========================NestedScrollingChild  结束=======================

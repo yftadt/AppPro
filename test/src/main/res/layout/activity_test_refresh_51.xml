@@ -17,7 +17,7 @@
         android:orientation="vertical">
 
         <RelativeLayout
-            android:id="@+id/rl_load"
+            android:id="@+id/rl_root_load"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_0"
             android:background="#333">
