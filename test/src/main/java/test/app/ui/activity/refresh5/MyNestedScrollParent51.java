@@ -156,7 +156,7 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
         int newHeight = setViewParams(-dy);
         consumed[1] = dy;//告诉child我消费了多少
         //setTargetViewOffset(newHeight);
-        Logx.d("父类:" + " 1向下滑动 "  + " dy=" + dy + " newHeight=" + newHeight + " headViewHeight=" + headViewHeight);
+        Logx.d("父类:" + " 1向下滑动 " + " dy=" + dy + " newHeight=" + newHeight + " headViewHeight=" + headViewHeight);
     }
 
     //手指上划 dy >0
@@ -227,8 +227,11 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
         // 返回 true 表示父 View 处理了，子 View 不应再处理
-        /*if () {
-        }*/
+        if (rlRootLoad.getHeight() != 0) {
+            Logx.d("当惯性嵌套滚动时被调用之前:" + velocityY);
+            setViewParams(-(int) velocityY);
+            return true;
+        }
         return dispatchNestedPreFling(velocityX, velocityY);
     }
 
@@ -236,7 +239,10 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
         // 只有子 View 消耗了 Fling（consumed=true），且有剩余滑动时，父 View 才处理
-        return dispatchNestedFling(velocityX, velocityY, consumed);
+        if (consumed) {
+            setViewParams(-(int) velocityY);
+        }
+        return false;//dispatchNestedFling(velocityX, velocityY, consumed);
     }
 
     @Override
