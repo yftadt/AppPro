@@ -7,6 +7,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
@@ -29,7 +30,7 @@ import test.app.ui.activity.refresh6.qrefreshlayout.listener.TargetHandler;
  * 3.dispatchNestedScroll    ->  onNestedScroll
  * 4.stopNestedScroll        ->  onStopNestedScroll
  */
-public class MyNestedScrollParent51 extends LinearLayout implements NestedScrollingChild, NestedScrollingParent {
+public class MyNestedScrollParent51 extends FrameLayout implements NestedScrollingChild, NestedScrollingParent {
     public MyNestedScrollParent51(Context context) {
         super(context);
     }
@@ -79,6 +80,15 @@ public class MyNestedScrollParent51 extends LinearLayout implements NestedScroll
         return super.onInterceptTouchEvent(ev);
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (!isEnabled() || canChildScrollUp()) {
+            // Fail fast if we're not in a state where a swipe is possible
+            return false;
+        }
+        return super.onTouchEvent(event);
+    }
+
     public boolean canChildScrollUp() {
         if (recyclerView == null) {
             return false;
@@ -114,6 +124,7 @@ public class MyNestedScrollParent51 extends LinearLayout implements NestedScroll
     @Override
     public void onStopNestedScroll(View target) {
         mNestedScrollingParentHelper.onStopNestedScroll(target);
+        stopNestedScroll();
     }
 
     //先于child滚动
@@ -150,8 +161,8 @@ public class MyNestedScrollParent51 extends LinearLayout implements NestedScroll
         if (newHeight > headViewHeight) {
             newHeight = headViewHeight;
         }
-        /*lp.height = newHeight;
-        rlLoad.setLayoutParams(lp);*/
+        lp.height = newHeight;
+        rlLoad.setLayoutParams(lp);
         consumed[1] = dy;//告诉child我消费了多少
         setTargetViewOffset(newHeight);
         Logx.d("父类:" + " 1向下滑动 tempHeight=" + tempHeight + " dy=" + dy + " newHeight=" + newHeight + " headViewHeight=" + headViewHeight);
@@ -173,8 +184,8 @@ public class MyNestedScrollParent51 extends LinearLayout implements NestedScroll
         if (newHeight < 0) {
             newHeight = 0;
         }
-        /*lp.height = newHeight;
-        rlLoad.setLayoutParams(lp);*/
+        lp.height = newHeight;
+        rlLoad.setLayoutParams(lp);
         consumed[1] = dy;//告诉child我消费了多少
         setTargetViewOffset(newHeight);
         Logx.d("父类:" + " 2向上滑动 tempHeight=" + tempHeight + " dy=" + dy + " newHeight=" + newHeight);
@@ -183,10 +194,11 @@ public class MyNestedScrollParent51 extends LinearLayout implements NestedScroll
     //设置偏移，否则会出现抖动
     private void setTargetViewOffset(float dis) {
         if (recyclerView != null) {
-            recyclerView.setTranslationY(dis);
+             recyclerView.setTranslationY(dis);
         }
 
     }
+
     // scrollBy内部会调用scrollTo
     // 限制滚动范围
     //y：垂直滚动偏移量（规则：正数 = 内容向上滚，负数 = 内容向下滚）
@@ -199,23 +211,27 @@ public class MyNestedScrollParent51 extends LinearLayout implements NestedScroll
         }
         super.scrollTo(x, y);
     }*/
+    private int[] mParentOffsetInWindow;
 
     //后于child滚动
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-
+        if (mParentOffsetInWindow == null) {
+            mParentOffsetInWindow = new int[2];
+        }
+        dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, mParentOffsetInWindow);
     }
 
     //当惯性嵌套滚动时被调用之前
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
-        return false;
+        return dispatchNestedPreFling(velocityX, velocityY);
     }
 
     //当惯性嵌套滚动时被调用
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
-        return false;
+        return dispatchNestedFling(velocityX, velocityY, consumed);
     }
 
     @Override
