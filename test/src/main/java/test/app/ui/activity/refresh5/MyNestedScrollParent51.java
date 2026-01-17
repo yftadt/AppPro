@@ -2,7 +2,6 @@ package test.app.ui.activity.refresh5;
 
 
 import android.animation.Animator;
-import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -60,15 +59,22 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
     private View rlRootLoad;
     //头部高度
     private int headViewHeight = 0;
+    //加载视图
     private View ivLoad;
+    //加载视图高度
+    private int loadViewHeight = 0;
+    private STATE stateType;
+
 
     //获取子view
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
         rlRootLoad = findViewById(R.id.rl_root_load);
-        headViewHeight = getContext().getResources().getDimensionPixelSize(R.dimen.dp_180);
         ivLoad = findViewById(R.id.iv_load);
+        //
+        headViewHeight = getContext().getResources().getDimensionPixelSize(R.dimen.dp_180);
+        loadViewHeight = getContext().getResources().getDimensionPixelSize(R.dimen.dp_50);
     }
 
     @Override
@@ -149,27 +155,41 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
     @Override
     public void onStopNestedScroll(View target) {
         mNestedScrollingParentHelper.onStopNestedScroll(target);
-        //stopNestedScroll();
+        //setStop();
+    }
+
+    private void setStop() {
+        int viewHeight = rlRootLoad.getHeight();
+        int teamHeight = 0;
+        if (viewHeight >= loadViewHeight) {
+            stateType = STATE.Refresh;
+            teamHeight = viewHeight - loadViewHeight;
+        } else {
+            stateType = STATE.Init;
+            teamHeight = viewHeight;
+        }
+        if (teamHeight == 0) {
+            return;
+        }
+        setReboundAnimator(1, teamHeight);
     }
 
     //先于child滚动
     //在子视图消费滚动之前调用
     //做出相应的处理把处理完后的结果通过 consumed 传给子 view。
-    //前3个为输入参数，最后一个是输出参数  (dy<0 手指向上滑动)  (dy>0 手指向下滑动)
+    //前3个为输入参数，最后一个是输出参数  正数：子 View 内容向上滚动；  负数：子 View 内容向下滚动；
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         if (dy > 0) {
-            Logx.d("父类:" + " 2向上滑动 dy>0");
             setDataLoadHide(dy, consumed);
             //
         }
         if (dy < 0) {
-            Logx.d("父类:" + " 1向下滑动 dy<0");
             setDataLoadShow(dy, consumed);
         }
     }
 
-    //手指向下滑动 dy<0
+    //负数：子 View 内容向下滚动；
     private void setDataLoadShow(int dy, int[] consumed) {
         //true 可以向上滑动
         boolean isCanUp = recyclerView.canScrollVertically(-1);
@@ -186,7 +206,7 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
         Logx.d("父类:" + " 1向下滑动 " + " dy=" + dy + " newHeight=" + newHeight + " headViewHeight=" + headViewHeight);
     }
 
-    //手指上划 dy >0
+    //正数：子 View 内容向上滚动
     private void setDataLoadHide(int dy, int[] consumed) {
         boolean isCanUp = recyclerView.canScrollVertically(-1);
         if (isCanUp) {
@@ -196,8 +216,8 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
             consumed[1] = dy;
             return;
         }*/
-
         int newHeight = setViewParams(-dy);
+        //
         consumed[1] = dy;//告诉child我消费了多少
         //setTargetViewOffset(newHeight);
         Logx.d("父类:" + " 2向上滑动 " + " dy=" + dy + " newHeight=" + newHeight);
@@ -210,8 +230,9 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
         if (newHeight < 0) {
             newHeight = 0;
         }
-        if (newHeight > headViewHeight) {
-            newHeight = headViewHeight;
+        int maxHeight = getHeadMaxHeight();
+        if (newHeight > maxHeight) {
+            newHeight = maxHeight;
         }
         lp.height = newHeight;
         rlRootLoad.setLayoutParams(lp);
@@ -224,7 +245,15 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
         if (recyclerView != null) {
             recyclerView.setTranslationY(dis);
         }
+    }
 
+    //返回head可以显示的最大高度
+    private int getHeadMaxHeight() {
+        int temp = headViewHeight;
+        if (stateType == STATE.Refresh) {
+            temp = loadViewHeight;
+        }
+        return temp;
     }
 
     // scrollBy内部会调用scrollTo
@@ -305,16 +334,11 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
 
 
     private int animationType;
+    private AnimationManager animationFling;
 
     /**
-     * @param type      1 消失
+     * @param type      显示可消失动画  2 回弹动画
      * @param velocityY 正数：子 View 内容向上滚动；  负数：子 View 内容向下滚动；
-     * @param height    高度
-     *
-     */
-    /**
-     * @param type
-     * @param velocityY
      * @param
      * @return true 已消耗
      */
@@ -323,76 +347,73 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
             return false;
         }
         int viewHeight = rlRootLoad.getHeight();
-        switch (type) {
-            case 1:
-                int tempHeight = 0;
-                int y = (int) Math.abs(velocityY);
-                if (velocityY > 0) {
-                    if (viewHeight == 0) {
-                        return false;
-                    }
-                    //head 全部消失
-                    //tempHeight = Math.min(height, y);
-                    tempHeight = viewHeight;
-                    animationType = 1;
-                }
-                if (velocityY < 0) {
-                    //head 全部显示
-                    if (viewHeight == headViewHeight) {
-                        return false;
-                    }
-                    int surplusHeight = headViewHeight - viewHeight;
-                    //tempHeight = Math.min(surplusHeight, y);
-                    tempHeight = surplusHeight;
-                    animationType = 2;
-                }
-                Logx.d("动画", "移动总距离 " + tempHeight + " viewHeight=" + viewHeight);
-                //消失 或者全部显示
-                setTestAnimator(tempHeight, new OnAnimationListener() {
-                    //上次移动距离
-                    private float upMoveValue;
-                    //移动总距离
-                    private float numTotal;
-
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        //动画移动速度
-                        float value = (float) animation.getAnimatedValue(); // 获取当前动画值
-                        long animationTime = animation.getCurrentPlayTime(); // 获取动画已播放的时间（毫秒）
-
-                        int move = (int) (value - upMoveValue);
-                        if (move > 0) {
-                            upMoveValue = value;
-                        }
-                        if (value == animDistance) {
-                            move = (int) (animDistance - numTotal) + 1;
-                        }
-                        String str = "";
-                        if (animationType == 1 && move > 0) {
-                            str = "隐藏";
-                            numTotal += move;
-                            setViewParams(-move);
-                        }
-                        if (animationType == 2 && move > 0) {
-                            numTotal += move;
-                            setViewParams(move);
-                            str = "显示";
-                        }
-                        Logx.d("动画", " value=" + value + " move=" + move + " numTotal=" + numTotal);
-                    }
-                });
-                break;
+        int tempHeight = 0;
+        int y = (int) Math.abs(velocityY);
+        if (velocityY > 0) {
+            if (viewHeight == 0) {
+                return false;
+            }
+            //head 全部消失
+            //tempHeight = Math.min(height, y);
+            tempHeight = viewHeight;
+            animationType = 1;
         }
+        if (velocityY < 0) {
+            //head 全部显示
+            if (viewHeight == headViewHeight) {
+                return false;
+            }
+            int surplusHeight = headViewHeight - viewHeight;
+            //tempHeight = Math.min(surplusHeight, y);
+            tempHeight = surplusHeight;
+            animationType = 2;
+        }
+        Logx.d("动画", "移动总距离 " + tempHeight + " viewHeight=" + viewHeight);
+        //消失 或者全部显示
+        animationFling = new AnimationManager();
+        animationFling.setAnimatorPar(tempHeight, new OnAnimationListener() {
+            //上次移动距离
+            private float upMoveValue;
+            //移动总距离
+            private float numTotal;
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                //动画移动速度
+                float value = (float) animation.getAnimatedValue(); // 获取当前动画值
+                long animationTime = animation.getCurrentPlayTime(); // 获取动画已播放的时间（毫秒）
+
+                int move = (int) (value - upMoveValue);
+                if (move > 0) {
+                    upMoveValue = value;
+                }
+                if (value == animationFling.animDistance) {
+                    move = (int) (animationFling.animDistance - numTotal) + 1;
+                }
+                String str = "";
+                if (animationType == 1 && move > 0) {
+                    str = "隐藏";
+                    numTotal += move;
+                    setViewParams(-move);
+                }
+                if (animationType == 2 && move > 0) {
+                    numTotal += move;
+                    setViewParams(move);
+                    str = "显示";
+                }
+                Logx.d("动画", " value=" + value + " move=" + move + " numTotal=" + numTotal);
+            }
+        });
         return true;
     }
 
@@ -450,63 +471,111 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
         //子 View 处理完 Fling 后，把剩余事件交给父 View 处理
         return mNestedChildHelper.dispatchNestedPreFling(velocityX, velocityY);
     }
+
     //##==========================NestedScrollingChild  结束=======================
+    //回弹动画
+    private AnimationManager animationRebound;
+
+    private void setReboundAnimator(int type, int velocityY) {
+        animationRebound = new AnimationManager();
+        animationRebound.setAnimatorPar(velocityY, new OnAnimationListener() {
+            //上次移动距离
+            private float upMoveValue;
+            //移动总距离
+            private float numTotal;
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                //动画移动速度
+                float value = (float) animation.getAnimatedValue(); // 获取当前动画值
+                long animationTime = animation.getCurrentPlayTime(); // 获取动画已播放的时间（毫秒）
+                int move = (int) (value - upMoveValue);
+                if (move > 0) {
+                    upMoveValue = value;
+                }
+                if (value == animationRebound.animDistance) {
+                    move = (int) (animationRebound.animDistance - numTotal) + 1;
+                }
+                String str = "隐藏";
+                numTotal += move;
+                setViewParams(-move);
+                //
+                Logx.d("动画", " value=" + value + " move=" + move + " numTotal=" + numTotal);
+            }
+        });
+    }
+
+    //================================状态====================================
+    public static enum STATE {
+        Init, Refresh, RefreshEnd
+    }
+
+    //================================动画====================================
+    class AnimationManager {
+        private ValueAnimator animator;
+        //移动总距离
+        private int animDistance;
+
+        /**
+         * @param animationDistance 移动距离
+         */
+        private void setAnimatorPar(int animationDistance, OnAnimationListener listener) {
+            animDistance = animationDistance;
+            animator = ValueAnimator.ofFloat(0, animationDistance);
+            //
+            float temp = ((float) animationDistance) / 100;
+            //每100的距离 移动时间是50毫秒
+            int time = (int) (temp * 50);
+            if (time == 0) {
+                time = 10;
+            }
+            animator.setDuration(time);
+            animator.setInterpolator(new AccelerateDecelerateInterpolator()); // 插值器（先加速后减速）
+            // animator.setRepeatCount(ValueAnimator.INFINITE); // 重复次数（INFINITE 无限）
+            // animator.setRepeatMode(ValueAnimator.REVERSE); // 重复模式（REVERSE 反向，RESTART 重启）
+            animator.addListener(new Animator.AnimatorListener() {
+
+                @Override
+                public void onAnimationStart(@NonNull Animator animation) {
+                    listener.onAnimationStart(animation);
+                }
+
+                @Override
+                public void onAnimationEnd(@NonNull Animator animation) {
+                    listener.onAnimationEnd(animation);
+                }
+
+                @Override
+                public void onAnimationCancel(@NonNull Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(@NonNull Animator animation) {
+                    //动画重复
+                }
+            });
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(@NonNull ValueAnimator animation) {
+                    listener.onAnimationUpdate(animation);
 
 
-    //动画
+                }
+            });
 
-    private ValueAnimator animator;
-    private int animDistance;
-
-    /**
-     * @param animationDistance 移动距离
-     */
-    private void setTestAnimator(int animationDistance, OnAnimationListener listener) {
-        animDistance = animationDistance;
-        animator = ValueAnimator.ofFloat(0, animationDistance);
-        //
-        float temp = ((float) animationDistance) / 100;
-        //每100的距离 移动时间是50毫秒
-        int time = (int) (temp * 50);
-        if (time == 0) {
-            time = 10;
+            animator.start();
         }
-        animator.setDuration(time);
-        animator.setInterpolator(new AccelerateDecelerateInterpolator()); // 插值器（先加速后减速）
-        // animator.setRepeatCount(ValueAnimator.INFINITE); // 重复次数（INFINITE 无限）
-        // animator.setRepeatMode(ValueAnimator.REVERSE); // 重复模式（REVERSE 反向，RESTART 重启）
-        animator.addListener(new Animator.AnimatorListener() {
-
-            @Override
-            public void onAnimationStart(@NonNull Animator animation) {
-                listener.onAnimationStart(animation);
-            }
-
-            @Override
-            public void onAnimationEnd(@NonNull Animator animation) {
-                listener.onAnimationEnd(animation);
-            }
-
-            @Override
-            public void onAnimationCancel(@NonNull Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(@NonNull Animator animation) {
-                //动画重复
-            }
-        });
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(@NonNull ValueAnimator animation) {
-                listener.onAnimationUpdate(animation);
-
-
-            }
-        });
-
-        animator.start();
     }
 
     interface OnAnimationListener {
