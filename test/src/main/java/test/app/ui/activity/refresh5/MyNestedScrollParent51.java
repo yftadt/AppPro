@@ -63,7 +63,7 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
     private View ivLoad;
     //加载视图高度
     private int loadViewHeight = 0;
-    private STATE stateType;
+    private STATE stateType = STATE.Init;
 
 
     //获取子view
@@ -160,6 +160,14 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
     }
 
     private void setStop() {
+        if (stateType == STATE.Refresh) {
+            //正在刷新 无回弹
+            return;
+        }
+        if (animationRebound != null && animationRebound.isAnimRunning()) {
+            //正在动画
+            return;
+        }
         int viewHeight = rlRootLoad.getHeight();
         int teamHeight = 0;
         int tempType = 0;
@@ -233,6 +241,7 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
             newHeight = 0;
         }
         int maxHeight = getHeadMaxHeight();
+        Logx.d("滚动：" + "maxHeight=" + maxHeight + " stateType=" + stateType.toString());
         if (newHeight > maxHeight) {
             newHeight = maxHeight;
         }
@@ -346,6 +355,10 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
      */
     private boolean setFlingAnimator(int type, float velocityY) {
         if (stateType != STATE.Refresh) {
+            return false;
+        }
+        if (animationRebound != null && animationRebound.isAnimRunning()) {
+            //正在回弹动画
             return false;
         }
         if (velocityY == 0) {
@@ -554,6 +567,10 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
 
         private void setTypeState(int typeState) {
             this.typeState = typeState;
+        }
+
+        private boolean isAnimRunning() {
+            return animator.isRunning();
         }
 
         /**
