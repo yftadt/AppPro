@@ -155,23 +155,25 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
     @Override
     public void onStopNestedScroll(View target) {
         mNestedScrollingParentHelper.onStopNestedScroll(target);
-        //setStop();
+        Logx.d("动画---》" + "滑动结束");
+        setStop();
     }
 
     private void setStop() {
         int viewHeight = rlRootLoad.getHeight();
         int teamHeight = 0;
+        int tempType = 0;
         if (viewHeight >= loadViewHeight) {
-            stateType = STATE.Refresh;
             teamHeight = viewHeight - loadViewHeight;
+            tempType = 2;
         } else {
-            stateType = STATE.Init;
             teamHeight = viewHeight;
+            tempType = 1;
         }
         if (teamHeight == 0) {
             return;
         }
-        setReboundAnimator(1, teamHeight);
+        setReboundAnimator(tempType, teamHeight);
     }
 
     //先于child滚动
@@ -299,7 +301,7 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
         int height = rlRootLoad.getHeight();
         if (height != 0) {
             //一般是有head只显示了部分，子滑动之前，先滑动head，至其消失或者全部显示
-            boolean isConsumed = setFling(1, velocityY);
+            boolean isConsumed = setFlingAnimator(1, velocityY);
             if (isConsumed) {
                 return true;
             }
@@ -327,7 +329,7 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
         Logx.d("惯性滑动2：" + velocityY);
         if (consumed) {
             //setViewParams(-(int) velocityY);
-            setFling(1, velocityY);
+            setFlingAnimator(1, velocityY);
         }
         return false;//dispatchNestedFling(velocityX, velocityY, consumed);
     }
@@ -337,12 +339,15 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
     private AnimationManager animationFling;
 
     /**
-     * @param type      显示可消失动画  2 回弹动画
+     * @param type      显示可消失动画
      * @param velocityY 正数：子 View 内容向上滚动；  负数：子 View 内容向下滚动；
      * @param
      * @return true 已消耗
      */
-    private boolean setFling(int type, float velocityY) {
+    private boolean setFlingAnimator(int type, float velocityY) {
+        if (stateType != STATE.Refresh) {
+            return false;
+        }
         if (velocityY == 0) {
             return false;
         }
@@ -360,10 +365,11 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
         }
         if (velocityY < 0) {
             //head 全部显示
-            if (viewHeight == headViewHeight) {
+            int maxHeight = getHeadMaxHeight();
+            if (viewHeight >= maxHeight) {
                 return false;
             }
-            int surplusHeight = headViewHeight - viewHeight;
+            int surplusHeight = maxHeight - viewHeight;
             //tempHeight = Math.min(surplusHeight, y);
             tempHeight = surplusHeight;
             animationType = 2;
@@ -378,17 +384,17 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
             private float numTotal;
 
             @Override
-            public void onAnimationStart(Animator animation) {
+            public void onAnimationStart(AnimationManager manager, Animator animation) {
 
             }
 
             @Override
-            public void onAnimationEnd(Animator animation) {
+            public void onAnimationEnd(AnimationManager manager, Animator animation) {
 
             }
 
             @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
+            public void onAnimationUpdate(AnimationManager manager, ValueAnimator animation) {
                 //动画移动速度
                 float value = (float) animation.getAnimatedValue(); // 获取当前动画值
                 long animationTime = animation.getCurrentPlayTime(); // 获取动画已播放的时间（毫秒）
@@ -397,8 +403,8 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
                 if (move > 0) {
                     upMoveValue = value;
                 }
-                if (value == animationFling.animDistance) {
-                    move = (int) (animationFling.animDistance - numTotal) + 1;
+                if (value == manager.animDistance) {
+                    move = (int) (manager.animDistance - numTotal) + 1;
                 }
                 String str = "";
                 if (animationType == 1 && move > 0) {
@@ -476,8 +482,14 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
     //回弹动画
     private AnimationManager animationRebound;
 
+    /**
+     * @param type      修改stateType的状态  （1： Init 2： Refresh）
+     * @param velocityY 移动距离
+     */
     private void setReboundAnimator(int type, int velocityY) {
+        Logx.d("回弹动画", " 回弹高度=" + velocityY);
         animationRebound = new AnimationManager();
+        animationRebound.setTypeState(type);
         animationRebound.setAnimatorPar(velocityY, new OnAnimationListener() {
             //上次移动距离
             private float upMoveValue;
@@ -485,17 +497,27 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
             private float numTotal;
 
             @Override
-            public void onAnimationStart(Animator animation) {
+            public void onAnimationStart(AnimationManager manager, Animator animation) {
 
             }
 
             @Override
-            public void onAnimationEnd(Animator animation) {
+            public void onAnimationEnd(AnimationManager manager, Animator animation) {
+                // 修改stateType的状态  （1： Init 2： Refresh）
+                switch (manager.typeState) {
+                    case 1:
+                        stateType = STATE.Init;
+                        break;
+                    case 2:
+                        stateType = STATE.Refresh;
+                        //这里调刷新接口
+                        break;
+                }
 
             }
 
             @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
+            public void onAnimationUpdate(AnimationManager manager, ValueAnimator animation) {
                 //动画移动速度
                 float value = (float) animation.getAnimatedValue(); // 获取当前动画值
                 long animationTime = animation.getCurrentPlayTime(); // 获取动画已播放的时间（毫秒）
@@ -503,14 +525,16 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
                 if (move > 0) {
                     upMoveValue = value;
                 }
-                if (value == animationRebound.animDistance) {
-                    move = (int) (animationRebound.animDistance - numTotal) + 1;
+                if (value == manager.animDistance) {
+                    move = (int) (manager.animDistance - numTotal) + 1;
                 }
                 String str = "隐藏";
                 numTotal += move;
-                setViewParams(-move);
+                if (move > 0) {
+                    setViewParams(-move);
+                }
                 //
-                Logx.d("动画", " value=" + value + " move=" + move + " numTotal=" + numTotal);
+                Logx.d("回弹动画", " value=" + value + " move=" + move + " numTotal=" + numTotal);
             }
         });
     }
@@ -525,6 +549,12 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
         private ValueAnimator animator;
         //移动总距离
         private int animDistance;
+        // 修改stateType的状态  （1： Init 2： Refresh）
+        private int typeState;
+
+        private void setTypeState(int typeState) {
+            this.typeState = typeState;
+        }
 
         /**
          * @param animationDistance 移动距离
@@ -547,12 +577,12 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
 
                 @Override
                 public void onAnimationStart(@NonNull Animator animation) {
-                    listener.onAnimationStart(animation);
+                    listener.onAnimationStart(AnimationManager.this, animation);
                 }
 
                 @Override
                 public void onAnimationEnd(@NonNull Animator animation) {
-                    listener.onAnimationEnd(animation);
+                    listener.onAnimationEnd(AnimationManager.this, animation);
                 }
 
                 @Override
@@ -568,7 +598,7 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
             animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(@NonNull ValueAnimator animation) {
-                    listener.onAnimationUpdate(animation);
+                    listener.onAnimationUpdate(AnimationManager.this, animation);
 
 
                 }
@@ -579,11 +609,11 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
     }
 
     interface OnAnimationListener {
-        void onAnimationStart(Animator animation);
+        void onAnimationStart(AnimationManager manager, Animator animation);
 
-        void onAnimationEnd(Animator animation);
+        void onAnimationEnd(AnimationManager manager, Animator animation);
 
-        void onAnimationUpdate(ValueAnimator animation);
+        void onAnimationUpdate(AnimationManager manager, ValueAnimator animation);
     }
 
 }
