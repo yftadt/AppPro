@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.library.baseui.utile.toast.ToastUtile;
+
 import java.util.ArrayList;
 
 import test.app.ui.activity.R;
@@ -27,6 +29,8 @@ public class TestRefreshActivity5 extends AppCompatActivity {
         setListView();
     }
 
+    private MyNestedScrollParent51 scrollParent51;
+
     private void setListView() {
         RecyclerView mRecyclerView = findViewById(R.id.recyler_view);
         if (mRecyclerView == null) {
@@ -37,6 +41,19 @@ public class TestRefreshActivity5 extends AppCompatActivity {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(adapter);
+        scrollParent51 = findViewById(R.id.scroll_parent51);
+        findViewById(R.id.tv_end).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scrollParent51.setRefreshingEnd();
+            }
+        });
+        scrollParent51.setOnRefreshListener(new MyNestedScrollParent51.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                ToastUtile.showToast("刷新回调");
+            }
+        });
     }
 
     private ArrayList<String> getItems() {

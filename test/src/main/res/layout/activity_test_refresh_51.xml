@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <test.app.ui.activity.refresh5.MyNestedScrollParent51
+        android:id="@+id/scroll_parent51"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
@@ -36,4 +37,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </test.app.ui.activity.refresh5.MyNestedScrollParent51>
+
+    <TextView
+        android:id="@+id/tv_end"
+        android:layout_width="@dimen/dp_50"
+        android:layout_height="@dimen/dp_50"
+        android:layout_marginTop="@dimen/dp_100"
+        android:background="#999"
+        android:gravity="center"
+        android:text="刷新结束"
+        android:textColor="#333" />
 </RelativeLayout>
