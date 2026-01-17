@@ -1,14 +1,19 @@
 package test.app.ui.activity.refresh5;
 
 
+import android.animation.Animator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.Size;
 import androidx.core.view.NestedScrollingChild;
@@ -62,7 +67,7 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
     protected void onFinishInflate() {
         super.onFinishInflate();
         rlRootLoad = findViewById(R.id.rl_root_load);
-        headViewHeight = getContext().getResources().getDimensionPixelSize(R.dimen.dp_80);
+        headViewHeight = getContext().getResources().getDimensionPixelSize(R.dimen.dp_180);
         ivLoad = findViewById(R.id.iv_load);
     }
 
@@ -111,18 +116,40 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
         return result;
     }
 
-    // 接受滚动
+
+    /**
+     * 是嵌套滑动的「初始化回调」，在 onStartNestedScroll 返回 true 后触发，核心做状态初始化；
+     * 不是处理滑动事件，而是初始化状态
+     * 1.重置滑动相关的变量（比如清空上一次的滑动偏移量、重置动画状态）；
+     * 2.记录滑动开始的初始位置（比如获取 target 的初始坐标，用于计算滑动距离）；
+     * 3.标记滑动类型 / 方向（比如记录本次是垂直触摸滑动，后续事件只处理垂直方向）；
+     * 4.初始化动画 / 手势检测器（比如提前创建 Scroller 实例处理惯性滑动）。
+     *
+     * @param child            父 View 的直接子 View（是 target 的父级，不一定是直接父级），简单说就是「嵌套滑动链中，离父 View 最近的那个子 View」。
+     *                         //比如布局结构是 ParentLayout -> ChildLayout -> RecyclerView，
+     *                         //那么 child 是 ChildLayout，target 是 RecyclerView；
+     *                         // 如果布局是 ParentLayout -> RecyclerView，
+     *                         //那么 child 和 target 是同一个 View。
+     * @param target           实际触发嵌套滑动的子 View（比如 RecyclerView、ScrollView、ViewPager 等）
+     * @param nestedScrollAxes 表示嵌套滑动的方向轴（二进制位标识），只有两种有效值：
+     *                         ViewCompat.SCROLL_AXIS_HORIZONTAL：水平方向滑动；
+     *                         ViewCompat.SCROLL_AXIS_VERTICAL：垂直方向滑动；
+     * @param type:            Int 表示嵌套滑动的触发类型，是 Android 5.0+ 新增的参数，核心区分「手指触摸滑动」和「非触摸滑动（如 fling）
+     *                         ViewCompat.TYPE_TOUCH：手指触摸屏幕触发的滑动（最常见，比如手指拖动 RecyclerView）；
+     *                         ViewCompat.TYPE_NON_TOUCH：非触摸触发的滑动（比如 fling 惯性滑动、代码主动调用 scrollTo 等）。
+     *                         父 View 可根据类型做差异化处理，比如「仅处理手指触摸的滑动，忽略 fling 惯性滑动」
+     */
     @Override
     public void onNestedScrollAccepted(View child, View target, int nestedScrollAxes) {
         mNestedScrollingParentHelper.onNestedScrollAccepted(child, target, nestedScrollAxes);
-        startNestedScroll(nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL);
+        //startNestedScroll(nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL);
     }
 
     //本次滑动结束
     @Override
     public void onStopNestedScroll(View target) {
         mNestedScrollingParentHelper.onStopNestedScroll(target);
-        stopNestedScroll();
+        //stopNestedScroll();
     }
 
     //先于child滚动
@@ -223,26 +250,150 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, mParentOffsetInWindow);
     }
 
-    //当惯性嵌套滚动时被调用之前
+
+    /**
+     * 当惯性嵌套滚动时被调用之前
+     *
+     * @param target    触发 fling 事件的子 View（即嵌套滑动的子 View，比如 RecyclerView、ScrollView 等）
+     * @param velocityX 水平方向的 fling 速度（单位：像素 / 秒）
+     * @param velocityY 垂直方向的 fling 速度（单位：像素 / 秒）
+     *                  //
+     *                  正数：子 View 内容向上滚动；
+     *                  负数：子 View 内容向下滚动；
+     *                  //
+     * @return 返回 true 表示父 View 处理了，子 View 不再处理
+     */
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
-        // 返回 true 表示父 View 处理了，子 View 不应再处理
-        if (rlRootLoad.getHeight() != 0) {
-            Logx.d("当惯性嵌套滚动时被调用之前:" + velocityY);
-            setViewParams(-(int) velocityY);
-            return true;
+        Logx.d("惯性滑动1：" + velocityY);
+        //
+        int height = rlRootLoad.getHeight();
+        if (height != 0) {
+            //一般是有head只显示了部分，子滑动之前，先滑动head，至其消失或者全部显示
+            boolean isConsumed = setFling(1, velocityY);
+            if (isConsumed) {
+                return true;
+            }
         }
         return dispatchNestedPreFling(velocityX, velocityY);
     }
 
-    //当惯性嵌套滚动时被调用
+
+    /**
+     * 当惯性嵌套滚动时被调用,只有子 View 消耗了 Fling（consumed=true），且有剩余滑动时，父 View 才处理
+     *
+     * @param target    触发 fling 事件的子 View（即嵌套滑动的子 View，比如 RecyclerView、ScrollView 等）
+     * @param velocityX 水平方向的 fling 速度（单位：像素 / 秒）
+     * @param velocityY 垂直方向的 fling 速度（单位：像素 / 秒）
+     *                  //
+     *                  正数：子 View 内容向上滚动；
+     *                  负数：子 View 内容向下滚动；
+     *                  //
+     * @param consumed  true 子View消费了这个 fling 事件，父 View 不会再执行 fling；
+     * @return
+     */
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
-        // 只有子 View 消耗了 Fling（consumed=true），且有剩余滑动时，父 View 才处理
+        //
+        Logx.d("惯性滑动2：" + velocityY);
         if (consumed) {
-            setViewParams(-(int) velocityY);
+            //setViewParams(-(int) velocityY);
+            setFling(1, velocityY);
         }
         return false;//dispatchNestedFling(velocityX, velocityY, consumed);
+    }
+
+
+    private int animationType;
+
+    /**
+     * @param type      1 消失
+     * @param velocityY 正数：子 View 内容向上滚动；  负数：子 View 内容向下滚动；
+     * @param height    高度
+     *
+     */
+    /**
+     * @param type
+     * @param velocityY
+     * @param
+     * @return true 已消耗
+     */
+    private boolean setFling(int type, float velocityY) {
+        if (velocityY == 0) {
+            return false;
+        }
+        int viewHeight = rlRootLoad.getHeight();
+        switch (type) {
+            case 1:
+                int tempHeight = 0;
+                int y = (int) Math.abs(velocityY);
+                if (velocityY > 0) {
+                    if (viewHeight == 0) {
+                        return false;
+                    }
+                    //head 全部消失
+                    //tempHeight = Math.min(height, y);
+                    tempHeight = viewHeight;
+                    animationType = 1;
+                }
+                if (velocityY < 0) {
+                    //head 全部显示
+                    if (viewHeight == headViewHeight) {
+                        return false;
+                    }
+                    int surplusHeight = headViewHeight - viewHeight;
+                    //tempHeight = Math.min(surplusHeight, y);
+                    tempHeight = surplusHeight;
+                    animationType = 2;
+                }
+                Logx.d("动画", "移动总距离 " + tempHeight + " viewHeight=" + viewHeight);
+                //消失 或者全部显示
+                setTestAnimator(tempHeight, new OnAnimationListener() {
+                    //上次移动距离
+                    private float upMoveValue;
+                    //移动总距离
+                    private float numTotal;
+
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        //动画移动速度
+                        float value = (float) animation.getAnimatedValue(); // 获取当前动画值
+                        long animationTime = animation.getCurrentPlayTime(); // 获取动画已播放的时间（毫秒）
+
+                        int move = (int) (value - upMoveValue);
+                        if (move > 0) {
+                            upMoveValue = value;
+                        }
+                        if (value == animDistance) {
+                            move = (int) (animDistance - numTotal) + 1;
+                        }
+                        String str = "";
+                        if (animationType == 1 && move > 0) {
+                            str = "隐藏";
+                            numTotal += move;
+                            setViewParams(-move);
+                        }
+                        if (animationType == 2 && move > 0) {
+                            numTotal += move;
+                            setViewParams(move);
+                            str = "显示";
+                        }
+                        Logx.d("动画", " value=" + value + " move=" + move + " numTotal=" + numTotal);
+                    }
+                });
+                break;
+        }
+        return true;
     }
 
     @Override
@@ -300,5 +451,70 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
         return mNestedChildHelper.dispatchNestedPreFling(velocityX, velocityY);
     }
     //##==========================NestedScrollingChild  结束=======================
+
+
+    //动画
+
+    private ValueAnimator animator;
+    private int animDistance;
+
+    /**
+     * @param animationDistance 移动距离
+     */
+    private void setTestAnimator(int animationDistance, OnAnimationListener listener) {
+        animDistance = animationDistance;
+        animator = ValueAnimator.ofFloat(0, animationDistance);
+        //
+        float temp = ((float) animationDistance) / 100;
+        //每100的距离 移动时间是50毫秒
+        int time = (int) (temp * 50);
+        if (time == 0) {
+            time = 10;
+        }
+        animator.setDuration(time);
+        animator.setInterpolator(new AccelerateDecelerateInterpolator()); // 插值器（先加速后减速）
+        // animator.setRepeatCount(ValueAnimator.INFINITE); // 重复次数（INFINITE 无限）
+        // animator.setRepeatMode(ValueAnimator.REVERSE); // 重复模式（REVERSE 反向，RESTART 重启）
+        animator.addListener(new Animator.AnimatorListener() {
+
+            @Override
+            public void onAnimationStart(@NonNull Animator animation) {
+                listener.onAnimationStart(animation);
+            }
+
+            @Override
+            public void onAnimationEnd(@NonNull Animator animation) {
+                listener.onAnimationEnd(animation);
+            }
+
+            @Override
+            public void onAnimationCancel(@NonNull Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(@NonNull Animator animation) {
+                //动画重复
+            }
+        });
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(@NonNull ValueAnimator animation) {
+                listener.onAnimationUpdate(animation);
+
+
+            }
+        });
+
+        animator.start();
+    }
+
+    interface OnAnimationListener {
+        void onAnimationStart(Animator animation);
+
+        void onAnimationEnd(Animator animation);
+
+        void onAnimationUpdate(ValueAnimator animation);
+    }
 
 }
