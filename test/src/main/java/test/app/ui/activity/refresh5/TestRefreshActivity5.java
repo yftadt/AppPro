@@ -2,6 +2,7 @@ package test.app.ui.activity.refresh5;
 
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,11 +23,13 @@ public class TestRefreshActivity5 extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_refresh_51);
+        setContentView(R.layout.activity_test_refresh_5);
         //View childScroll = findViewById(R.id.child_scroll);
         //View childScroll = findViewById(R.id.child_scroll);
         //initView();
-        setListView();
+
+        //51
+        //setListView();
     }
 
     private MyNestedScrollParent51 scrollParent51;
@@ -54,6 +57,10 @@ public class TestRefreshActivity5 extends AppCompatActivity {
                 ToastUtile.showToast("刷新回调");
             }
         });
+        View view = LayoutInflater.from(this).inflate(R.layout.head_test_refresh, null);
+        int headViewHeight = getResources().getDimensionPixelSize(R.dimen.dp_100);
+        int loadViewHeight = getResources().getDimensionPixelSize(R.dimen.dp_50);
+        scrollParent51.setHeadView(view,headViewHeight,loadViewHeight);
     }
 
     private ArrayList<String> getItems() {

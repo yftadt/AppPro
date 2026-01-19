@@ -11,6 +11,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
+import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,18 +21,22 @@ import androidx.core.view.NestedScrollingChildHelper;
 import androidx.core.view.NestedScrollingParent;
 import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
+import androidx.core.widget.ListViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
 
 import sj.mblog.Logx;
 import test.app.ui.activity.R;
-import test.app.ui.activity.refresh.RefreshLayoutRl;
 
 /**
  * 嵌套滚动（子 -> 父）
  * 1.startNestedScroll       ->  onStartNestedScroll,onNestedScrollAccepted
  * 2.dispatchNestedPreScroll ->  onNestedPreScroll
  * 3.dispatchNestedScroll    ->  onNestedScroll
- * 4.stopNestedScroll        ->  onStopNestedScroll
+ * 4.dispatchNestedPreFling  ->  onNestedPreFling  子 View 处理 Fling 前先问父 View 是否要处理，父 View 处理了则子 View 放弃
+ * 5.dispatchNestedFling     ->  onNestedFling     子 View 处理完 Fling 后，把剩余事件交给父 View 处理
+ * 6.stopNestedScroll        ->  onStopNestedScroll
  */
 public class MyNestedScrollParent51 extends FrameLayout implements NestedScrollingChild, NestedScrollingParent {
     public MyNestedScrollParent51(Context context) {
@@ -60,11 +65,10 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
     private View rlRootLoad;
     //头部高度
     private int headViewHeight = 0;
-    //加载视图
-    private View ivLoad;
+
     //加载视图高度
     private int loadViewHeight = 0;
-    private STATE stateType = STATE.Init;
+    private STATE stateType = STATE.Empty;
 
 
     //获取子view
@@ -72,10 +76,52 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
     protected void onFinishInflate() {
         super.onFinishInflate();
         rlRootLoad = findViewById(R.id.rl_root_load);
-        ivLoad = findViewById(R.id.iv_load);
-        //
         headViewHeight = getContext().getResources().getDimensionPixelSize(R.dimen.dp_180);
         loadViewHeight = getContext().getResources().getDimensionPixelSize(R.dimen.dp_50);
+        stateType = STATE.Init;
+    }
+
+    private int type = 0;
+
+
+    /**
+     * @param headView       头部view
+     * @param headViewHeight 头部view的高度
+     * @param loadViewHeight 加载View的高度/触发刷新的阈值
+     */
+    public void setHeadView(View headView, int headViewHeight, int loadViewHeight) {
+        stateType = STATE.Empty;
+        if (rlRootLoad != null) {
+            removeView(rlRootLoad);
+            rlRootLoad = null;
+        }
+        this.rlRootLoad = headView;
+        this.headViewHeight = headViewHeight;
+        this.loadViewHeight = loadViewHeight;
+        //
+        if (type == 0) {
+            ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, 0);
+            addView(headView, 0, lp);
+        } else {
+            int count = getChildCount();
+            ArrayList<View> childViews = new ArrayList();
+            for (int i = 0; i < count; i++) {
+                View viewtemp = getChildAt(i);
+                childViews.add(viewtemp);
+            }
+            childViews.add(0, headView);
+            removeAllViews();
+            for (int i = 0; i < childViews.size(); i++) {
+                View childTemp = childViews.get(i);
+                if (childTemp == headView) {
+                    ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, 0);
+                    addView(childTemp, lp);
+                } else {
+                    addView(childTemp);
+                }
+            }
+        }
+        stateType = STATE.Init;
     }
 
     @Override
@@ -101,13 +147,19 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
 
     //true 可以滑动
     private boolean canChildScrollUp() {
-        if (recyclerView == null) {
+        if (mTargetView == null) {
             return false;
         }
-        return ViewCompat.canScrollVertically(recyclerView, -1);
+        if (mTargetView instanceof ListView) {
+            return ListViewCompat.canScrollList((ListView) mTargetView, -1);
+        }
+        if (mTargetView instanceof RecyclerView) {
+            return ViewCompat.canScrollVertically(mTargetView, -1);
+        }
+        return mTargetView.canScrollVertically(-1);
     }
 
-    private RecyclerView recyclerView;
+    private View mTargetView;
 
     //##==========================NestedScrollingParent 开始=======================
     //
@@ -118,7 +170,7 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
         boolean result = false;
         //boolean result = isEnabled() && !mRefreshing && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
         if (target instanceof RecyclerView) {
-            recyclerView = (RecyclerView) target;
+            mTargetView = (RecyclerView) target;
             result = true;
         }
         return result;
@@ -206,7 +258,7 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
     //负数：子 View 内容向下滚动；
     private void setDataLoadShow(int dy, int[] consumed) {
         //true 可以向上滑动
-        boolean isCanUp = recyclerView.canScrollVertically(-1);
+        boolean isCanUp = mTargetView.canScrollVertically(-1);
         if (isCanUp) {
             return;
         }
@@ -222,7 +274,7 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
 
     //正数：子 View 内容向上滚动
     private void setDataLoadHide(int dy, int[] consumed) {
-        boolean isCanUp = recyclerView.canScrollVertically(-1);
+        boolean isCanUp = mTargetView.canScrollVertically(-1);
         if (isCanUp) {
             return;
         }
@@ -257,8 +309,8 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
 
     //设置偏移，否则会出现抖动
     private void setTargetViewOffset(float dis) {
-        if (recyclerView != null) {
-            recyclerView.setTranslationY(dis);
+        if (mTargetView != null) {
+            mTargetView.setTranslationY(dis);
         }
     }
 
@@ -311,6 +363,9 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
         Logx.d("惯性滑动1：" + velocityY);
         //
+        if (stateType == STATE.Empty) {
+            return dispatchNestedPreFling(velocityX, velocityY);
+        }
         int height = rlRootLoad.getHeight();
         if (height != 0) {
             //一般是有head只显示了部分，子滑动之前，先滑动head，至其消失或者全部显示
@@ -485,13 +540,14 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
 
     @Override
     public boolean dispatchNestedFling(float velocityX, float velocityY, boolean consumed) {
-        //子 View 处理 Fling 前先问父 View 是否要处理，父 View 处理了则子 View 放弃。
+        //子 View 处理完 Fling 后，把剩余事件交给父 View 处理
         return mNestedChildHelper.dispatchNestedFling(velocityX, velocityY, consumed);
     }
 
     @Override
     public boolean dispatchNestedPreFling(float velocityX, float velocityY) {
-        //子 View 处理完 Fling 后，把剩余事件交给父 View 处理
+
+        //子 View 处理 Fling 前先问父 View 是否要处理，父 View 处理了则子 View 放弃。
         return mNestedChildHelper.dispatchNestedPreFling(velocityX, velocityY);
     }
 
@@ -613,6 +669,7 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
             }
         });
     }
+
     private OnRefreshListener refreshListener;
 
     public void setOnRefreshListener(@Nullable OnRefreshListener listener) {
@@ -621,7 +678,11 @@ public class MyNestedScrollParent51 extends FrameLayout implements NestedScrolli
 
     //================================状态====================================
     public static enum STATE {
-        Init, Refresh, RefreshEnd
+
+        Empty,//空
+        Init,//初始状态
+        Refresh, //刷新状态
+        RefreshEnd//刷新结束状态
     }
 
     //================================动画====================================
