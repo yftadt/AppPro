@@ -108,6 +108,10 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
         stateType = STATE.Init;
     }
 
+    //拖动阻力
+    protected float getDragCoefficient() {
+        return 0.4f;
+    }
 
     //##==========================NestedScrollingParent 开始=======================
     //

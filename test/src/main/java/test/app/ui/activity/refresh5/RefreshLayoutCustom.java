@@ -69,13 +69,15 @@ public class RefreshLayoutCustom extends BaseRefreshLayout {
         int scrollY = getScrollY();
         int childScrollY = mTargetView.getScrollY();
         if (scrollY >= 0 && childScrollY == 0) {
-            int newHeight = setViewParams(dy);
+            int temp = (int) (dy * getDragCoefficient());
+            int newHeight = setViewParams(temp);
             consumed[1] = dy;//告诉child我消费了多少
             //setTargetViewOffset(newHeight);
             Logx.d("父类:" + " 1向下滑动 " + " dy=" + dy + " newHeight=" + newHeight + " headViewHeight=" + headViewHeight);
         }
 
     }
+
     //
     private void setDataLoadHide(int dy, int[] consumed) {
         int scrollY = getScrollY();
@@ -83,7 +85,8 @@ public class RefreshLayoutCustom extends BaseRefreshLayout {
         int height = rlRootLoad.getHeight();
         Logx.d("滑动--> :" + " scrollY=" + scrollY + " childScrollY=" + childScrollY);
         if (height != 0) {
-            int newHeight = setViewParams(dy);
+            int temp = (int) (dy * getDragCoefficient());
+            int newHeight = setViewParams(temp);
             //
             consumed[1] = dy;//告诉child我消费了多少
             //setTargetViewOffset(newHeight);

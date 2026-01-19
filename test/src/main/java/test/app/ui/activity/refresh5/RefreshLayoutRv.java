@@ -116,10 +116,9 @@ public class RefreshLayoutRv extends BaseRefreshLayout {
             consumed[1] = dy;
             return;
         }*/
-        int newHeight = setViewParams(-dy);
+        int temp = (int) (dy * getDragCoefficient());
+        int newHeight = setViewParams(-temp);
         consumed[1] = dy;//告诉child我消费了多少
-        //setTargetViewOffset(newHeight);
-        Logx.d("父类:" + " 1向下滑动 " + " dy=" + dy + " newHeight=" + newHeight + " headViewHeight=" + headViewHeight);
     }
 
     //正数：子 View 内容向上滚动
@@ -132,11 +131,10 @@ public class RefreshLayoutRv extends BaseRefreshLayout {
             consumed[1] = dy;
             return;
         }*/
-        int newHeight = setViewParams(-dy);
+        int temp = (int) (dy * getDragCoefficient());
+        int newHeight = setViewParams(-temp);
         //
         consumed[1] = dy;//告诉child我消费了多少
-        //setTargetViewOffset(newHeight);
-        Logx.d("父类:" + " 2向上滑动 " + " dy=" + dy + " newHeight=" + newHeight);
     }
 
 
