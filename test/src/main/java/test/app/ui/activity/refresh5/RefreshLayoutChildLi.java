@@ -18,22 +18,20 @@ import sj.mblog.Logx;
 
 
 /**
- * Created by Administrator on 2017/2/14 0014.
- * E-Mil：543441727@qq.com
+ * 下拉刷新子view
  */
-
-public class MyNestedScrollChild5 extends LinearLayout implements NestedScrollingChild {
+public class RefreshLayoutChildLi extends LinearLayout implements NestedScrollingChild {
     private NestedScrollingChildHelper mNestedScrollingChildHelper;
 
     private int lastY;
     private int showHeight;
 
 
-    public MyNestedScrollChild5(Context context) {
+    public RefreshLayoutChildLi(Context context) {
         super(context);
     }
 
-    public MyNestedScrollChild5(Context context, AttributeSet attrs) {
+    public RefreshLayoutChildLi(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -42,7 +40,6 @@ public class MyNestedScrollChild5 extends LinearLayout implements NestedScrollin
         //第一次测量，因为布局文件中高度是wrap_content，因此测量模式为atmost，即高度不超过父控件的剩余空间
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         showHeight = getMeasuredHeight();
-
         //第二次测量，对稿哦度没有任何限制，那么测量出来的就是完全展示内容所需要的高度
         heightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -68,8 +65,7 @@ public class MyNestedScrollChild5 extends LinearLayout implements NestedScrollin
                 int y = (int) (event.getRawY());
                 int dy = y - lastY;
                 lastY = y;
-                if (getScrollY() <= 0 && startNestedScroll(ViewCompat.SCROLL_AXIS_HORIZONTAL)
-                        && dispatchNestedPreScroll(0, dy, consumed, offset)) //如果找到了支持嵌套滑动的父类,父类进行了一系列的滑动
+                if (getScrollY() <= 0 && startNestedScroll(ViewCompat.SCROLL_AXIS_HORIZONTAL) && dispatchNestedPreScroll(0, dy, consumed, offset)) //如果找到了支持嵌套滑动的父类,父类进行了一系列的滑动
                 {
                     //获取滑动距离
                     int remain = dy - consumed[1];
@@ -83,7 +79,6 @@ public class MyNestedScrollChild5 extends LinearLayout implements NestedScrollin
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
-
 
                 break;
         }
@@ -101,8 +96,6 @@ public class MyNestedScrollChild5 extends LinearLayout implements NestedScrollin
         if (maxY < 0) {
             maxY = 0;
         }
-        Logx.d("viewHeight=" + viewHeight +
-                " showHeight=" + showHeight + " maxY=" + maxY + " y=" + y + " rootViewHeight=" + rootHeight);
         if (y > maxY) {
             y = maxY;
         }

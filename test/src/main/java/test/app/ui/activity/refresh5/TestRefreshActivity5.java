@@ -33,7 +33,7 @@ public class TestRefreshActivity5 extends AppCompatActivity {
         setListView52();
     }
 
-    private MyNestedScrollParent51 scrollParent51;
+    private RefreshLayoutRv scrollParent51;
 
     private void setListView51() {
         RecyclerView mRecyclerView = findViewById(R.id.recyler_view);
@@ -52,7 +52,7 @@ public class TestRefreshActivity5 extends AppCompatActivity {
                 scrollParent51.setRefreshingEnd();
             }
         });
-        scrollParent51.setOnRefreshListener(new MyNestedScrollParent51.OnRefreshListener() {
+        scrollParent51.setOnRefreshListener(new RefreshLayoutRv.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 ToastUtile.showToast("刷新回调");
@@ -64,7 +64,7 @@ public class TestRefreshActivity5 extends AppCompatActivity {
        // scrollParent51.setHeadView(view, headViewHeight, loadViewHeight);
     }
 
-    private MyNestedScrollParent52 scrollParent52;
+    private RefreshLayoutCustom scrollParent52;
 
     private void setListView52() {
         scrollParent52 = findViewById(R.id.scroll_parent52);
@@ -74,7 +74,7 @@ public class TestRefreshActivity5 extends AppCompatActivity {
                 scrollParent52.setRefreshingEnd();
             }
         });
-        scrollParent52.setOnRefreshListener(new MyNestedScrollParent52.OnRefreshListener() {
+        scrollParent52.setOnRefreshListener(new RefreshLayoutCustom.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 ToastUtile.showToast("刷新回调");

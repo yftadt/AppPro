@@ -1,40 +1,22 @@
 package test.app.ui.activity.refresh5;
 
 
-import android.animation.Animator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewConfiguration;
-import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.FrameLayout;
-import android.widget.ListView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.Size;
-import androidx.core.view.NestedScrollingChild;
-import androidx.core.view.NestedScrollingChildHelper;
-import androidx.core.view.NestedScrollingParent;
-import androidx.core.view.NestedScrollingParentHelper;
-import androidx.core.view.ViewCompat;
-import androidx.core.widget.ListViewCompat;
-import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
 
 import sj.mblog.Logx;
 import test.app.ui.activity.R;
 
-
-public class MyNestedScrollParent52 extends BaseRefreshLayout {
-    public MyNestedScrollParent52(Context context) {
+/**
+ * 其可以滑动的子View：RefreshLayoutChildLi
+ */
+public class RefreshLayoutCustom extends BaseRefreshLayout {
+    public RefreshLayoutCustom(Context context) {
         super(context);
     }
 
-    public MyNestedScrollParent52(Context context, AttributeSet attrs) {
+    public RefreshLayoutCustom(Context context, AttributeSet attrs) {
         super(context, attrs);
 
     }
@@ -53,8 +35,8 @@ public class MyNestedScrollParent52 extends BaseRefreshLayout {
     protected boolean isStartNestedScroll(View child, View target, int nestedScrollAxes) {
         boolean result = false;
         //boolean result = isEnabled() && !mRefreshing && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
-        if (target instanceof MyNestedScrollChild5) {
-            mTargetView = (MyNestedScrollChild5) target;
+        if (target instanceof RefreshLayoutChildLi) {
+            mTargetView = (RefreshLayoutChildLi) target;
             result = true;
         }
         return result;
