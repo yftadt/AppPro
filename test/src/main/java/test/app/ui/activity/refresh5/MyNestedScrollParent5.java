@@ -107,7 +107,7 @@ public class MyNestedScrollParent5 extends LinearLayout implements NestedScrolli
         }
     }
 
-    //手指上划 dy <0
+    //内容上划
     private void setDataLoadHide(int dy, int[] consumed) {
         int scrollY = getScrollY();
         int childScrollY = myNestedScrollChild.getScrollY();

@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <test.app.ui.activity.refresh5.MyNestedScrollParent5
+    <test.app.ui.activity.refresh5.MyNestedScrollParent52
+        android:id="@+id/scroll_parent52"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
@@ -17,9 +18,9 @@
         android:orientation="vertical">
 
         <RelativeLayout
-            android:id="@+id/rl_load"
+            android:id="@+id/rl_root_load"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_80"
+            android:layout_height="@dimen/dp_0"
             android:background="#333">
 
             <ImageView
@@ -36,20 +37,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="77\n88\n88\n8\n88\n99"
-                android:textColor="#f0f"
-                android:textSize="20sp"
-                android:visibility="gone"/>
-            <TextView
 
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="123\n456\n789\n111\n222\n333\n444\n555\n666\n777\n888\n999\n14\n12\n13\n44\n55\n66\n77\n88\n99\n11\n22\n33\n44\n55\n66\n77\n88\n99\n77\n88\n88\n8\n88\n99\n哈哈哈\n123\n456\n789\n111\n222\n333\n444\n555\n666\n777\n888\n999\n14\n12\n13\n44\n55\n66\n77\n88\n99\n11\n22\n33\n44\n55\n66\n77\n88\n99\n77\n88\n88\n8\n88\n99"
                 android:textColor="#f0f"
                 android:textSize="20sp" />
         </test.app.ui.activity.refresh5.MyNestedScrollChild5>
-    </test.app.ui.activity.refresh5.MyNestedScrollParent5>
+    </test.app.ui.activity.refresh5.MyNestedScrollParent52>
+
+    <TextView
+        android:id="@+id/tv_end"
+        android:layout_width="@dimen/dp_50"
+        android:layout_height="@dimen/dp_50"
+        android:layout_marginTop="@dimen/dp_100"
+        android:background="#999"
+        android:gravity="center"
+        android:text="刷新结束"
+        android:textColor="#333" />
 </RelativeLayout>

@@ -23,18 +23,19 @@ public class TestRefreshActivity5 extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_refresh_5);
-        //View childScroll = findViewById(R.id.child_scroll);
-        //View childScroll = findViewById(R.id.child_scroll);
-        //initView();
-
+        //5
+        //setContentView(R.layout.activity_test_refresh_5);
         //51
-        //setListView();
+        /* setContentView(R.layout.activity_test_refresh_51);
+        setListView51();*/
+        //52
+        setContentView(R.layout.activity_test_refresh_52);
+        setListView52();
     }
 
     private MyNestedScrollParent51 scrollParent51;
 
-    private void setListView() {
+    private void setListView51() {
         RecyclerView mRecyclerView = findViewById(R.id.recyler_view);
         if (mRecyclerView == null) {
             return;
@@ -60,7 +61,25 @@ public class TestRefreshActivity5 extends AppCompatActivity {
         View view = LayoutInflater.from(this).inflate(R.layout.head_test_refresh, null);
         int headViewHeight = getResources().getDimensionPixelSize(R.dimen.dp_100);
         int loadViewHeight = getResources().getDimensionPixelSize(R.dimen.dp_50);
-        scrollParent51.setHeadView(view,headViewHeight,loadViewHeight);
+       // scrollParent51.setHeadView(view, headViewHeight, loadViewHeight);
+    }
+
+    private MyNestedScrollParent52 scrollParent52;
+
+    private void setListView52() {
+        scrollParent52 = findViewById(R.id.scroll_parent52);
+        findViewById(R.id.tv_end).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scrollParent52.setRefreshingEnd();
+            }
+        });
+        scrollParent52.setOnRefreshListener(new MyNestedScrollParent52.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                ToastUtile.showToast("刷新回调");
+            }
+        });
     }
 
     private ArrayList<String> getItems() {
