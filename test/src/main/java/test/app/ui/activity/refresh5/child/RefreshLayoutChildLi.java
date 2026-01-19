@@ -1,4 +1,4 @@
-package test.app.ui.activity.refresh5;
+package test.app.ui.activity.refresh5.child;
 
 
 import android.content.Context;
@@ -13,8 +13,6 @@ import androidx.annotation.RequiresApi;
 import androidx.core.view.NestedScrollingChild;
 import androidx.core.view.NestedScrollingChildHelper;
 import androidx.core.view.ViewCompat;
-
-import sj.mblog.Logx;
 
 
 /**

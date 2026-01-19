@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <test.app.ui.activity.refresh5.RefreshLayoutRv
+    <test.app.ui.activity.refresh5.fl.RefreshFlRv
         android:id="@+id/scroll_parent51"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -36,7 +36,7 @@
             android:id="@+id/recyler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </test.app.ui.activity.refresh5.RefreshLayoutRv>
+    </test.app.ui.activity.refresh5.fl.RefreshFlRv>
 
     <TextView
         android:id="@+id/tv_end"

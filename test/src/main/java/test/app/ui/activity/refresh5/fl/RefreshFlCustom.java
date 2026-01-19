@@ -1,4 +1,4 @@
-package test.app.ui.activity.refresh5;
+package test.app.ui.activity.refresh5.fl;
 
 
 import android.content.Context;
@@ -7,16 +7,17 @@ import android.view.View;
 
 import sj.mblog.Logx;
 import test.app.ui.activity.R;
+import test.app.ui.activity.refresh5.child.RefreshLayoutChildLi;
 
 /**
  * 其可以滑动的子View：RefreshLayoutChildLi
  */
-public class RefreshLayoutCustom extends BaseRefreshLayout {
-    public RefreshLayoutCustom(Context context) {
+public class RefreshFlCustom extends BaseRefreshLayoutFl {
+    public RefreshFlCustom(Context context) {
         super(context);
     }
 
-    public RefreshLayoutCustom(Context context, AttributeSet attrs) {
+    public RefreshFlCustom(Context context, AttributeSet attrs) {
         super(context, attrs);
 
     }

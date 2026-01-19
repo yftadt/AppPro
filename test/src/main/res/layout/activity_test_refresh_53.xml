@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <test.app.ui.activity.refresh5.fl.RefreshFlCustom
-        android:id="@+id/scroll_parent52"
+    <test.app.ui.activity.refresh5.ll.RefreshLiRv
+        android:id="@+id/scroll_parent53"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
@@ -32,20 +32,16 @@
 
         </RelativeLayout>
 
-        <test.app.ui.activity.refresh5.child.RefreshLayoutChildLi
-            android:id="@+id/child_scroll"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:text="哈哈哈哈哈哈哈 不会动" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="123\n456\n789\n111\n222\n333\n444\n555\n666\n777\n888\n999\n14\n12\n13\n44\n55\n66\n77\n88\n99\n11\n22\n33\n44\n55\n66\n77\n88\n99\n77\n88\n88\n8\n88\n99\n哈哈哈\n123\n456\n789\n111\n222\n333\n444\n555\n666\n777\n888\n999\n14\n12\n13\n44\n55\n66\n77\n88\n99\n11\n22\n33\n44\n55\n66\n77\n88\n99\n77\n88\n88\n8\n88\n99"
-                android:textColor="#f0f"
-                android:textSize="20sp" />
-        </test.app.ui.activity.refresh5.child.RefreshLayoutChildLi>
-    </test.app.ui.activity.refresh5.fl.RefreshFlCustom>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </test.app.ui.activity.refresh5.ll.RefreshLiRv>
 
     <TextView
         android:id="@+id/tv_end"

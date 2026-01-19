@@ -1,4 +1,4 @@
-package test.app.ui.activity.refresh5;
+package test.app.ui.activity.refresh5.ll;
 
 
 import android.animation.Animator;
@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,12 +32,12 @@ import sj.mblog.Logx;
  * 5.dispatchNestedFling     ->  onNestedFling     子 View 处理完 Fling 后，把剩余事件交给父 View 处理
  * 6.stopNestedScroll        ->  onStopNestedScroll
  */
-public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChild, NestedScrollingParent {
-    public BaseRefreshLayout(Context context) {
+public class BaseRefreshLayoutLl extends LinearLayout implements NestedScrollingChild, NestedScrollingParent {
+    public BaseRefreshLayoutLl(Context context) {
         super(context);
     }
 
-    public BaseRefreshLayout(Context context, AttributeSet attrs) {
+    public BaseRefreshLayoutLl(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
@@ -228,7 +228,7 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
     protected View mTargetView;
 
     //设置偏移，否则会出现抖动
-    private void setTargetViewOffset(float dis) {
+    protected void setTargetViewOffset(float dis) {
         if (mTargetView != null) {
             mTargetView.setTranslationY(dis);
         }

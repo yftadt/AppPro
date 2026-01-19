@@ -1,4 +1,4 @@
-package test.app.ui.activity.refresh5;
+package test.app.ui.activity.refresh5.fl;
 
 
 import android.content.Context;
@@ -9,18 +9,17 @@ import android.view.View;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import sj.mblog.Logx;
 import test.app.ui.activity.R;
 
 /**
  * 其可以滑动的子View：RecyclerView
  */
-public class RefreshLayoutRv extends BaseRefreshLayout {
-    public RefreshLayoutRv(Context context) {
+public class RefreshFlRv extends BaseRefreshLayoutFl {
+    public RefreshFlRv(Context context) {
         super(context);
     }
 
-    public RefreshLayoutRv(Context context, AttributeSet attrs) {
+    public RefreshFlRv(Context context, AttributeSet attrs) {
         super(context, attrs);
 
     }
