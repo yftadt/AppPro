@@ -5,13 +5,11 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
-import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,14 +18,10 @@ import androidx.core.view.NestedScrollingChild;
 import androidx.core.view.NestedScrollingChildHelper;
 import androidx.core.view.NestedScrollingParent;
 import androidx.core.view.NestedScrollingParentHelper;
-import androidx.core.view.ViewCompat;
-import androidx.core.widget.ListViewCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
 import sj.mblog.Logx;
-import test.app.ui.activity.R;
 
 /**
  * 嵌套滚动（子 -> 父）
@@ -177,15 +171,18 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
         int teamHeight = 0;
         int tempType = 0;
         if (viewHeight >= loadViewHeight) {
+            //只显示大于loadViewHeight的部分
             teamHeight = viewHeight - loadViewHeight;
             tempType = 2;
         } else {
+            //全部消失
             teamHeight = viewHeight;
             tempType = 1;
         }
         if (teamHeight == 0) {
             return;
         }
+        Logx.d(tag + "设置回弹动画" + " 总高度=" + headViewHeight + " 阈值=" + loadViewHeight + " 现高度=" + viewHeight + " 回弹高度=" + teamHeight + " stateType=" + stateType.toString());
         setReboundAnimator(tempType, teamHeight);
     }
 
@@ -207,16 +204,20 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
         ViewGroup.LayoutParams lp = rlRootLoad.getLayoutParams();
         int tempHeight = lp.height;
         int newHeight = tempHeight + (dy);
-        if (newHeight < 0) {
-            newHeight = 0;
+        int minHeight = getHeadMinHeight();
+        if (newHeight < minHeight) {
+            newHeight = minHeight;
         }
         int maxHeight = getHeadMaxHeight();
         if (newHeight > maxHeight) {
             newHeight = maxHeight;
         }
-        lp.height = newHeight;
-        rlRootLoad.setLayoutParams(lp);
-        setTargetViewOffset(newHeight);
+        Logx.d(tag + "" + " 总高度=" + maxHeight + " 当前高度=" + tempHeight + " 移动=" + dy + "设置高度=" + newHeight + " stateType=" + stateType.toString());
+        if (newHeight != lp.height) {
+            lp.height = newHeight;
+            rlRootLoad.setLayoutParams(lp);
+            setTargetViewOffset(newHeight);
+        }
         return newHeight;
     }
 
@@ -232,7 +233,22 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
     //返回head可以显示的最大高度
     private int getHeadMaxHeight() {
         int temp = headViewHeight;
-        if (stateType != STATE.Init) {
+        if (STATE.Empty == stateType || STATE.Init == stateType) {
+            temp = headViewHeight;
+        }
+        if (STATE.AminRebound_Refresh == stateType || STATE.AminRebound_Init == stateType) {
+            temp = headViewHeight;
+        }
+        if (STATE.Refresh == stateType || STATE.RefreshEnd_Init == stateType) {
+            temp = loadViewHeight;
+        }
+        return temp;
+    }
+
+    //返回head可以显示的最小高度
+    private int getHeadMinHeight() {
+        int temp = 0;
+        if (STATE.AminRebound_Refresh == stateType) {
             temp = loadViewHeight;
         }
         return temp;
@@ -475,7 +491,12 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
      * @param velocityY 移动距离
      */
     private void setReboundAnimator(int type, int velocityY) {
-        Logx.d(tag + "" + "回弹动画_回弹高度=" + velocityY + " stateType=" + stateType.toString());
+        if (type == 1) {
+            stateType = STATE.AminRebound_Init;
+        }
+        if (type == 2) {
+            stateType = STATE.AminRebound_Refresh;
+        }
         animationRebound = new AnimationManager();
         animationRebound.setTypeState(type);
         animationRebound.setAnimatorPar(velocityY, new OnAnimationListener() {
@@ -494,25 +515,25 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
                 // 修改stateType的状态  （1： Init 2： Refresh）
                 switch (manager.typeState) {
                     case 1:
-                        stateType = STATE.Init;
                         int viewHeight = rlRootLoad.getHeight();
+                        Logx.d(tag + "" + "回弹动画_结束_回弹总高度=" + numTotal + " 修正高度_" + viewHeight + " stateType=" + stateType.toString());
                         if (viewHeight != 0) {
                             setViewParams(-viewHeight);
                         }
-                        Logx.d(tag + "" + "回弹动画_结束_回弹总高度=" + numTotal + " 修正高度_" + viewHeight + " stateType=" + stateType.toString());
+                        stateType = STATE.Init;
                         break;
                     case 2:
-                        stateType = STATE.Refresh;
                         //这里调刷新接口
                         if (refreshListener != null) {
                             refreshListener.onRefresh();
                         }
                         viewHeight = rlRootLoad.getHeight();
                         int tempHeight = viewHeight - loadViewHeight;
-                        if (tempHeight > 0) {
+                        Logx.d(tag + "" + "回弹动画_结束_回弹总高度=" + numTotal + " 修正高度_" + tempHeight + " stateType=" + stateType.toString());
+                        if (tempHeight != 0) {
                             setViewParams(-tempHeight);
                         }
-                        Logx.d(tag + "" + "回弹动画_结束_回弹总高度=" + numTotal + " 修正高度_" + tempHeight + " stateType=" + stateType.toString());
+                        stateType = STATE.Refresh;
                         break;
                 }
             }
@@ -532,10 +553,10 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
                 String str = "隐藏";
                 numTotal += move;
                 if (move > 0) {
+                    Logx.d(tag + "滚动 有效" + " 本次=" + value + " 上一次=" + upMoveValue + " move=" + move + " numTotal=" + numTotal + " stateType=" + stateType.toString());
                     setViewParams(-move);
-                    Logx.d(tag + "滚动" + " 本次=" + value + " 上一次=" + upMoveValue + " move=" + move + " numTotal=" + numTotal + " stateType=" + stateType.toString());
                 } else {
-                    Logx.d(tag + "滚动" + " 本次=" + value + " 上一次=" + upMoveValue + " move=" + move + " numTotal=" + numTotal + " stateType=" + stateType.toString());
+                    Logx.d(tag + "滚动 无效" + " 本次=" + value + " 上一次=" + upMoveValue + " move=" + move + " numTotal=" + numTotal + " stateType=" + stateType.toString());
                 }
                 //
             }
@@ -547,7 +568,7 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
         if (stateType != STATE.Refresh) {
             return;
         }
-        stateType = STATE.RefreshEnd;
+        stateType = STATE.RefreshEnd_Init;
         if (animationFling != null && animationFling.isAnimRunning()) {
             animationFling.setAnimStop();
         }
@@ -609,7 +630,9 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
         Empty,//空
         Init,//初始状态
         Refresh, //刷新状态
-        RefreshEnd//刷新结束状态
+        RefreshEnd_Init,//刷新结束状态->Init
+        AminRebound_Refresh,//回弹动画->Refresh
+        AminRebound_Init//回弹动画->Init
     }
 
     //================================动画====================================
