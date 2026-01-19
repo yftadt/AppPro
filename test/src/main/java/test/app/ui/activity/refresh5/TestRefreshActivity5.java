@@ -19,7 +19,7 @@ import test.app.ui.activity.refresh5.fl.RefreshFlRv;
 import test.app.ui.activity.refresh5.ll.RefreshLiRv;
 import test.app.ui.adapter.test.TestRefreshAdapter;
 
-//
+//刷新  (有效 可以使用)
 public class TestRefreshActivity5 extends AppCompatActivity {
 
 

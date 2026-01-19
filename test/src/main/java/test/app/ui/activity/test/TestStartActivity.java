@@ -43,12 +43,8 @@ import java.util.List;
 import test.app.net.socket.TcpTimeoutExample;
 import test.app.ui.activity.MainActivity;
 import test.app.ui.activity.action.NormalActionBar;
-import test.app.ui.activity.refresh3.TestRefreshActivity3;
-import test.app.ui.activity.refresh4.TestRefreshActivity4;
-import test.app.ui.activity.refresh5.TestRefreshActivity5;
-import test.app.ui.activity.refresh6.qrefreshlayoutdemo.TestRefreshActivity61;
-import test.app.ui.activity.refresh6.qrefreshlayoutdemo.TestRefreshActivity62;
-import test.app.ui.activity.refresh6.qrefreshlayoutdemo.TestRefreshActivity63;
+ import test.app.ui.activity.refresh5.TestRefreshActivity5;
+
 import test.app.ui.bean.Test;
 import test.app.ui.getui.PushIntentService;
 import test.app.ui.getui.PushService;
@@ -211,15 +207,9 @@ public class TestStartActivity extends NormalActionBar {
         int id = v.getId();
         if (id == R.id.refresh_btn) {
             //刷新
-            // ActivityUtile.startActivityCommon(TestRefreshActivity.class);
             //ActivityUtile.startActivityCommon(TestRefreshActivity1.class);
             //ActivityUtile.startActivityCommon(TestRefreshActivity2.class);
-            // ActivityUtile.startActivityCommon(TestRefreshActivity3.class);
-            //ActivityUtile.startActivityCommon(TestRefreshActivity4.class);
-             ActivityUtile.startActivityCommon(TestRefreshActivity5.class);
-            //ActivityUtile.startActivityCommon(TestRefreshActivity61.class);
-
-
+            ActivityUtile.startActivityCommon(TestRefreshActivity5.class);
             return;
         }
         if (id == R.id.test_iv) {

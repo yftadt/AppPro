@@ -15,7 +15,7 @@ import sj.mblog.Logx;
 import test.app.ui.activity.R;
 import test.app.ui.adapter.test.TestRefreshAdapter;
 
-//刷新
+//刷新  (有效 可以使用)
 public class TestRefreshActivity1 extends AppCompatActivity {
     private RecyclerView mRecyclerView;
      private RefreshLayoutRl refreshLayoutRl;

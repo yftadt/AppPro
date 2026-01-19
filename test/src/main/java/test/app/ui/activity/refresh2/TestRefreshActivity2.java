@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import test.app.ui.activity.R;
 import test.app.ui.adapter.test.TestRefreshAdapter;
 
-//魔兽世界
+//魔兽世界 学习
 public class TestRefreshActivity2 extends AppCompatActivity {
 
     private  RecyclerView rv;
