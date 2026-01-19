@@ -48,6 +48,7 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
         init();
     }
 
+    private String tag = "下拉刷新_";
     private int mTouchSlop;
 
     private NestedScrollingParentHelper mNestedScrollingParentHelper;
@@ -159,7 +160,7 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
     @Override
     public void onStopNestedScroll(View target) {
         mNestedScrollingParentHelper.onStopNestedScroll(target);
-        Logx.d("动画---》" + "滑动结束");
+        Logx.d(tag + "onStopNestedScroll_" + "滑动结束" + " stateType=" + stateType.toString());
         setStop();
     }
 
@@ -169,7 +170,7 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
             return;
         }
         if (animationRebound != null && animationRebound.isAnimRunning()) {
-            //正在动画
+            //正在动画就停止
             return;
         }
         int viewHeight = rlRootLoad.getHeight();
@@ -210,7 +211,6 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
             newHeight = 0;
         }
         int maxHeight = getHeadMaxHeight();
-        Logx.d("滚动：" + "maxHeight=" + maxHeight + " stateType=" + stateType.toString());
         if (newHeight > maxHeight) {
             newHeight = maxHeight;
         }
@@ -276,7 +276,7 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
      */
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
-        Logx.d("惯性滑动1：" + velocityY);
+        Logx.d(tag + "onNestedPreFling_" + "惯性滑动之前" + " stateType=" + stateType.toString());
         //
         if (stateType == STATE.Empty) {
             return dispatchNestedPreFling(velocityX, velocityY);
@@ -309,7 +309,7 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
         //
-        Logx.d("惯性滑动2：" + velocityY);
+        Logx.d(tag + "onNestedPreFling_" + "惯性滑动之后" + " stateType=" + stateType.toString());
         if (consumed) {
             //setViewParams(-(int) velocityY);
             setFlingAnimator(1, velocityY);
@@ -361,7 +361,8 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
             tempHeight = surplusHeight;
             animationType = 2;
         }
-        Logx.d("动画", "移动总距离 " + tempHeight + " viewHeight=" + viewHeight);
+        Logx.d(tag + "" + "惯性滑动动画开始_" + " stateType=" + stateType.toString());
+
         //消失 或者全部显示
         animationFling = new AnimationManager();
         animationFling.setAnimatorPar(tempHeight, new OnAnimationListener() {
@@ -404,7 +405,6 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
                     setViewParams(move);
                     str = "显示";
                 }
-                Logx.d("动画", " value=" + value + " move=" + move + " numTotal=" + numTotal);
             }
         });
         return true;
@@ -475,7 +475,7 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
      * @param velocityY 移动距离
      */
     private void setReboundAnimator(int type, int velocityY) {
-        Logx.d("回弹动画", " 回弹高度=" + velocityY);
+        Logx.d(tag + "" + "回弹动画_回弹高度=" + velocityY + " stateType=" + stateType.toString());
         animationRebound = new AnimationManager();
         animationRebound.setTypeState(type);
         animationRebound.setAnimatorPar(velocityY, new OnAnimationListener() {
@@ -495,6 +495,11 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
                 switch (manager.typeState) {
                     case 1:
                         stateType = STATE.Init;
+                        int viewHeight = rlRootLoad.getHeight();
+                        if (viewHeight != 0) {
+                            setViewParams(-viewHeight);
+                        }
+                        Logx.d(tag + "" + "回弹动画_结束_回弹总高度=" + numTotal + " 修正高度_" + viewHeight + " stateType=" + stateType.toString());
                         break;
                     case 2:
                         stateType = STATE.Refresh;
@@ -502,9 +507,14 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
                         if (refreshListener != null) {
                             refreshListener.onRefresh();
                         }
+                        viewHeight = rlRootLoad.getHeight();
+                        int tempHeight = viewHeight - loadViewHeight;
+                        if (tempHeight > 0) {
+                            setViewParams(-tempHeight);
+                        }
+                        Logx.d(tag + "" + "回弹动画_结束_回弹总高度=" + numTotal + " 修正高度_" + tempHeight + " stateType=" + stateType.toString());
                         break;
                 }
-
             }
 
             @Override
@@ -523,9 +533,11 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
                 numTotal += move;
                 if (move > 0) {
                     setViewParams(-move);
+                    Logx.d(tag + "滚动" + " 本次=" + value + " 上一次=" + upMoveValue + " move=" + move + " numTotal=" + numTotal + " stateType=" + stateType.toString());
+                } else {
+                    Logx.d(tag + "滚动" + " 本次=" + value + " 上一次=" + upMoveValue + " move=" + move + " numTotal=" + numTotal + " stateType=" + stateType.toString());
                 }
                 //
-                Logx.d("回弹动画", " value=" + value + " move=" + move + " numTotal=" + numTotal);
             }
         });
     }
@@ -544,6 +556,7 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
             stateType = STATE.Init;
             return;
         }
+        Logx.d(tag + "" + "结束下拉刷新动画_" + " stateType=" + stateType.toString());
         AnimationManager temp = new AnimationManager();
         temp.setAnimatorPar(viewHeight, new OnAnimationListener() {
             //上次移动距离
@@ -580,7 +593,6 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
                     setViewParams(-move);
                 }
                 //
-                Logx.d("结束动画", " value=" + value + " move=" + move + " numTotal=" + numTotal);
             }
         });
     }
@@ -663,8 +675,6 @@ public class BaseRefreshLayout extends FrameLayout implements NestedScrollingChi
                 @Override
                 public void onAnimationUpdate(@NonNull ValueAnimator animation) {
                     listener.onAnimationUpdate(AnimationManager.this, animation);
-
-
                 }
             });
 
