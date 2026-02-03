@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#33000000"
+    android:orientation="vertical">
+
+    <test.app.ui.view.view3d.RoundView
+        android:id="@+id/view"
+        android:layout_width="@dimen/dp_80"
+        android:layout_height="@dimen/dp_40" />
+
+
+</RelativeLayout>

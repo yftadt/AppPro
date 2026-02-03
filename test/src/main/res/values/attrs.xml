@@ -3,4 +3,21 @@
     <declare-styleable name="QRefreshLayout">
         <attr name="resistance" format="float"/>
     </declare-styleable>
+
+
+    <!--圆角-->
+    <declare-styleable name="RadiusImageView">
+        <!--圆角的img-->
+        <attr name="RadiusImageViewStyle" format="reference" />
+        <!--圆角的大小，默认0-->
+        <attr name="corner_left_radius_top" format="dimension" />
+        <attr name="corner_left_radius_bto" format="dimension" />
+        <attr name="corner_right_radius_top" format="dimension" />
+        <attr name="corner_right_radius_bto" format="dimension" />
+        <attr name="corner_all_radius" format="dimension" />
+
+        <!--图片是否是圆形的，默认：false-->
+        <attr name="is_circle" format="boolean" />
+
+    </declare-styleable>
 </resources>

@@ -201,6 +201,9 @@
         <activity
             android:name=".WebView2Activity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".test.TestViewCustomActivity"
+            android:screenOrientation="portrait"/>
 
         <!-- =========个推开始=========== -->
         <meta-data

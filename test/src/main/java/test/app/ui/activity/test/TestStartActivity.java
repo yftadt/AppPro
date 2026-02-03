@@ -140,6 +140,7 @@ public class TestStartActivity extends NormalActionBar {
 
         findViewById(R.id.jtb_btn).setOnClickListener(this);
         findViewById(R.id.card_btn).setOnClickListener(this);
+        findViewById(R.id.view_btn).setOnClickListener(this);
         findViewById(R.id.yc_btn).setOnClickListener(this);
         findViewById(R.id.xs_btn).setOnClickListener(this);
         findViewById(R.id.main_btn).setOnClickListener(this);
@@ -233,6 +234,12 @@ public class TestStartActivity extends NormalActionBar {
             ActivityUtile.startActivityCommon(CanvasActivity.class);
             return;
         }
+        if (id == R.id.view_btn) {
+            //自定义view
+            ActivityUtile.startActivityCommon(TestViewCustomActivity.class);
+            return;
+        }
+
         if (id == R.id.lang_btn) {
             //多语言
             ActivityUtile.startActivityCommon(LangActivity.class);
