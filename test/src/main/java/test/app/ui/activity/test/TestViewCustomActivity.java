@@ -21,6 +21,9 @@ public class TestViewCustomActivity extends NormalActionBar {
         setBarTvText(0, "返回");
         setBarTvText(1, "画布");
         binding.view.setRound();
+
+        binding.view2.setRound();
+        binding.view3.setRound();
     }
 
     private void initViews() {
@@ -28,6 +31,4 @@ public class TestViewCustomActivity extends NormalActionBar {
     }
 
 
-
-
- }
+}
