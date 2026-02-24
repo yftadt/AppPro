@@ -43,7 +43,7 @@ import java.util.List;
 import test.app.net.socket.TcpTimeoutExample;
 import test.app.ui.activity.MainActivity;
 import test.app.ui.activity.action.NormalActionBar;
- import test.app.ui.activity.refresh5.TestRefreshActivity5;
+import test.app.ui.activity.refresh5.TestRefreshActivity5;
 
 import test.app.ui.bean.Test;
 import test.app.ui.getui.PushIntentService;
@@ -225,7 +225,8 @@ public class TestStartActivity extends NormalActionBar {
         }
         if (id == R.id.open_app_btn) {
             //打开第三方应用
-            ActivityUtile.startNBC(this);
+            // ActivityUtile.startNBC(this);
+            ActivityUtile.openAppPlayGoogle("com.nbaworld.hoops");
             //ActivityUtile.startActivityCommon(OpenAppActivity.class);
             return;
         }

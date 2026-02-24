@@ -207,6 +207,20 @@ public class ActivityUtile {
         BaseApplication.context.startActivity(intent);
     }
 
+
+
+    /**
+     * 通过系统选择浏览器
+     *
+     * @param url 网址
+     */
+    public static void openUrl(String url) {
+        Uri uri = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addCategory("android.intent.category.BROWSABLE");
+        BaseApplication.context.startActivity(intent);
+    }
     /**
      * 打开nbc 应用
      */
@@ -217,5 +231,56 @@ public class ActivityUtile {
         intent.setData(Uri.parse("https://baidu.com?guom=1&utm_source=2&utm_campaign=3"));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+    //打开app商店(google)
+    //https://play.google.com/store/apps/details?id=com.nbaworld.hoops
+    public static void openAppPlayGoogle(String packageName) {
+        //
+        Context context = BaseApplication.context;
+        if (TextUtils.isEmpty(packageName)) {
+            packageName = context.getPackageName();
+        }
+        String url = "market://details?id=" + packageName;
+        //url = "market://details?id=com.xbkj.nbc";
+        //url = "market://details?id=com.xingin.xhs";//小红书
+        boolean isOk = openAppPlay(url);
+        if (isOk) {
+            return;
+        }
+        String urlWeb = "https://play.google.com/store/apps/details?id=" + packageName;
+        openAppPlayWeb(urlWeb);
+    }
+
+    //打开app商店
+    public static boolean openAppPlay(String url) {
+        try {
+            var uri = Uri.parse(url);
+            var intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(uri);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addCategory("android.intent.category.BROWSABLE");
+            if (intent.resolveActivity(BaseApplication.context.getPackageManager()) != null) {
+                BaseApplication.context.startActivity(intent);
+                return true;
+            }
+        } catch (Exception e) {
+
+        }
+        return false;
+    }
+
+    private static boolean openAppPlayWeb(String url) {
+        try {
+            Context context = BaseApplication.context;
+            Intent intent2 = new Intent(Intent.ACTION_VIEW);
+            intent2.setData(Uri.parse(url));
+            if (intent2.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent2);
+                return true;
+            }
+        } catch (Exception e) {
+
+        }
+        return false;
     }
 }
