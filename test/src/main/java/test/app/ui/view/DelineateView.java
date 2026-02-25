@@ -11,6 +11,8 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import sj.mblog.Logx;
+
 public class DelineateView extends View {
     private Paint paint = new Paint();
     private Path path = new Path();
@@ -44,7 +46,6 @@ public class DelineateView extends View {
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStrokeCap(Paint.Cap.ROUND);
-
         paint.setStrokeWidth(12);
     }
 
@@ -95,6 +96,14 @@ public class DelineateView extends View {
         path.quadTo(lastX, lastY, (lastX + eventX) / 2, (lastY + eventY) / 2);
         lastX = eventX;
         lastY = eventY;
+    }
+
+    public float getLastX() {
+        return lastX;
+    }
+
+    public float getLastY() {
+        return lastY;
     }
 
     private boolean isRest = false;

@@ -20,14 +20,25 @@ public class DelineateActivity extends BaseBarActivity1 {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setScreen();
+        //StatusBarUtile.setStatusBarColor(this,true, Color.parseColor("#00000000"),false);
         binding = ActivityTestDelineateBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        StatusBarUtile.setStatusBarColor(this,true, Color.parseColor("#00000000"),false);
+        //重置
         binding.tvReset.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 binding.delineateView.setReset();
+            }
+        });
+        //获取位置
+        binding.tvWl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                float x = binding.delineateView.getLastX();
+                float y = binding.delineateView.getLastY();
+                binding.tvWl.setText("x=" + x + " y=" + y);
             }
         });
 

@@ -28,9 +28,21 @@ public class StatusBarUtile {
      * 可用
      * 设置全屏
      */
-    public static void setBarFull(Activity activity) {
+    public static void setBarFull (Activity activity) {
+        int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        View decorView = activity.getWindow().getDecorView();
+        decorView.setSystemUiVisibility(option);
+    }
+    public static void setBarFull1(Activity activity) {
         //表示5.0
-        int option = (SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        int option = (SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         activity.getWindow().getDecorView().setSystemUiVisibility(option);
     }
 
