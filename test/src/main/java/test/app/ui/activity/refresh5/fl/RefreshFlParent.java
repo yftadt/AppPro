@@ -7,17 +7,17 @@ import android.view.View;
 
 import sj.mblog.Logx;
 import test.app.ui.activity.R;
-import test.app.ui.activity.refresh5.child.RefreshLayoutChildLi;
+import test.app.ui.activity.refresh5.child.RefreshChildLl;
 
 /**
  * 其可以滑动的子View：RefreshLayoutChildLi
  */
-public class RefreshFlCustom extends BaseRefreshLayoutFl {
-    public RefreshFlCustom(Context context) {
+public class RefreshFlParent extends BaseRefreshLayoutFl {
+    public RefreshFlParent(Context context) {
         super(context);
     }
 
-    public RefreshFlCustom(Context context, AttributeSet attrs) {
+    public RefreshFlParent(Context context, AttributeSet attrs) {
         super(context, attrs);
 
     }
@@ -36,8 +36,8 @@ public class RefreshFlCustom extends BaseRefreshLayoutFl {
     protected boolean isStartNestedScroll(View child, View target, int nestedScrollAxes) {
         boolean result = false;
         //boolean result = isEnabled() && !mRefreshing && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
-        if (target instanceof RefreshLayoutChildLi) {
-            mTargetView = (RefreshLayoutChildLi) target;
+        if (target instanceof RefreshChildLl) {
+            mTargetView = (RefreshChildLl) target;
             result = true;
         }
         return result;

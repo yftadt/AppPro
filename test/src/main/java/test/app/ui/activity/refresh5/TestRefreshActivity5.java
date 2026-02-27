@@ -14,9 +14,9 @@ import com.library.baseui.utile.toast.ToastUtile;
 import java.util.ArrayList;
 
 import test.app.ui.activity.R;
-import test.app.ui.activity.refresh5.fl.RefreshFlCustom;
-import test.app.ui.activity.refresh5.fl.RefreshFlRv;
-import test.app.ui.activity.refresh5.ll.RefreshLiRv;
+import test.app.ui.activity.refresh5.fl.RefreshFlParent;
+import test.app.ui.activity.refresh5.fl.RefreshFl;
+import test.app.ui.activity.refresh5.ll.RefreshLl;
 import test.app.ui.adapter.test.TestRefreshAdapter;
 
 //刷新  (有效 可以使用)
@@ -26,19 +26,20 @@ public class TestRefreshActivity5 extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //5
+        //5  只是一个联动学习
         //setContentView(R.layout.activity_test_refresh_5);
-        //51
-        /* setContentView(R.layout.activity_test_refresh_51);
+        //51 有效 RefreshFl+RecyclerView
+       /* setContentView(R.layout.activity_test_refresh_51);
         setListView51();*/
-        //52
+        //52 有效  RefreshFlParent+RefreshChildLl
         /*setContentView(R.layout.activity_test_refresh_52);
         setListView52();*/
+        //53  有效 RefreshLl+RecyclerView
         setContentView(R.layout.activity_test_refresh_53);
         setListView53();
     }
 
-    private RefreshFlRv scrollParent51;
+    private RefreshFl scrollParent51;
 
     private void setListView51() {
         setRecyclerView();
@@ -49,7 +50,7 @@ public class TestRefreshActivity5 extends AppCompatActivity {
                 scrollParent51.setRefreshingEnd();
             }
         });
-        scrollParent51.setOnRefreshListener(new RefreshFlRv.OnRefreshListener() {
+        scrollParent51.setOnRefreshListener(new RefreshFl.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 ToastUtile.showToast("刷新回调");
@@ -61,7 +62,7 @@ public class TestRefreshActivity5 extends AppCompatActivity {
         // scrollParent51.setHeadView(view, headViewHeight, loadViewHeight);
     }
 
-    private RefreshFlCustom scrollParent52;
+    private RefreshFlParent scrollParent52;
 
     private void setListView52() {
         scrollParent52 = findViewById(R.id.scroll_parent52);
@@ -71,7 +72,7 @@ public class TestRefreshActivity5 extends AppCompatActivity {
                 scrollParent52.setRefreshingEnd();
             }
         });
-        scrollParent52.setOnRefreshListener(new RefreshFlCustom.OnRefreshListener() {
+        scrollParent52.setOnRefreshListener(new RefreshFlParent.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 ToastUtile.showToast("刷新回调");
@@ -79,7 +80,7 @@ public class TestRefreshActivity5 extends AppCompatActivity {
         });
     }
 
-    private RefreshLiRv scrollParent53;
+    private RefreshLl scrollParent53;
 
     private void setListView53() {
         setRecyclerView();
@@ -90,7 +91,7 @@ public class TestRefreshActivity5 extends AppCompatActivity {
                 scrollParent53.setRefreshingEnd();
             }
         });
-        scrollParent53.setOnRefreshListener(new RefreshLiRv.OnRefreshListener() {
+        scrollParent53.setOnRefreshListener(new RefreshLl.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 ToastUtile.showToast("刷新回调");

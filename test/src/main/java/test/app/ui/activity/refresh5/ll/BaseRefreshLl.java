@@ -32,12 +32,12 @@ import sj.mblog.Logx;
  * 5.dispatchNestedFling     ->  onNestedFling     子 View 处理完 Fling 后，把剩余事件交给父 View 处理
  * 6.stopNestedScroll        ->  onStopNestedScroll
  */
-public class BaseRefreshLayoutLl extends LinearLayout implements NestedScrollingChild, NestedScrollingParent {
-    public BaseRefreshLayoutLl(Context context) {
+public class BaseRefreshLl extends LinearLayout implements NestedScrollingChild, NestedScrollingParent {
+    public BaseRefreshLl(Context context) {
         super(context);
     }
 
-    public BaseRefreshLayoutLl(Context context, AttributeSet attrs) {
+    public BaseRefreshLl(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }

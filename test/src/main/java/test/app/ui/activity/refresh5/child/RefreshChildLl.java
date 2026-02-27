@@ -18,18 +18,18 @@ import androidx.core.view.ViewCompat;
 /**
  * 下拉刷新子view
  */
-public class RefreshLayoutChildLi extends LinearLayout implements NestedScrollingChild {
+public class RefreshChildLl extends LinearLayout implements NestedScrollingChild {
     private NestedScrollingChildHelper mNestedScrollingChildHelper;
 
     private int lastY;
     private int showHeight;
 
 
-    public RefreshLayoutChildLi(Context context) {
+    public RefreshChildLl(Context context) {
         super(context);
     }
 
-    public RefreshLayoutChildLi(Context context, AttributeSet attrs) {
+    public RefreshChildLl(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 

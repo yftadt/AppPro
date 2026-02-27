@@ -14,12 +14,12 @@ import test.app.ui.activity.R;
 /**
  * 其可以滑动的子View：RecyclerView
  */
-public class RefreshLiRv extends BaseRefreshLayoutLl {
-    public RefreshLiRv(Context context) {
+public class RefreshLl extends BaseRefreshLl {
+    public RefreshLl(Context context) {
         super(context);
     }
 
-    public RefreshLiRv(Context context, AttributeSet attrs) {
+    public RefreshLl(Context context, AttributeSet attrs) {
         super(context, attrs);
 
     }
