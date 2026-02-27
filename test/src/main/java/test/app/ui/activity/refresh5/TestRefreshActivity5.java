@@ -113,7 +113,7 @@ public class TestRefreshActivity5 extends AppCompatActivity {
 
     private ArrayList<String> getItems() {
         ArrayList<String> datas = new ArrayList<String>();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 60; i++) {
             datas.add("item+" + i);
         }
         return datas;
