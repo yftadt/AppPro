@@ -329,8 +329,9 @@ public class BaseRefreshLl extends LinearLayout implements NestedScrollingChild,
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
         //
-        Logx.d(tag + "onNestedPreFling_" + "惯性滑动之后" + " stateType=" + stateType.toString());
-        if (consumed) {
+        Logx.d(tag + "onNestedPreFling_" + "惯性滑动之后" + " stateType=" + stateType.toString()
+                +" consumed="+consumed);
+        if (!consumed) {
             //setViewParams(-(int) velocityY);
             setFlingAnimator(1, velocityY);
         }
@@ -528,9 +529,7 @@ public class BaseRefreshLl extends LinearLayout implements NestedScrollingChild,
                         break;
                     case 2:
                         //这里调刷新接口
-                        if (refreshListener != null) {
-                            refreshListener.onRefresh();
-                        }
+                        setOnRefresh();
                         viewHeight = rlRootLoad.getHeight();
                         int tempHeight = viewHeight - loadViewHeight;
                         Logx.d(tag + "" + "回弹动画_结束_回弹总高度=" + numTotal + " 修正高度_" + tempHeight + " stateType=" + stateType.toString());
@@ -566,10 +565,16 @@ public class BaseRefreshLl extends LinearLayout implements NestedScrollingChild,
             }
         });
     }
-
+    //设置刷新
+    protected void setOnRefresh() {
+        if (refreshListener != null) {
+            refreshListener.onRefresh();
+        }
+    }
     //设置下拉刷新 结束
     public void setRefreshingEnd() {
         if (stateType != STATE.Refresh) {
+            setRefreshEnd();
             return;
         }
         stateType = STATE.RefreshEnd_Init;
@@ -579,6 +584,7 @@ public class BaseRefreshLl extends LinearLayout implements NestedScrollingChild,
         int viewHeight = rlRootLoad.getHeight();
         if (viewHeight == 0) {
             stateType = STATE.Init;
+            setRefreshEnd();
             return;
         }
         Logx.d(tag + "" + "结束下拉刷新动画_" + " stateType=" + stateType.toString());
@@ -598,6 +604,7 @@ public class BaseRefreshLl extends LinearLayout implements NestedScrollingChild,
             public void onAnimationEnd(AnimationManager manager, Animator animation) {
                 // 修改stateType的状态
                 stateType = STATE.Init;
+                setRefreshEnd();
             }
 
             @Override
@@ -621,7 +628,9 @@ public class BaseRefreshLl extends LinearLayout implements NestedScrollingChild,
             }
         });
     }
-
+    //刷新完成
+    protected void setRefreshEnd() {
+    }
     private OnRefreshListener refreshListener;
 
     public void setOnRefreshListener(@Nullable OnRefreshListener listener) {
