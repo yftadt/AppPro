@@ -41,3 +41,6 @@ annotationProcessor "androidx.room:room-compiler:$room_version"
 compileSdkVersion：你编译项目时使用的 SDK 版本。
 minSdkVersion：设备可以运行的最低 SDK 版本。此版本的 SDK 应该与 compileSdkVersion 相同或更高
 targetSdkVersion：你指定的目标 SDK 版本，Android 版本不断变化，要确保你的应用向后兼容。
+
+四：java.lang.reflect.InaccessibleObjectException: Unable to make field private final java.lang.String java.io.File.path accessible: module java.base does not "opens java.io" to unnamed module @24321ae3
+解决：JDK从17降到11

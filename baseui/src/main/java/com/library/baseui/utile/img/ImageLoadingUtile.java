@@ -22,6 +22,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
+import com.library.baseui.utile.file.FileTypeUtil;
 import com.library.baseui.utile.img.req.BitReq;
 import com.library.baseui.utile.img.req.GifReq;
 import com.library.baseui.utile.img.req.WebPGifReq;
@@ -42,7 +43,7 @@ public class ImageLoadingUtile {
         //loadingGif(contxt, loadingUrl, defaultPng, iv);
         //loadingGifWebP2(contxt, loadingUrl, defaultPng, iv);
         loadingFileType(contxt, loadingUrl, defaultPng, iv);
-        loadingBitType(contxt, loadingUrl, defaultPng, iv);
+        //loadingBitType(contxt, loadingUrl, defaultPng, iv);
     }
 
 
@@ -74,7 +75,9 @@ public class ImageLoadingUtile {
                 .into(new SimpleTarget<File>() {
                     @Override
                     public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
-                        ImageFile.redImgFileType(resource);
+
+                        FileTypeUtil.getMimeType(resource);
+                        FileTypeUtil.redImgFileType(resource);
                     }
 
                 });
@@ -88,7 +91,7 @@ public class ImageLoadingUtile {
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        ImageFile.redImgBitType(resource);
+                        FileTypeUtil.redImgBitType(resource);
                     }
 
                 });

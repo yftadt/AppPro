@@ -26,7 +26,6 @@ import com.igexin.sdk.PushManager;
 import com.library.baseui.utile.HandlerUtil;
 import com.library.baseui.utile.app.ActivityUtile;
 import com.library.baseui.utile.file.FileTypeUtil;
-import com.library.baseui.utile.file.FileTypeUtil2;
 import com.library.baseui.utile.file.FileUtile;
 import com.library.baseui.utile.img.ImageLoadingUtile;
 import com.library.baseui.utile.time.DateUtile;
@@ -76,6 +75,8 @@ public class TestStartActivity extends NormalActionBar {
     private String img2 = "https://nbc.vtnbo.com/nbc/msg/image/pro/17517100642845371.jpg";
     private String img21 = "https://nbc.vtnbo.com/nbc/msg/image/pro/17517100642845371.jpg";
     private String img3 = "https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/1.png";
+    //不显示
+    private String img31="https://nbc-file-bk1.oss-ap-southeast-1.aliyuncs.com/nbc/msg/image/beta/1772522700331638.png";
     //可以显示
     private String img4 = "https://raw.githubusercontent.com/PokeAPI/sprites/refs/heads/master/sprites/pokemon/other/official-artwork/1.png";
     //webp 动图
@@ -84,7 +85,8 @@ public class TestStartActivity extends NormalActionBar {
     private String img6 = "https://nbc.vtnbo.com/nbc/msg/image/pro/17585948352157095.webp";
     //虽然是gif 但是手机上 没有正常显示动图，只是静态图
     private String ing7 = "https://nbc.vtnbo.com/nbc/msg/image/pro/17578323960027349.gif";
-    String img = ing7;
+
+    String img = img31;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,8 +199,6 @@ public class TestStartActivity extends NormalActionBar {
         Logx.d("文件类型---》" + fileType);
         byte[] bytes = new byte[]{0, 0, 0, 28, 102, 116, 121, 112};
         String str = new String(bytes);
-        Logx.d("文件类型---》" + str);
-        str = FileTypeUtil2.getFileTypeByHeader(file);
         Logx.d("文件类型---》" + str);
     }
 
