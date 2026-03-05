@@ -224,7 +224,9 @@ public class BaseRefreshLl extends LinearLayout implements NestedScrollingChild,
         }
         return newHeight;
     }
-
+    protected int getHeadViewHeight() {
+        return rlRootLoad.getHeight();
+    }
     protected View mTargetView;
 
     //设置偏移，否则会出现抖动

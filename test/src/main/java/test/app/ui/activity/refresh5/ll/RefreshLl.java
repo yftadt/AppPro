@@ -9,6 +9,7 @@ import android.view.View;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import sj.mblog.Logx;
 import test.app.ui.activity.R;
 
 /**
@@ -34,7 +35,7 @@ public class RefreshLl extends BaseRefreshLl {
         stateType = STATE.Init;
     }
 
-    @Override
+ /*   @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (!isEnabled() || canChildScrollUp()) {
             // Fail fast if we're not in a state where a swipe is possible
@@ -54,10 +55,19 @@ public class RefreshLl extends BaseRefreshLl {
         }
         return super.onTouchEvent(event);
     }
+*/
 
-
-    //true 可以滑动
+    //判断是否滑到顶部（无法再向下滚动） true 可以滑动 falsew 到了顶部
     private boolean canChildScrollUp() {
+        if (mTargetView == null) {
+            return false;
+        }
+        return ViewCompat.canScrollVertically(mTargetView, 1);
+    }
+
+
+    //判断是否滑到底部（无法再向上滚动） true 可以滑动 false 到了底部
+    private boolean canChildScrollDown() {
         if (mTargetView == null) {
             return false;
         }
@@ -105,9 +115,10 @@ public class RefreshLl extends BaseRefreshLl {
     }
 
     //负数：子 View 内容向下滚动；
-    private void setDataLoadShow(int dy, int[] consumed) {
-        //true 可以向上滑动
-        boolean isCanUp = mTargetView.canScrollVertically(-1);
+     private void setDataLoadShow(int dy, int[] consumed) {
+
+        boolean isCanUp = canChildScrollDown();
+        Logx.d("内容向下滚动 isCanDown:" + isCanUp);
         if (isCanUp) {
             return;
         }
@@ -120,10 +131,15 @@ public class RefreshLl extends BaseRefreshLl {
         consumed[1] = dy;//告诉child我消费了多少
     }
 
-    //正数：子 View 内容向上滚动
+     //正数：子 View 内容向上滚动
     private void setDataLoadHide(int dy, int[] consumed) {
-        boolean isCanUp = mTargetView.canScrollVertically(-1);
+       /* boolean isCanUp = canChildScrollUp();
+        Logx.d("内容向上滚动 isCanUp:" + isCanUp);
         if (isCanUp) {
+            return;
+        }*/
+        int height = getHeadViewHeight();
+        if (height == 0) {
             return;
         }
         /*if (Math.abs(dy) < mTouchSlop) {
