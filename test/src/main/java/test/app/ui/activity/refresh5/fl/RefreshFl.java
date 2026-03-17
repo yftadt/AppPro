@@ -29,8 +29,8 @@ public class RefreshFl extends BaseRefreshLayoutFl {
     protected void onFinishInflate() {
         super.onFinishInflate();
         rlRootLoad = findViewById(R.id.rl_root_load);
-        headViewHeight = getContext().getResources().getDimensionPixelSize(R.dimen.dp_180);
-        loadViewHeight = getContext().getResources().getDimensionPixelSize(R.dimen.dp_50);
+        headViewHeight = getContext().getResources().getDimensionPixelSize(com.library.dimen.R.dimen.dp_180);
+        loadViewHeight = getContext().getResources().getDimensionPixelSize(com.library.dimen.R.dimen.dp_50);
         stateType = STATE.Init;
     }
 

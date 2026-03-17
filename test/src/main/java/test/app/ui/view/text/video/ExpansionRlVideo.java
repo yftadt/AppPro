@@ -132,7 +132,7 @@ public class ExpansionRlVideo extends RelativeLayout {
         Context con = getContext();
         MeasureTextViewVideo tv = new MeasureTextViewVideo(con);
         tv.setTextColor(Color.parseColor("#ffffff"));
-        tv.setTextSize(con.getResources().getDimensionPixelSize(R.dimen.dp_15));
+        tv.setTextSize(con.getResources().getDimensionPixelSize(com.library.dimen.R.dimen.dp_15));
         return tv;
     }
 

@@ -25,7 +25,8 @@ buildscript {
     }
     dependencies {
         // 这个是gradle插件 要确保与gradle版本对应
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        //classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:8.5.2'
         //它可以隐式依赖：要配置 id 'kotlin-android',插件会处理版本关系
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
     }
@@ -56,12 +57,23 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-ext {
+/*ext {
     compileSdkVersion = 34
     buildToolsVersion = '34.0.0'
     //华为推送 最小17 胎心监测最小 21
     minSdkVersion = 26
     targetSdkVersion = 28
+    //compose_version = '1.1.0-beta03'
+    //对应kotlin-gradle-plugin:1.9.25 版本
+    compose_version = '1.5.14'
+
+}*/
+ext {
+    compileSdkVersion = 35
+    buildToolsVersion = '35.0.0'
+
+    minSdkVersion = 26
+    targetSdkVersion = 35
     //compose_version = '1.1.0-beta03'
     //对应kotlin-gradle-plugin:1.9.25 版本
     compose_version = '1.5.14'

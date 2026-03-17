@@ -58,5 +58,8 @@ dependencies {
     api "com.airbnb.android:lottie:6.5.2"
     //RootBeer检测设备是否已Root：
     api 'com.scottyab:rootbeer-lib:0.1.0'
+    //图片选择器
+    api 'com.github.AnUnyieldingFighter.Mediaaar:media:5.5'
+
 
 }

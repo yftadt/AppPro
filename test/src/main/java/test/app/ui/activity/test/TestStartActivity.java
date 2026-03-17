@@ -36,6 +36,8 @@ import test.app.ui.activity.R;
 
 
 import java.io.File;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,7 +78,7 @@ public class TestStartActivity extends NormalActionBar {
     private String img21 = "https://nbc.vtnbo.com/nbc/msg/image/pro/17517100642845371.jpg";
     private String img3 = "https://github.com/PokeAPI/sprites/blob/master/sprites/pokemon/other/official-artwork/1.png";
     //不显示
-    private String img31="https://nbc-file-bk1.oss-ap-southeast-1.aliyuncs.com/nbc/msg/image/beta/1772522700331638.png";
+    private String img31 = "https://nbc-file-bk1.oss-ap-southeast-1.aliyuncs.com/nbc/msg/image/beta/1772522700331638.png";
     //可以显示
     private String img4 = "https://raw.githubusercontent.com/PokeAPI/sprites/refs/heads/master/sprites/pokemon/other/official-artwork/1.png";
     //webp 动图
@@ -219,14 +221,24 @@ public class TestStartActivity extends NormalActionBar {
             return;
         }
         if (id == R.id.delineate_btn) {
-            //画线
+            //画线（获取画布上的坐标）
             ActivityUtile.startActivityCommon(DelineateActivity.class);
             return;
         }
         if (id == R.id.open_app_btn) {
             //打开第三方应用
             // ActivityUtile.startNBC(this);
-            ActivityUtile.openAppPlayGoogle("com.nbaworld.hoops");
+            //https://play.google.com/store/apps/details?id=com.nbaworld.hoops
+            //&utm_source=share
+            //&utm_medium=video_ad
+            //&utm_campaign=launch_2026
+            //&utm_content=ad_001
+            //String pck="com.nbaworld.hoops";
+            String pck = "com.nbaworld.hoops&utm_source=share&utm_medium=202523&utm_campaign=launch_2026&utm_content=ad_001";
+            String pak2="https://play.google.com/store/apps/details?id=com.nbaworld.hoops&referrer=utm_source%3Dgoogle%26utm_medium%3Dcpc%26utm_campaign%3Dsummer_sale";
+            String pak3="com.nbaworld.hoops&referrer=utm_source%3Dgoogle%26utm_medium%3Dcpc%26utm_campaign%3Dsummer_sale";
+            String url=generateAppBReferrerLink();
+            ActivityUtile.openAppPlayGoogleUrl(url);
             //ActivityUtile.startActivityCommon(OpenAppActivity.class);
             return;
         }
@@ -314,7 +326,31 @@ public class TestStartActivity extends NormalActionBar {
         }
 
     }
+     // 生成带自定义参数的应用B推广链接（核心：URL编码）
 
+    private String generateAppBReferrerLink() {
+         try {
+            String pck="com.nbaworld.hoops";
+            // 1. 自定义推广参数（应用A要传递给应用B的数据）
+            String utmSource = "app_a"; // 标记来源是应用A
+            String appAUserId = "user_8888"; // 应用A的用户ID（自定义参数）
+            String appAChannel = "inner_promotion_2026"; // 应用A的推广渠道
+
+            // 2. 拼接参数并URL编码（必须编码，否则参数会被截断/解析失败）
+            StringBuilder referrerParams = new StringBuilder();
+            referrerParams.append("utm_source=").append(URLEncoder.encode(utmSource, StandardCharsets.UTF_8.name()))
+                    .append("&utm_medium=").append(URLEncoder.encode("app_promotion", StandardCharsets.UTF_8.name()))
+                    .append("&app_a_user_id=").append(URLEncoder.encode(appAUserId, StandardCharsets.UTF_8.name()))
+                    .append("&app_a_channel=").append(URLEncoder.encode(appAChannel, StandardCharsets.UTF_8.name()));
+
+            // 3. 构造完整的Google Play跳转链接
+            return "https://play.google.com/store/apps/details?id=" + pck +
+                    "&referrer=" + URLEncoder.encode(referrerParams.toString(), StandardCharsets.UTF_8.name());
+        } catch (Exception e) {
+            Log.e("AppA", "生成推广链接失败", e);
+            return "";
+        }
+    }
     private void test() {
 
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);

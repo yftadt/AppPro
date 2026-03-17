@@ -11,14 +11,14 @@ import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 
-import com.images.config.entity.ImageEntity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import media.library.images.config.entity.MediaEntity;
 import test.app.ui.window.popup.BasePopupWindow;
 import test.app.ui.window.popup.PopupPhotoOption;
-import test.app.utiles.photo.ImageSelectManager;
 
 /**
  * Created by Administrator on 2017/7/4.
@@ -28,7 +28,7 @@ public class ImagesLayout extends ImagesBaseLayout {
     //选择获取图片方式
     private PopupPhotoOption photoPopupMenuView;
     //图片管理器
-    private ImageSelectManager managerPhoto;
+    //private ImageSelectManager managerPhoto;
     private View activityRoot;
 
     public ImagesLayout(Context context) {
@@ -87,7 +87,7 @@ public class ImagesLayout extends ImagesBaseLayout {
 
     @Override
     protected void imageClick(int index, int type) {
-        if (managerPhoto == null) {
+        /*if (managerPhoto == null) {
             return;
         }
         if (onImageTypeListener != null) {
@@ -104,13 +104,13 @@ public class ImagesLayout extends ImagesBaseLayout {
             case 3:
                 managerPhoto.previewImageDelect(getSourceIamgePaths(), index);
                 break;
-        }
+        }*/
 
     }
 
     //初始化管理器
     private void initManagerPhoto(Activity activity) {
-        managerPhoto = new ImageSelectManager(activity);
+      //  managerPhoto = new ImageSelectManager(activity);
         photoPopupMenuView = new PopupPhotoOption(activity);
         photoPopupMenuView.setOnPopupBackListener(new PhotoListener());
         photoPopupMenuView.setTitleText("上传照片");
@@ -122,13 +122,13 @@ public class ImagesLayout extends ImagesBaseLayout {
     private boolean isTake;
 
     //获取相册选择的图片
-    public List<ImageEntity> onActivityResult(int requestCode, int resultCode, Intent data) {
-        List<ImageEntity> iamges = managerPhoto.onActivityResult(requestCode, resultCode, data);
-        return iamges;
+    public List<MediaEntity> onActivityResult(int requestCode, int resultCode, Intent data) {
+        //List<MediaEntity> iamges = managerPhoto.onActivityResult(requestCode, resultCode, data);
+        return new ArrayList<>();
     }
 
     //
-    public void setImagesPath(List<ImageEntity> images) {
+    public void setImagesPath(List<MediaEntity> images) {
         if (isTake) {
             setImagesTakePath(images);
         } else {
@@ -138,12 +138,12 @@ public class ImagesLayout extends ImagesBaseLayout {
     }
 
     //设置拍照的图片
-    private void setImagesTakePath(List<ImageEntity> images) {
+    private void setImagesTakePath(List<MediaEntity> images) {
         setImageData(images, null);
     }
 
     //设置从相册选择的图片
-    private void setImagesOptionPath(List<ImageEntity> images) {
+    private void setImagesOptionPath(List<MediaEntity> images) {
         HashMap<String, ImagePath> imagesMap = getImages();
         imagePaths.clear();
         //
@@ -151,11 +151,11 @@ public class ImagesLayout extends ImagesBaseLayout {
     }
 
     //整合图片数据
-    private void setImageData(List<ImageEntity> images, HashMap<String, ImagePath> imagesMap) {
+    private void setImageData(List<MediaEntity> images, HashMap<String, ImagePath> imagesMap) {
         for (int i = 0; i < images.size(); i++) {
-            ImageEntity image = images.get(i);
-            String path = image.imagePath;
-            String pathSource = image.imagePathSource;
+            MediaEntity image = images.get(i);
+            String path = image.mediaPath;
+            String pathSource = image.mediaPathSource;
             if (TextUtils.isEmpty(pathSource)) {
                 pathSource = path;
             }
@@ -191,12 +191,12 @@ public class ImagesLayout extends ImagesBaseLayout {
                 case PopupPhotoOption.PHOTO_TYPE_LOCALITY:
                     //本地
                     isTake = false;
-                    managerPhoto.getMoreConfig(9, getSourceIamgePaths());
+                    //managerPhoto.getMoreConfig(9, getSourceIamgePaths());
                     break;
                 case PopupPhotoOption.PHOTO_TYPE_CAMERA:
                     //相机拍照
                     isTake = true;
-                    managerPhoto.getSinglePhotoConfig();
+                    //managerPhoto.getSinglePhotoConfig();
                     break;
                 case PopupPhotoOption.PHOTO_TYPE_CANCEL:
                     //取消

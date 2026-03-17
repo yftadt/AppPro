@@ -38,6 +38,7 @@
         android:theme="@style/NoActionBar"
         android:usesCleartextTraffic="true">
         <activity
+            android:exported="true"
             android:name=".MainAct"
             android:screenOrientation="portrait"
             tools:ignore="DiscouragedApi">

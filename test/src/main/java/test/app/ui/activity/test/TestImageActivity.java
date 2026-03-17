@@ -7,16 +7,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 
-import com.images.config.entity.ImageEntity;
+
 import com.library.baseui.utile.app.ActivityUtile;
 import com.library.baseui.utile.img.ImageLoadingUtile;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import media.library.images.config.entity.MediaEntity;
 import test.app.ui.activity.R;
 import test.app.ui.activity.action.NormalActionBar;
-import test.app.utiles.photo.ImageSelectManager;
+
 
 
 //测试登录
@@ -28,7 +29,7 @@ public class TestImageActivity extends NormalActionBar {
 
     private ImageView image1Iv;
     private ImageView image2Iv;
-    private ImageSelectManager photoManager;
+    //private ImageSelectManager photoManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +38,7 @@ public class TestImageActivity extends NormalActionBar {
         setBarColor();
         setBarTvText(0, "返回");
         setBarTvText(1, "图");
-        photoManager = new ImageSelectManager(this);
+       // photoManager = new ImageSelectManager(this);
         //
 
 
@@ -58,7 +59,7 @@ public class TestImageActivity extends NormalActionBar {
     public void onClick(View view) {
         super.onClick(view);
         int id = view.getId();
-        if (id == R.id.image_select_one_btn) {
+     /*   if (id == R.id.image_select_one_btn) {
             //选择一张
             photoManager.getMoreConfig(1, null);
             return;
@@ -77,7 +78,7 @@ public class TestImageActivity extends NormalActionBar {
             //选图裁剪
             photoManager.getSingleCropConfig();
             return;
-        }
+        }*/
         if (id == R.id.yp_btn) {
             //语音
             ActivityUtile.startActivityCommon(TestMusicActivity.class);
@@ -99,7 +100,7 @@ public class TestImageActivity extends NormalActionBar {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        List<ImageEntity> image = photoManager.onActivityResult(requestCode, resultCode, data);
+        List<MediaEntity> image = new ArrayList<>();//photoManager.onActivityResult(requestCode, resultCode, data);
         if (image == null) {
             image = new ArrayList<>();
         }
@@ -109,7 +110,7 @@ public class TestImageActivity extends NormalActionBar {
                 imagesIv[i].setVisibility(View.GONE);
                 continue;
             }
-            String imagePathSource = image.get(i).imagePathSource;
+            String imagePathSource = image.get(i).mediaPathSource;
             ImageLoadingUtile.loading(this, imagePathSource, R.mipmap.ic_launcher, imagesIv[i]);
             imagesIv[i].setVisibility(View.VISIBLE);
         }

@@ -7,7 +7,9 @@
                  android:supportsRtl="true"
     >
         <!-- 网络监听 -->
-        <receiver android:name=".receive.NetStateReceiver">
+        <receiver
+            android:name=".receive.NetStateReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>

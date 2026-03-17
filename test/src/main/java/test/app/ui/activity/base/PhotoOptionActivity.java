@@ -5,14 +5,15 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.images.config.entity.ImageEntity;
+
 
 import java.util.List;
 
+import media.library.images.config.entity.MediaEntity;
 import test.app.ui.activity.action.NormalActionBar;
 import test.app.ui.window.popup.BasePopupWindow;
 import test.app.ui.window.popup.PopupPhotoOption;
-import test.app.utiles.photo.ImageSelectManager;
+
 
 /**
  * 选择单张照片
@@ -22,7 +23,7 @@ import test.app.utiles.photo.ImageSelectManager;
 public class PhotoOptionActivity extends NormalActionBar implements BasePopupWindow.OnPopupBackListener {
     private PopupPhotoOption photoPopupMenuView;
     private View view;
-    protected ImageSelectManager imageSelectManager;
+   // protected ImageSelectManager imageSelectManager;
 
 
     public void initSeteleView() {
@@ -32,7 +33,7 @@ public class PhotoOptionActivity extends NormalActionBar implements BasePopupWin
 
     public void initSeteleView(View view) {
         this.view = view;
-        imageSelectManager = new ImageSelectManager(this);
+        //imageSelectManager = new ImageSelectManager(this);
         photoPopupMenuView = new PopupPhotoOption(this);
         photoPopupMenuView.setOnPopupBackListener(this);
     }
@@ -45,20 +46,20 @@ public class PhotoOptionActivity extends NormalActionBar implements BasePopupWin
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        List<ImageEntity> iamges = null;
+      /*  List<MediaEntity> iamges = null;
         if (imageSelectManager != null) {
             iamges = imageSelectManager.onActivityResult(requestCode, resultCode, data);
         }
         if (iamges != null) {
             getImage(iamges);
-        }
+        }*/
     }
 
     protected void setTitle(String popText) {
         photoPopupMenuView.setTitleText(popText);
     }
 
-    protected void getImage(List<ImageEntity> images) {
+    protected void getImage(List<MediaEntity> images) {
 
     }
 
@@ -85,7 +86,7 @@ public class PhotoOptionActivity extends NormalActionBar implements BasePopupWin
     }
 
     public void onPhotoTake() {
-        imageSelectManager.getSinglePhotoConfig();
+      //  imageSelectManager.getSinglePhotoConfig();
     }
 
     public void onPhotoCancel() {

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.text.TextUtils;
 
 
-import com.images.config.entity.ImageEntity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import media.library.images.config.entity.MediaEntity;
 import test.app.net.manager.loading.UploadingManager;
 import test.app.net.res.loading.AttaRes;
 import test.app.ui.activity.R;
@@ -57,14 +57,14 @@ public class PhotoMoreActivity extends NormalActionBar {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        List<ImageEntity> iamges = imagesView.onActivityResult(requestCode, resultCode, data);
+        List<MediaEntity> iamges = imagesView.onActivityResult(requestCode, resultCode, data);
         setImagesShow(iamges);
     }
 
     //上传文件
     private UploadingManager uploadingManager;
 
-    protected void setImagesShow(List<ImageEntity> iamges) {
+    protected void setImagesShow(List<MediaEntity> iamges) {
         if (iamges == null) {
             return;
         }

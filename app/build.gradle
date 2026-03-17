@@ -8,6 +8,7 @@ def appName = new String(apkName.getBytes("iso8859-1"), "UTF-8")
 def testUrl = "\"http://10.168.3.101\""
 def isLog=appIsLog
 android {
+    namespace 'com.app.ui.activity'
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
@@ -28,7 +29,7 @@ android {
         resValue "string", "app_name", appName.toString()
     }
 
-    packagingOptions {
+    /*packagingOptions {
         exclude 'META-INF/NOTICE' // will not include NOTICE file
         exclude 'META-INF/LICENSE' // will not include LICENSE file
         exclude 'META-INF/DEPENDENCIES.txt'
@@ -41,7 +42,7 @@ android {
         exclude 'META-INF/license.txt'
         exclude 'META-INF/dependencies.txt'
         exclude 'META-INF/LGPL2.1'
-    }
+    }*/
     dexOptions {
         javaMaxHeapSize "4g"
     }
@@ -136,12 +137,14 @@ android {
 
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    api project(':dimen')
+    //api project(':baseui')
+    //api project(':dimen')
+    api project(':test')
     //图片选择框架
    /* implementation files('libs\\optionv12.aar')
     //list
     implementation files('libs\\list-library-v1.aar')*/
     //
-    api project(':test')
-    api project(':baseui')
+
+
 }

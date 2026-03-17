@@ -1,4 +1,4 @@
-package com.app.ui.adapter.test;
+package test.app.ui.adapter.test;
 
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -32,7 +32,6 @@ import test.app.ui.activity.R;
 import test.app.ui.activity.test.TestChatActivity;
 import test.app.utiles.other.Constant;
 import test.app.utiles.other.DLog;
-import test.app.utiles.photo.ImageSelectManager;
 
 
 /**
@@ -43,12 +42,10 @@ public class TestChatAdapter extends AbstractListAdapter<ChatMessageTest> {
     private TestChatActivity activity;
     private String patHead, docHead;
     private int patDefaultIcon, docDefaultIcon;
-    private ImageSelectManager imageSelectManager;
+    // private ImageSelectManager imageSelectManager;
 
-    public TestChatAdapter(TestChatActivity activity, ImageSelectManager imageSelectManager) {
+    public TestChatAdapter(TestChatActivity activity) {
         this.activity = activity;
-        this.imageSelectManager = imageSelectManager;
-        MediaPlayerManager.getInstance().setAddOnMediaListener(new MediaListener());
     }
 
     public void setHeads(String patHead, int patDefaultIcon, String docHead, int docDefaultIcon) {
@@ -333,7 +330,7 @@ public class TestChatAdapter extends AbstractListAdapter<ChatMessageTest> {
                 }
                 //点击了图片
                 ArrayList<String> urls = bean.getUrls();
-                imageSelectManager.previewImage(urls, 0);
+                //imageSelectManager.previewImage(urls, 0);
                 return;
             }
             if (id == R.id.item_right_voice_tv) {

@@ -57,8 +57,8 @@ public class TestRefreshActivity5 extends AppCompatActivity {
             }
         });
         View view = LayoutInflater.from(this).inflate(R.layout.head_test_refresh, null);
-        int headViewHeight = getResources().getDimensionPixelSize(R.dimen.dp_100);
-        int loadViewHeight = getResources().getDimensionPixelSize(R.dimen.dp_50);
+        int headViewHeight = getResources().getDimensionPixelSize(com.library.dimen.R.dimen.dp_100);
+        int loadViewHeight = getResources().getDimensionPixelSize(com.library.dimen.R.dimen.dp_50);
         // scrollParent51.setHeadView(view, headViewHeight, loadViewHeight);
     }
 

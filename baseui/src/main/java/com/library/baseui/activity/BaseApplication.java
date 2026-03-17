@@ -4,39 +4,40 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 
+
 import androidx.multidex.MultiDex;
 
-import com.library.baseui.utile.app.ActivityCycle;
-import com.library.baseui.utile.app.DeviceSafe;
 
+import com.library.baseui.utile.app.ActivityCycle;
+
+import sj.mblog.Logx;
 
 /**
  * Created by Administrator on 2016/9/7.
  */
 public class BaseApplication extends Application {
-    public static BaseApplication application;
+
     public static Context context;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        initApplication();
+        init();
     }
 
-    private void initApplication() {
+    private void init() {
         if (!getPackageName().equals(getCurrentProcessName())) {
             return;
         }
-        application = this;
         context = this;
         ActivityCycle.getInstance().registerCallbacks(this);
+        Logx.init();
         initSdk();
     }
 
     protected void initSdk() {
 
     }
-
     /**
      * 获取当前进程名
      */
@@ -58,5 +59,9 @@ public class BaseApplication extends Application {
         super.attachBaseContext(base);
         MultiDex.install(this);
     }
-
+    /*@Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        android.os.Process.killProcess(android.os.Process.myPid());
+    }*/
 }

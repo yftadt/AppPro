@@ -225,7 +225,7 @@ public class RefreshLayoutRl extends RelativeLayout implements NestedScrollingPa
         mNestedScrollingChildHelper = new NestedScrollingChildHelper(this);
         setNestedScrollingEnabled(true);
         int initTop1 = (int) (60 * metrics.density);
-        int initTop = context.getResources().getDimensionPixelSize(R.dimen.dp_50);//(int) (60 * metrics.density);
+        int initTop = context.getResources().getDimensionPixelSize(com.library.dimen.R.dimen.dp_50);//(int) (60 * metrics.density);
         initTop1 = initTop;
         mCurrentTargetOffsetTop = -initTop1;
         mOriginalOffsetTop = -initTop1;

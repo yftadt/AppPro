@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.view.View;
 
 import androidx.core.view.ViewCompat;
+import sj.mblog.Logx;
 
 import com.library.baseui.activity.BaseApplication;
 
@@ -208,7 +209,6 @@ public class ActivityUtile {
     }
 
 
-
     /**
      * 通过系统选择浏览器
      *
@@ -221,6 +221,7 @@ public class ActivityUtile {
         intent.addCategory("android.intent.category.BROWSABLE");
         BaseApplication.context.startActivity(intent);
     }
+
     /**
      * 打开nbc 应用
      */
@@ -232,6 +233,7 @@ public class ActivityUtile {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
+
     //打开app商店(google)
     //https://play.google.com/store/apps/details?id=com.nbaworld.hoops
     public static void openAppPlayGoogle(String packageName) {
@@ -249,6 +251,26 @@ public class ActivityUtile {
         }
         String urlWeb = "https://play.google.com/store/apps/details?id=" + packageName;
         openAppPlayWeb(urlWeb);
+    }
+
+    /**
+     * 跳转到Google Play的应用B详情页
+     * referrerLink：
+     * https://play.google.com/store/apps/details?id=com.nbaworld.hoops&referrer=utm_source%3Dapp_a%26utm_medium%3Dapp_promotion%26app_a_user_id%3Duser_8888%26app_a_channel%3Dinner_promotion_2026]
+     */
+    public static void openAppPlayGoogleUrl(String referrerLink) {
+        Logx.d("打开：" + referrerLink);
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(referrerLink));
+        // 强制通过Google Play打开（避免跳转到其他应用商店）
+        intent.setPackage("com.android.vending");
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        // 检查设备是否安装了Google Play
+        Context context = BaseApplication.context;
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivity(intent);
+        } else {
+            Logx.d("打开失败");
+        }
     }
 
     //打开app商店

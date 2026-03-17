@@ -8,10 +8,9 @@ import android.widget.TextView;
 
 
 
-import com.app.ui.adapter.test.TestChatAdapter;
 
-import com.images.config.entity.ImageEntity;
-import com.library.baseui.utile.app.ActivityUtile;
+
+ import com.library.baseui.utile.app.ActivityUtile;
 import com.library.baseui.utile.media.MediaPlayerManager;
 import com.library.baseui.utile.toast.ToastUtile;
 import com.list.library.able.OnLoadingListener;
@@ -19,16 +18,19 @@ import com.list.library.view.BaseListView;
 import com.list.library.view.refresh.head.RefreshCustomList;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
+import media.library.images.config.entity.MediaEntity;
 import test.app.test.ChatMessageTest;
 import test.app.ui.activity.MainActivity;
 import test.app.ui.activity.R;
 import test.app.ui.activity.action.NormalActionBar;
+import test.app.ui.adapter.test.TestChatAdapter;
 import test.app.ui.view.key.ChatKeyboardLayout;
 import test.app.utiles.other.Constant;
 import test.app.utiles.other.DLog;
-import test.app.utiles.photo.ImageSelectManager;
+
 
 
 //测试会话
@@ -40,7 +42,7 @@ public class TestChatActivity extends NormalActionBar {
     ChatKeyboardLayout chatKeyboardLayout;
 
     private TestChatAdapter adapter;
-    private ImageSelectManager photoManager;
+    //private ImageSelectManager photoManager;
 
 
     @Override
@@ -62,8 +64,8 @@ public class TestChatActivity extends NormalActionBar {
         chatKeyboardLayout.setViewInit(this, findViewById(R.id.chat_popup_in));
         chatKeyboardLayout.setOnKeyboardListener(new KeyboardListener());
         //
-        photoManager = new ImageSelectManager(this);
-        adapter = new TestChatAdapter(this, photoManager);
+        // photoManager = new ImageSelectManager(this);
+        adapter = new TestChatAdapter(this);
         adapter.setHeads("", R.mipmap.default_head_pat_man, "", R.mipmap.default_head_doc);
         chatLv.setAdapter(adapter);
         chatLv.setHeadType(2);
@@ -125,12 +127,12 @@ public class TestChatActivity extends NormalActionBar {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        List<ImageEntity> images = photoManager.onActivityResult(requestCode, resultCode, data);
+        List<MediaEntity> images =new ArrayList<>(); //photoManager.onActivityResult(requestCode, resultCode, data);
         if (images == null || images.size() == 0) {
             return;
         }
         for (int i = 0; i < images.size(); i++) {
-            String imagePath = images.get(i).imagePath;
+            String imagePath = images.get(i).mediaPath;
             File file = new File(imagePath);
             if (!file.exists()) {
                 DLog.e("照片不存在", "" + imagePath);
@@ -160,11 +162,11 @@ public class TestChatActivity extends NormalActionBar {
             switch (type) {
                 case 1:
                     //图片
-                    photoManager.getMoreConfig(1, null);
+                    //photoManager.getMoreConfig(1, null);
                     break;
                 case 2:
                     //拍照
-                    photoManager.getSinglePhotoConfig();
+                    //photoManager.getSinglePhotoConfig();
                     break;
 
             }
