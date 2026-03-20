@@ -22,8 +22,8 @@
 
     <TextView
         android:id="@+id/tv_reset"
-        android:layout_width="200dp"
-        android:layout_height="100dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:background="#fff"
         android:gravity="center"
@@ -31,12 +31,13 @@
 
     <TextView
         android:id="@+id/tv_wl"
-        android:layout_width="200dp"
-        android:layout_height="100dp"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:background="#fff"
         android:gravity="center"
+        android:textSize="@dimen/dp_10"
         android:text="位置" />
     <TextView
         android:id="@+id/tv_img"
