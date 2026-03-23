@@ -2,6 +2,7 @@ package com.library.baseui.utile.app;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.provider.Settings;
 
 import com.scottyab.rootbeer.RootBeer;
@@ -24,9 +25,10 @@ public class DeviceSafe {
      * @return
      */
     public static boolean isDeveloperModeEnabled(Context context) {
-        return Settings.Secure.getInt(
+        boolean isDeveloperOpen = Settings.Secure.getInt(
                 context.getContentResolver(),
                 Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 0) != 0;
+        return isDeveloperOpen;
     }
 
     /**
@@ -36,9 +38,13 @@ public class DeviceSafe {
      * @return
      */
     public static boolean isAdbEnabled(Context context) {
-        return Settings.Secure.getInt(
+        boolean isDubugOpen = Settings.Secure.getInt(
                 context.getContentResolver(),
                 Settings.Global.ADB_ENABLED, 0) != 0;
+        if (!isDubugOpen) {
+            isDubugOpen = android.os.Debug.isDebuggerConnected();
+        }
+        return isDubugOpen;
     }
 
     /**
@@ -172,4 +178,6 @@ public class DeviceSafe {
         }
         Logx.d("检查结果：" + message);
     }
+
+
 }
