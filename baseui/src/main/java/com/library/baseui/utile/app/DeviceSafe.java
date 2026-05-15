@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
+import android.text.TextUtils;
 
 import com.scottyab.rootbeer.RootBeer;
 
@@ -138,43 +139,31 @@ public class DeviceSafe {
         boolean isRooted2 = isDeviceRooted2(context);
         boolean isDeveloperModeEnabled = isDeveloperModeEnabled(context);
         boolean isAdbEnabled = isAdbEnabled(context);
-        String message = "您的设备状态正常";
+        String message = "";
         if (isRooted || isRooted2) {
-            String root1 = "";
-            String root2 = "";
+            String root = "";
             if (isRooted) {
-                root1 = "(检查模式1)";
+                root = "(检查模式1)";
             }
             if (isRooted2) {
-                root2 = "(检查模式2)";
+                root = "(检查模式2)";
             }
-            if (isDeveloperModeEnabled) {
-                if (isAdbEnabled) {
-                    message = "您的设备已进入开发者模式并且已root" + root1 + root2 + "，同时已开启ADB调试模式，这可能带来严重安全风险。请在“设置” -> “开发者选项”中关闭开发者模式并取消设备root，同时关闭ADB调试模式。";
-                } else {
-                    message = "您的设备已进入开发者模式并且已root" + root1 + root2 + "，这可能带来安全风险。请在“设置” -> “开发者选项”中关闭开发者模式并取消设备root。";
-                }
+            message = "已root，" + root;
+        }
+        if (isDeveloperModeEnabled) {
+            String msg = "已开启发者模式";
+            if (TextUtils.isEmpty(message)) {
+                message = msg;
             } else {
-                if (isAdbEnabled) {
-                    message = "您的设备已root" + root1 + root2 + "并且已开启ADB调试模式，这可能带来安全风险。请取消设备root并关闭ADB调试模式。";
-                } else {
-                    message = "您的设备已root" + root1 + root2 + "，这可能带来安全风险。请取消设备root。";
-                }
+                message += "  " + msg;
             }
-        } else {
-            if (isDeveloperModeEnabled) {
-                if (isAdbEnabled) {
-                    message = "您的设备已进入开发者模式并且已开启ADB调试模式，这可能带来安全风险。请在“设置” -> “开发者选项”中关闭开发者模式和ADB调试模式。";
-                } else {
-                    message = "您的设备已进入开发者模式，这可能带来安全风险。请在“设置” -> “开发者选项”中关闭开发者模式。";
-                }
-            } else {
-                if (isAdbEnabled) {
-                    message = "您的设备已开启ADB调试模式，这可能带来安全风险。请关闭ADB调试模式。";
-                } else {
-                    message = "您的设备状态正常。";
-                }
-            }
+        }
+        if (isAdbEnabled) {
+            String msg = "已链接ADB";
+            message += "  " + msg;
+        }
+        if (TextUtils.isEmpty(message)) {
+            message = "您的设备状态正常";
         }
         Logx.d("检查结果：" + message);
     }
