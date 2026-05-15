@@ -19,7 +19,8 @@ android {
                                 GETUI_APP_KEY   : "BJ56LEFVoL80UncU9pw4m1",
                                 GETUI_APP_SECRET: "Zla6WFDDpr8zX8Gn1w0916",
                                 //${PCK}
-                                PCK             : "com.app.baseui"]
+                                PCK             : "com.app.baseui",
+                                applicationId   : "com.app.baseui"]
         ndk {
             abiFilters "armeabi", "x86"
         }

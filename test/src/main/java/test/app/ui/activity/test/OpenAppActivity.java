@@ -10,20 +10,27 @@ import android.os.Bundle;
 
 import android.view.View;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.FileProvider;
 
 import com.library.baseui.utile.app.ActivityUtile;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 import sj.mblog.Logx;
 import test.app.open.OpenAppManager;
+import test.app.ui.activity.MainActivity;
 import test.app.ui.activity.R;
 import test.app.ui.activity.WebView2Activity;
 import test.app.ui.activity.WebViewActivity;
@@ -34,6 +41,7 @@ import com.library.baseui.utile.file.FileUtile;
 import com.library.baseui.utile.toast.ToastUtile;
 
 //打开第三方应用
+
 public class OpenAppActivity extends NormalActionBar {
 
 
@@ -57,8 +65,12 @@ public class OpenAppActivity extends NormalActionBar {
         findViewById(R.id.open_ks_btn).setOnClickListener(this);
         findViewById(R.id.open_dy_btn).setOnClickListener(this);
         findViewById(R.id.nbc_btn).setOnClickListener(this);
+        findViewById(R.id.nbc_btn_open).setOnClickListener(this);
         findViewById(R.id.web_btn2).setOnClickListener(this);
+        findViewById(R.id.write_private_file).setOnClickListener(this);
+        findViewById(R.id.open_private_file).setOnClickListener(this);
 
+        testDoc();
     }
 
     @Override
@@ -91,48 +103,39 @@ public class OpenAppActivity extends NormalActionBar {
         if (id == R.id.nbc_btn) {
             type = "nbc_btn";
         }
+        if (id == R.id.nbc_btn_open) {
+            type = "nbc_btn_open";
+        }
+        if (id == R.id.web_btn2) {
+            type = "nbc_btn_opem";
+        }
         if (id == R.id.web_btn2) {
             type = "web_btn2";
+        }
+        if (id == R.id.write_private_file) {
+            type = "write_private_file";
+        }
+        if (id == R.id.open_private_file) {
+            type = "open_private_file";
         }
 
         switch (type) {
             case "web_btn2":
                 //打开网页
-                String html = "<a rel=\"follow\" href=\"nbcopen://m.nbc.com\">打开APP</a>";
-                String nbcUlr = "nbcopen://m.nbc.com";
-                String u1 = "https://www.admin.umqnb.com/full/protocol/logoutProtocol.html";
-                String u2 = "?params=" + urlBM(nbcUlr);
-                String u3 = "http://p5ml3g4x2.bkt.clouddn.com/open_app.html";
-                String u4 = " https://login.m.taobao.com/havanaone/login/login.htm?bizEntrance=taobao_h5&bizName=taobao&redirectURL=https%3A%2F%2Fdetail.m.tmall.com%2Fitem.htm%3Fid%3D744484813309%26ali_trackid%3D2%253Amm_6780106115_3120750015_115739500048%253A1750065362709_556988033_0%26rid%3D3111129563%26union_lens%3DlensId%253ATAPI%25401726113636%2540213dcdf8_12a2_191e463e11d_3dbc%254001%253Brecoveryid%253A556988033_0%25401750065362714%26relationId%3D3111129563%26ak%3D33956823%26e%3DzdNP5zn_GcT-AUPYJvYe3BevvGA4rTDc1n2u1uaGfFTbgXwX9FmGb8KAvv819ZCvB7FVevGTgCorcHC8ppjTrg5_BV1nUcFk1ZcjcWCguPExoZdbGI0X3Y6_ipqUvDlVtvwJFnLcSqzQItry-8UZkQYlxGmsdYF41m1UR_MnIORcWZ_OWTAmRznpmhTObRx2MWco0HG1Q4XnrKGKd0ehGO83GrqTPIR_y7sIXXo4FsWs-ZTzZaXoO7EVE8Pmku4temEtdHrfv9GwJV6QB_UwBmzrK1HO0ps3c0U9_K__QmHuH24yfJXM1LIWxEn0wFIb8bChKbVFVRT3qdB77ShfYfNJFx3oe4S3EiM_lSG_bZRGHQYpXShXzTsevsTOWcvoU1NVKZy3ECeuOLrdHTHPFUjXjjyenLs1l0eTW-p3ONO4qvzcOojn1fNc0fvSPvF13oSBPzNGOYfRd2pVpXoUSAd6yWJi31bievfr-LFhzs576J1UFuST4gnxyG67V65D0c2ya3o3TF4%26type%3D2%26tk_cps_param%3D6780106115%26tkFlag%3D0%26tk_cps_ut%3D2%26bxsign%3DtbkgJrWtC5_8eKkbMDIopofnczN7H9MtouHuuAdiUaHOUW0pumFCwfSegi7CdOl_h9ajzqp_q6ISmWD_jiByURLkPtzpGjLcRgoDx8tVUmZ37f9oX-wpiNC4PqLTImbMuey-wEMiWrHuQaTvRewyE65qPj8FiFJzcccmeb4Jh0mx2WvfiqVyWX7vTMq561J-clY&ttid=";
-
-                String u5 = urlJM(u4);
-                String nbcUrl = "nbcopen://m.nbc.com";
-                String u6 = " https://login.m.taobao.com/havanaone/login/login.htm?bizEntrance=taobao_h5&bizName=taobao&redirectURL=" + nbcUrl;
-                //ActivityUtile.startActivityString(WebViewActivity.class, "测试", u6, html);
-                ActivityUtile.startActivityString(WebViewActivity.class, "测试", "", "");
+                //打开本地html
+                String u7 = "file:///android_asset/jump.html";
+                ActivityUtile.startActivityString(WebViewActivity.class, "测试", u7, "");
                 break;
             case "nbc_btn":
-                 nbcUrl = "nbcopen://m.nbc.com";
-                //打开nbc
-                /*Uri uri = Uri.parse(nbcUrl);
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(uri);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addCategory("android.intent.category.BROWSABLE");
-                startActivity(intent); */
-                //在AndroidManifest.xml设置
-                /* <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data
-                android:host="m.nbc.com"
-                android:scheme="nbcopen" />
-            </intent-filter>*/
-
-                testXHS();
+                // 调用：弹出系统保存选择器，默认文件名 newfile.txt
+                String filePath = "nbc.html";
+                mCreateDocLauncher.launch(filePath);
+                break;
+            case "nbc_btn_open":
+                //只允许选 文本文件 / 所有文件
+                //mOpenDocLauncher.launch(new String[]{"text/plain", "*/*"});
+                mimeType = "html/plain";
+                mOpenDocLauncher.launch(new String[]{mimeType, "*/*"});
                 break;
             case "open_btn":
                 //打开淘宝商品
@@ -186,40 +189,134 @@ public class OpenAppActivity extends NormalActionBar {
                 url = "snssdk1128://poi/goodsdetail?back_page=0&activity_id=1797193016931344&common_extra=%7B%22poi_distribution_info%22%3A%7B%22pid%22%3A%22dy_2421566367335466_174078_5466194%22%2C%22external_info%22%3A%22api_396124_8726686%22%2C%22product_id%22%3A1797193016931344%2C%22sign%22%3A%22tx7bpA39qZi0zUzDEpBkg0QqNuV5M5AaFopHfgsH_zc%3D%22%2C%22source%22%3A1%2C%22by_track%22%3A0%7D%7D&sale_channel=distribution.default.default&detail_enter_page=deeplink";
                 OpenAppManager.getInstance().openApp(this, "OPEN_DY", url);
                 return;
-
+            case "write_private_file":
+                //写入私有文件
+                testNBC();
+                break;
+            case "open_private_file":
+                //打开私有文件
+                File htmlFile = new File(getFilesDir(), "nbc.html");
+                if (htmlFile.exists()) {
+                    ActivityUtile.openHtmlInBrowser(this, htmlFile);
+                }
+                break;
 
         }
 
 
+    }
+
+    // 注册 文件创建 回调
+    private ActivityResultLauncher<String> mCreateDocLauncher;
+    private ActivityResultLauncher<String[]> mOpenDocLauncher;
+
+    private String mimeType = "";
+
+    private void testDoc() {
+        // 初始化回调
+        mCreateDocLauncher = registerForActivityResult(
+                new ActivityResultContracts.CreateDocument("*/*"),
+                uri -> {
+                    // 用户选好保存路径 & 文件名后回调
+                    if (uri != null) {
+                        //"content://com.android.providers.downloads.documents/document/163"
+                        // 往文件写入文本内容
+                        String html = "<a href=\"nbcopen://m.nbc.com?page=login\">打开</a>";
+                        // 创建HTML字符串
+                        String htmlContent = "<html><body>" + html + "</body></html>";
+                        String saveContent = htmlContent;
+                        writeFileToUri(OpenAppActivity.this, uri, saveContent);
+                        ToastUtile.showToast("文件保存成功");
+
+                    }
+                });
+        // 读取文件选择器：只选 txt 所有文本文件
+        mOpenDocLauncher = registerForActivityResult(
+                new ActivityResultContracts.OpenDocument(),
+                uri -> {
+                    if (uri != null) {
+                        // 读取 Uri 里的文件内容
+                        String text = readTextFromUri(this, uri);
+                        // text 就是你保存时写入的内容
+                        ToastUtile.showToast("读取成功");
+                        //
+                        Logx.d("内容：==>" + text);
+                        ActivityUtile.openFileByOtherApp(OpenAppActivity.this, uri, mimeType);
+                    }
+                });
+    }
+
+
+    /**
+     * 通过 Uri 写入文件内容
+     */
+    private void writeFileToUri(Context context, Uri uri, String content) {
+        OutputStream outputStream = null;
+        try {
+            // 获得输出流
+            outputStream = context.getContentResolver().openOutputStream(uri);
+            if (outputStream != null) {
+                outputStream.write(content.getBytes());
+                outputStream.flush();
+            }
+        } catch (IOException e) {
+
+            ToastUtile.showToast("保存失败");
+        } finally {
+            try {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // 从 Uri 读取文本文件
+    private String readTextFromUri(Context context, Uri uri) {
+        StringBuilder sb = new StringBuilder();
+        InputStream is = null;
+        BufferedReader reader = null;
+        try {
+            is = context.getContentResolver().openInputStream(uri);
+            reader = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (reader != null) reader.close();
+                if (is != null) is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return sb.toString();
     }
 
     //跳转至nbc 把html 代码片段写入sd卡，再用浏览器打开
-    private void test() {
-        String filePath = FileUtile.getTextFile("index.html");
-        File htmlFile = new File(filePath);
-        if (!htmlFile.exists()) {
-            String html = "<a rel=\"follow\" href=\"nbcopen://m.nbc.com\">打开APP</a>";
-            // 创建HTML字符串
-            String htmlContent = "<html><body>" + html + "</body></html>";
-            FileUtile.writeTxet(htmlContent, "index.html");
-            return;
+    private void testNBC() {
+        File htmlFile = new File(getFilesDir(), "nbc.html");
+
+        String html = "<a href=\"nbcopen://m.nbc.com?page=login\">打开46</a>";
+        // 创建HTML字符串
+        String htmlContent = "<html><body>" + html + "</body></html>";
+        try {
+            FileOutputStream fos = new FileOutputStream(htmlFile);
+            fos.write(htmlContent.toString().getBytes());
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            ToastUtile.showToast("写入失败");
         }
-        if (!htmlFile.exists()) {
-            ToastUtile.showToast("文件不存在");
-            return;
-        }
-        // 创建文件URI
-        Uri htmlUri = getUriForFile(this, htmlFile);
-        // Uri htmlUri = Uri.fromFile(htmlFile);
-        // 创建Intent并打开浏览器
-        String packagename = this.getPackageName();
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(htmlUri, "text/html");
-        if (Build.VERSION.SDK_INT >= 24) {
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        }
-        startActivity(intent);
+
+
     }
+
     //跳转至小红书 下载页面
     private void testXHS() {
         String filePath = FileUtile.getTextFile("xhs.html");
@@ -235,31 +332,9 @@ public class OpenAppActivity extends NormalActionBar {
             ToastUtile.showToast("文件不存在");
             return;
         }
-        // 创建文件URI
-        Uri htmlUri = getUriForFile(this, htmlFile);
-        // Uri htmlUri = Uri.fromFile(htmlFile);
-        // 创建Intent并打开浏览器
-        String packagename = this.getPackageName();
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(htmlUri, "text/html");
-        if (Build.VERSION.SDK_INT >= 24) {
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        }
-        startActivity(intent);
+        ActivityUtile.openFile(this, htmlFile);
     }
 
-    private static Uri getUriForFile(Context context, File file) {
-        if (context == null || file == null) {
-            throw new NullPointerException();
-        }
-        Uri uri;
-        if (Build.VERSION.SDK_INT >= 24) {
-            uri = FileProvider.getUriForFile(context.getApplicationContext(), "com.app.baseui.provider", file);
-        } else {
-            uri = Uri.fromFile(file);
-        }
-        return uri;
-    }
 
     //解码
     private String urlJM(String str) {

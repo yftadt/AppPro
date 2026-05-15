@@ -227,6 +227,14 @@ public class TestStartActivity extends NormalActionBar {
         }
         if (id == R.id.open_app_btn) {
             //打开第三方应用
+            if(true){
+                ActivityUtile.startActivityCommon(OpenAppActivity.class);
+                return;
+            }
+            if(true){
+                ActivityUtile.startNBC2(this);
+                return;
+            }
             // ActivityUtile.startNBC(this);
             //https://play.google.com/store/apps/details?id=com.nbaworld.hoops
             //&utm_source=share

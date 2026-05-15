@@ -6,15 +6,19 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 
+import androidx.core.content.FileProvider;
 import androidx.core.view.ViewCompat;
 import sj.mblog.Logx;
 
 import com.library.baseui.activity.BaseApplication;
+import com.library.baseui.utile.toast.ToastUtile;
 
+import java.io.File;
 import java.io.Serializable;
 
 
@@ -234,6 +238,63 @@ public class ActivityUtile {
         context.startActivity(intent);
     }
 
+    //完全可用
+    public static void startNBC2(Context context) {
+        //
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("nbcopen://m.nbc.com?page=login"));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+    //专属的 App 协议：
+    //nbcopen://m.nbc.com
+    /* <activity
+    android:name=".OpenAppAct"
+    android:exported="true"
+    android:theme="@style/ActTransparentTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+    android:host="m.nbc.com"
+    android:scheme="nbcopen" />
+            </intent-filter>
+
+        </activity>*/
+    //透明的act
+/*<style name="ActTransparentTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>*/
+    //拿
+    //打开App
+    //String html2 = "<a href=\"nbcopen://m.nbc.com?page=login\">打开</a>";
+   /* private fun openApp() {
+        var tempIntent = getIntent()
+        var uri = tempIntent.getData()
+        var page = ""
+        if (uri != null && uri.toString().startsWith("nbcopen://m.nbc.com?")) {
+            page = uri.getQueryParameter("page").toString()
+        }
+        if ("login".equals(page)) {
+            ActivityUtile.startActivityCommon(MainAct2::class.java)
+        } else {
+            var isActExist = ActivityCycle.getInstance().isActExist(MainAct2::class.java)
+            if (!isActExist) {
+                ActivityUtile.startActivityCommon(WelcomeAct::class.java)
+            }
+        }
+        finish()
+        Logx.d("=====>参数：" + page + " " + uri.toString())
+    }*/
+
+
     //打开app商店(google)
     //https://play.google.com/store/apps/details?id=com.nbaworld.hoops
     public static void openAppPlayGoogle(String packageName) {
@@ -304,5 +365,77 @@ public class ActivityUtile {
 
         }
         return false;
+    }
+
+    /**
+     * 使用第三方 app 打开文件
+     *
+     * @param context
+     * @param file
+     */
+    public static void openFile(Context context, File file) {
+        if (context == null || file == null) {
+            throw new NullPointerException();
+        }
+        Uri htmlUri;
+        if (Build.VERSION.SDK_INT >= 24) {
+            htmlUri = FileProvider.getUriForFile(context.getApplicationContext(), "com.app.baseui.provider", file);
+        } else {
+            htmlUri = Uri.fromFile(file);
+        }
+        // 创建Intent并打开浏览器
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(htmlUri, "text/html");
+        if (Build.VERSION.SDK_INT >= 24) {
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+        context.startActivity(intent);
+    }
+
+    /**
+     * 用第三方App打开SAF选择的文件Uri
+     *
+     * @param context  上下文
+     * @param uri      SAF拿到的文件Uri
+     * @param mimeType 文件类型 如 text/plain、
+     */
+
+    public static void openFileByOtherApp(Context context, Uri uri, String mimeType) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        // 关键：设置Uri和类型
+        intent.setDataAndType(uri, mimeType);
+        // 核心flag：给外部App临时授予读写权限
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        // 跳出当前应用，选择外部App
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            context.startActivity(intent);
+        } catch (Exception e) {
+            ToastUtile.showToast("没有找到可打开该文件的应用");
+        }
+    }
+
+    /**
+     * 私有文件 用第三方app打开
+     * @param context
+     * @param htmlFile
+     */
+    public static void openHtmlInBrowser(Context context, File htmlFile) {
+        try {
+            Uri fileUri = FileProvider.getUriForFile(
+                    context,
+                    context.getPackageName() + ".fileprovider",
+                    htmlFile
+            );
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(fileUri, "text/html");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        } catch (Exception e) {
+            ToastUtile.showToast("没有找到可打开该文件的应用");
+        }
     }
 }

@@ -95,6 +95,9 @@ public class WebViewActivity extends NormalActionBar {
                 if (!isUrl) {
                     isUrl = url.startsWith("www");
                 }
+                if(!isUrl){
+                    isUrl = url.startsWith("file:");
+                }
 
                 if (!isUrl) {
                     // 自定义处理逻辑

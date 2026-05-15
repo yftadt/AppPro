@@ -54,7 +54,12 @@
                 android:layout_height="45dp"
                 android:gravity="center"
                 android:text="打开nbc" />
-
+            <Button
+                android:id="@+id/nbc_btn_open"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:text="打开nbc2" />
             <Button
                 android:id="@+id/open_btn"
                 android:layout_width="match_parent"
@@ -94,6 +99,18 @@
                 android:layout_height="45dp"
                 android:gravity="center"
                 android:text="抖音" />
+            <Button
+                android:id="@+id/write_private_file"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:text="写入私有文件" />
+            <Button
+                android:id="@+id/open_private_file"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:gravity="center"
+                android:text="打开私有文件" />
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>
