@@ -90,6 +90,10 @@ public class DraggableFloatWindow {
             } else {
                 params.type = WindowManager.LayoutParams.TYPE_PHONE;
             }
+            //只能配合Act在当前页面使用
+            // params.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
+            //只能配合Act在当前页面使用
+            //params.type = WindowManager.LayoutParams.TYPE_APPLICATION;
 
             params.format = PixelFormat.TRANSLUCENT;
             params.gravity = Gravity.TOP | Gravity.START;
