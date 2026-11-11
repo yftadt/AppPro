@@ -43,7 +43,10 @@ public class InformBean {
     //true 不确定 进度的最大值和 当前进度值
     public boolean progressIndeterminate;//进度是确定的
     //=============自定义===============
+    //折叠布局。
     public RemoteViews customViews;
+    //展开布局，可不设置。
+    public RemoteViews customBigViews;
     public int customSmallIcon;//必填
     public String customTicker;
     //=============声音和震动==============

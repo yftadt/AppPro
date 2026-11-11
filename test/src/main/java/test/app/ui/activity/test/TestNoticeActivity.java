@@ -106,14 +106,22 @@ public class TestNoticeActivity extends NormalActionBar {
         informBean.informType = 4;
         informBean.msgTitle = "自定义通知";
         informBean.msgContent = "自定义通知" + zdt1;
-        informBean.msgTicker = "自定义通知" + zdt2;
+        informBean.customTicker = "自定义通知" + zdt2;
         informBean.intent = it;
         informBean.informId = id;
         informBean.informReqCode = id;
         informBean.informAutoCancel = true;
         //
-        RemoteViews views = new RemoteViews(getPackageName(), R.layout.layout_notice_custom);
+        //折叠情况下
+        RemoteViews views = new RemoteViews(packageName, R.layout.layout_notice_custom);
+        views.setTextViewText(R.id.tv_test_1, informBean.msgTitle);
+        views.setTextViewText(R.id.tv_test_2, informBean.msgContent);
         informBean.customViews = views;
+        //展开情况下
+        RemoteViews bigViews = new RemoteViews(packageName, R.layout.layout_notice_custom_big);
+        bigViews.setTextViewText(R.id.tv_test_1, informBean.msgTitle);
+        bigViews.setTextViewText(R.id.tv_test_2, informBean.msgContent);
+        informBean.customBigViews = bigViews;
         informBean.customSmallIcon = R.mipmap.ic_launcher;
         NotificationCompat.Builder builder = informManager.setInformContent(informBean);
         //

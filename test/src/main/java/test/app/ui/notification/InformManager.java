@@ -89,11 +89,16 @@ public class InformManager {
                 break;
             case 4:
                 //自定义通知
-                builder.setContent(informBean.customViews);
+                setText(builder, informBean.msgTitle, informBean.msgContent, informBean.customTicker);
+                builder.setCustomContentView(informBean.customViews);
+                if (informBean.customBigViews != null) {
+                    builder.setCustomBigContentView(informBean.customBigViews);
+                }
+                //保留系统通知头部，自定义布局只负责内容区域。
+                builder.setStyle(new NotificationCompat.DecoratedCustomViewStyle());
                 if (informBean.customSmallIcon != 0) {
                     smallIcon = informBean.customSmallIcon;
                 }
-                builder.setTicker(informBean.customTicker);
                 break;
         }
         setIntent(builder, informBean.intent, informBean.informReqCode);
@@ -136,7 +141,21 @@ public class InformManager {
         style.setSummaryText(informBean.bigTxtMsg);
         Bitmap img = informBean.bigImg;
         if (informBean.bigResIdImg != 0) {
-            img = BitmapFactory.decodeResource(context.getResources(), informBean.bigResIdImg);
+            //先读取尺寸，不分配图片像素内存。
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeResource(context.getResources(), informBean.bigResIdImg, options);
+            //按 2 的幂次采样，将长边控制在约 1024px 以内，保持图片比例。
+            final int maxImageSize = 1024;
+            options.inSampleSize = 1;
+            while (options.outWidth > (long) maxImageSize * options.inSampleSize
+                    || options.outHeight > (long) maxImageSize * options.inSampleSize) {
+                options.inSampleSize *= 2;
+            }
+            //禁止资源按屏幕密度再次放大，避免采样后增加内存占用。
+            options.inScaled = false;
+            options.inJustDecodeBounds = false;
+            img = BitmapFactory.decodeResource(context.getResources(), informBean.bigResIdImg, options);
         }
         if (img != null) {
             style.bigPicture(img);
@@ -148,7 +167,6 @@ public class InformManager {
     //设置icon
     private void setIcon(NotificationCompat.Builder builder, int LargeIcon, int smallicon) {
         builder.setSmallIcon(smallicon);
-        builder.setSmallIcon(smallicon, 2);
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), LargeIcon);
         builder.setLargeIcon(bitmap);
     }
@@ -235,7 +253,7 @@ public class InformManager {
     }
 
     /**
-     * 创建渠道
+     * 创建渠道，已存在时更新名称和描述。
      * 声音、震动等是渠道配置，自定义参数仅在首次创建时使用，后续保留系统和用户设置。
      */
     private void setCreateChannel(String[] channels, InformBean informBean) {
@@ -245,7 +263,11 @@ public class InformManager {
         }
         NotificationChannel existingChannel = notificationManager.getNotificationChannel(channels[2]);
         if (existingChannel != null) {
-            //渠道存在
+            //渠道存在，更新名称和描述。
+            existingChannel.setName(channels[1]);
+            existingChannel.setDescription(channels[1]);
+            //提交更新，沿用已有渠道的其他设置。
+            notificationManager.createNotificationChannel(existingChannel);
             return;
         }
         //普通重要性用于提醒渠道，下载进度在对应分支中设置为低重要性。
@@ -376,13 +398,11 @@ public class InformManager {
             Logx.d("", "状态栏显示，配置错误");
             return;
         }
-        if (isResident) {
-            //在顶部常驻
-            //true：设置为进行中的通知；false：取消进行中状态，保留其他通知标志。
-            builder.setOngoing(true);
-        }
+        //在顶部常驻
+        //true：设置为进行中的通知；false：取消进行中状态，保留其他通知标志。
+        builder.setOngoing(isResident);
         Notification notification = builder.build();
-        //这种方式 会覆盖 flags， 要使用上面的方式
+
         /*if (isResident) {
             //FLAG_ONGOING_EVENT 在顶部常驻
             //覆盖：只保留 FLAG_ONGOING_EVENT，清掉其他标志。
