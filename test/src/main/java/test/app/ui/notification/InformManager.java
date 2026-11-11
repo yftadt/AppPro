@@ -78,8 +78,14 @@ public class InformManager {
                 setBigText(builder, informBean);
                 break;
             case 3:
+                //未指定渠道时使用下载进度渠道，由 setFeeling 统一绑定并按需创建。
+                //强行设置下载渠道
+                informBean.channelId = downloadProgressChannel[2];
+                //
                 setText(builder, informBean.msgTitle, informBean.msgContent, informBean.msgTicker);
                 setProgress(builder, informBean.progressMax, informBean.progress, informBean.progressIndeterminate);
+                //首次显示时允许按渠道设置提醒，更新同一条通知时不重复提醒。
+                builder.setOnlyAlertOnce(true);
                 break;
             case 4:
                 //自定义通知
@@ -142,26 +148,14 @@ public class InformManager {
         builder.setLargeIcon(bitmap);
     }
 
+
     /**
      * 选择通知使用的渠道，具体配置交给 setCreateChannel。
-     * 显式指定 channelId 时优先使用该渠道，否则按 feelingType 选择。
+     * 指定 channelId 时优先使用该渠道，否则按 feelingType 选择。
      */
     private void setFeeling(NotificationCompat.Builder builder, InformBean informBean) {
         if (!TextUtils.isEmpty(informBean.channelId)) {
-            //内置渠道可以按需创建；非内置渠道由调用方提前创建。
-            String[][] channelList = new String[][]{
-                    alertsChannel, downloadProgressChannel, patternAlertsChannel,
-                    vibrationChannel, allAlertsChannel, customVibrationChannel, customAlertsChannel
-            };
-            for (String[] channels : channelList) {
-                if (informBean.channelId.equals(channels[2])) {
-                    //本条通知都需要绑定渠道 ID。
-                    builder.setChannelId(channels[2]);
-                    setCreateChannel(channels, informBean);
-                    return;
-                }
-            }
-            //其他显式渠道由调用方提前创建。
+            setChannelId(builder, informBean);
             return;
         }
         //未指定提醒类型或类型不匹配时，使用消息提醒渠道。
@@ -199,11 +193,51 @@ public class InformManager {
         setCreateChannel(channels, informBean);
     }
 
+    //按渠道id 设置渠道
+    private void setChannelId(NotificationCompat.Builder builder, InformBean informBean) {
+        //本条通知绑定指定的渠道 ID。
+        builder.setChannelId(informBean.channelId);
+        String[] channels;
+        //按渠道 ID 匹配内置渠道，case 的值与上方渠道数组的 ID 保持一致。
+        switch (informBean.channelId) {
+            case "message_alert":
+                channels = alertsChannel;
+                break;
+            case "download_progress":
+                channels = downloadProgressChannel;
+                break;
+            case "message_pattern_alert":
+                channels = patternAlertsChannel;
+                break;
+            case "message_vibration":
+                channels = vibrationChannel;
+                break;
+            case "message_all_alerts":
+                channels = allAlertsChannel;
+                break;
+            case "message_custom_vibration":
+                channels = customVibrationChannel;
+                break;
+            case "message_custom_alert":
+                channels = customAlertsChannel;
+                break;
+            default:
+                //非内置渠道由调用方提前创建。
+                return;
+        }
+        //内置渠道按需创建，已存在时保留系统和用户设置。
+        setCreateChannel(channels, informBean);
+    }
+
     /**
      * 创建渠道
      * 声音、震动等是渠道配置，自定义参数仅在首次创建时使用，后续保留系统和用户设置。
      */
     private void setCreateChannel(String[] channels, InformBean informBean) {
+        if (channels == null) {
+            //获取渠道类别失败
+            return;
+        }
         NotificationChannel existingChannel = notificationManager.getNotificationChannel(channels[2]);
         if (existingChannel != null) {
             //渠道存在

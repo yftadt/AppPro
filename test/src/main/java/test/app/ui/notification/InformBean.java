@@ -8,7 +8,7 @@ import android.widget.RemoteViews;
 //通知栏
 public class InformBean {
 
-    //渠道id：未指定时使用消息提醒渠道，并按 feelingType 选择提醒方式。
+    //渠道id：未指定时，进度通知使用下载渠道，其他通知按 feelingType 选择提醒渠道。
     public String channelId;
 
     //0 消息通知 1 大图 ，2 长文字 3 进度通知 4 自定义通知
