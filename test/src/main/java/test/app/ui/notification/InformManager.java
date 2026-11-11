@@ -101,6 +101,11 @@ public class InformManager {
         setFeeling(builder, informBean);
         //true 点击消失
         builder.setAutoCancel(informBean.informAutoCancel);
+        //锁屏显示方式，最终受用户的锁屏通知设置限制。
+        //VISIBILITY_PUBLIC：允许显示完整内容。
+        //VISIBILITY_PRIVATE：隐藏敏感内容，仅显示基本信息。
+        //VISIBILITY_SECRET：不在锁屏上显示。
+        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         return builder;
     }
 
@@ -256,11 +261,6 @@ public class InformManager {
                 .build();
         //以渠道名称作为说明。
         channel.setDescription(channels[1]);
-        //安全锁屏上
-        //VISIBILITY_PUBLIC	显示完整内容
-        //VISIBILITY_PRIVATE	显示通知，但隐藏敏感内容
-        //VISIBILITY_SECRET	完全隐藏通知
-        channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
         //各分支独立配置提醒方式；免打扰和灯光效果受权限、用户设置及设备支持限制。
         //震动节奏单位为毫秒，{100, 200} 表示等待 100ms 后震动 200ms。
         switch (channels[0]) {
