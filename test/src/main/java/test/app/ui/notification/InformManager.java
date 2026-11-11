@@ -155,7 +155,9 @@ public class InformManager {
             };
             for (String[] channels : channelList) {
                 if (informBean.channelId.equals(channels[2])) {
-                    setCreateChannel(channels, builder, informBean);
+                    //本条通知都需要绑定渠道 ID。
+                    builder.setChannelId(channels[2]);
+                    setCreateChannel(channels, informBean);
                     return;
                 }
             }
@@ -192,117 +194,126 @@ public class InformManager {
             default:
                 break;
         }
-        setCreateChannel(channels, builder, informBean);
+        //本条通知都需要绑定渠道 ID。
+        builder.setChannelId(channels[2]);
+        setCreateChannel(channels, informBean);
     }
 
     /**
-     * 将 Builder 绑定到渠道，渠道不存在时才配置并创建。
+     * 创建渠道
      * 声音、震动等是渠道配置，自定义参数仅在首次创建时使用，后续保留系统和用户设置。
      */
-    private void setCreateChannel(String[] channels, NotificationCompat.Builder builder, InformBean informBean) {
-        //无论渠道是否已存在，本条通知都需要绑定渠道 ID。
-        builder.setChannelId(channels[2]);
+    private void setCreateChannel(String[] channels, InformBean informBean) {
         NotificationChannel existingChannel = notificationManager.getNotificationChannel(channels[2]);
         if (existingChannel != null) {
-            //读取已保存渠道的免打扰配置，不重新创建或覆盖用户设置。
-            Logx.d("InformManager", "channelId:" + channels[2]
-                    + " isDnd---->" + existingChannel.canBypassDnd());
+            //渠道存在
             return;
         }
-        //提醒渠道默认使用普通重要性，下载进度分支会降低重要性。
+        //普通重要性用于提醒渠道，下载进度在对应分支中设置为低重要性。
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
         NotificationChannel channel = new NotificationChannel(
                 channels[2], channels[1], importance);
-        //获取系统默认“通知提示音”的 UR
-        Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        //请求绕过优先级免打扰，是否生效取决于权限和用户设置。
-        channel.setBypassDnd(true);
-        //默认以名称作为说明，消息和下载渠道在对应分支中提供更具体的描述。
+        //系统默认通知音的 URI，使用声音的分支显式设置。
+        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        //将声音标记为通知提示音。
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+        //以渠道名称作为说明。
         channel.setDescription(channels[1]);
         //安全锁屏上
         //VISIBILITY_PUBLIC	显示完整内容
         //VISIBILITY_PRIVATE	显示通知，但隐藏敏感内容
         //VISIBILITY_SECRET	完全隐藏通知
-        channel.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
-        //启用通知指示灯，需要设备支持。
-        channel.enableLights(true);
-        //将通知指示灯颜色设为红色，需要灯光已启用且设备支持该颜色。
-        channel.setLightColor(Color.RED);
-        //启用通知震动，具体节奏可通过 setVibrationPattern() 设置。
-        channel.enableVibration(true);
-        //单位为毫秒：等待 100ms 后震动 200ms，自定义分支会覆盖此节奏。
-        channel.setVibrationPattern(new long[]{100, 200});
+        channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        //各分支独立配置提醒方式；免打扰和灯光效果受权限、用户设置及设备支持限制。
+        //震动节奏单位为毫秒，{100, 200} 表示等待 100ms 后震动 200ms。
         switch (channels[0]) {
             case "1":
-                //消息提醒：
-                // 沿用公共声音、震动和灯光配置。
+                //消息提醒：默认声音、固定震动节奏和红色指示灯。
+                channel.setSound(defaultSound, audioAttributes); //使用系统默认通知提示音。
+                channel.setBypassDnd(true); //请求绕过优先级免打扰，实际受权限和用户设置限制。
+                channel.enableVibration(true); //启用通知震动。
+                channel.setVibrationPattern(new long[]{100, 200}); //等待 100ms 后震动 200ms。
+                channel.enableLights(true); //启用通知指示灯，需要设备支持。
+                channel.setLightColor(Color.RED); //将通知指示灯颜色设为红色。
                 break;
             case "2":
                 //下载进度：
-                // 低重要性，无声音、震动、灯光，不请求绕过免打扰。
-                channel.setImportance(NotificationManager.IMPORTANCE_LOW);
-                sound = null;
-                channel.setBypassDnd(false);
-                channel.enableLights(false);
-                channel.enableVibration(false);
+                //低重要性，无声音、震动、灯光，不请求绕过免打扰。
+                channel.setImportance(NotificationManager.IMPORTANCE_LOW); //使用低重要性展示下载进度。
+                channel.setSound(null, null); //不播放通知声音。
+                channel.setBypassDnd(false); //不请求绕过免打扰。
+                channel.enableLights(false); //关闭通知指示灯。
+                channel.enableVibration(false); //关闭通知震动。
                 break;
             case "3":
-                //消息声音与震动模式:
-                //默认通知声音，自定义震动节奏。
-                channel.setVibrationPattern(informBean.pattern);
+                //消息声音与震动模式：默认声音、自定义震动和红色指示灯。
+                channel.setSound(defaultSound, audioAttributes); //使用系统默认通知提示音。
+                channel.setBypassDnd(true); //请求绕过优先级免打扰，实际受权限和用户设置限制。
+                channel.enableVibration(true); //启用通知震动。
+                channel.setVibrationPattern(informBean.pattern); //使用传入的震动节奏，单位为毫秒，依次为等待、震动时长。
+                channel.enableLights(true); //启用通知指示灯，需要设备支持。
+                channel.setLightColor(Color.RED); //将通知指示灯颜色设为红色。
                 break;
             case "4":
-                //消息声音、震动与指示灯:
-                //仅震动：关闭声音，沿用公共震动节奏和灯光配置。
-                sound = null;
+                //消息震动：无声音，固定震动节奏和红色指示灯。
+                channel.setSound(null, null); //不播放通知声音。
+                channel.setBypassDnd(true); //请求绕过优先级免打扰，实际受权限和用户设置限制。
+                channel.enableVibration(true); //启用通知震动。
+                channel.setVibrationPattern(new long[]{100, 200}); //等待 100ms 后震动 200ms。
+                channel.enableLights(true); //启用通知指示灯，需要设备支持。
+                channel.setLightColor(Color.RED); //将通知指示灯颜色设为红色。
                 break;
             case "5":
-                //消息震动:
-                //声音、震动、灯光已在公共配置中启用，无需重复设置。
+                //消息声音、震动与指示灯：默认声音、固定震动节奏和红色指示灯。
+                channel.setSound(defaultSound, audioAttributes); //使用系统默认通知提示音。
+                channel.setBypassDnd(true); //请求绕过优先级免打扰，实际受权限和用户设置限制。
+                channel.enableVibration(true); //启用通知震动。
+                channel.setVibrationPattern(new long[]{100, 200}); //等待 100ms 后震动 200ms。
+                channel.enableLights(true); //启用通知指示灯，需要设备支持。
+                channel.setLightColor(Color.RED); //将通知指示灯颜色设为红色。
                 break;
             case "6":
-                //自定义消息震动
-                //自定义震动：关闭声音并替换震动节奏。
-                sound = null;
-                channel.setVibrationPattern(informBean.pattern);
+                //自定义消息震动：无声音，自定义震动节奏和红色指示灯。
+                channel.setSound(null, null); //不播放通知声音。
+                channel.setBypassDnd(true); //请求绕过优先级免打扰，实际受权限和用户设置限制。
+                channel.enableVibration(true); //启用通知震动。
+                channel.setVibrationPattern(informBean.pattern); //使用传入的震动节奏，单位为毫秒，依次为等待、震动时长。
+                channel.enableLights(true); //启用通知指示灯，需要设备支持。
+                channel.setLightColor(Color.RED); //将通知指示灯颜色设为红色。
                 break;
             case "7":
-                //自定义消息提醒
-                //自定义声音和震动；sound 为 null 时无声音。
-                sound = informBean.sound;
-                channel.setVibrationPattern(informBean.pattern);
+                //自定义消息提醒：自定义声音、震动和红色指示灯；sound 为 null 时无声音。
+                channel.setSound(informBean.sound, audioAttributes); //使用传入的声音 URI，null 表示无声。
+                channel.setBypassDnd(true); //请求绕过优先级免打扰，实际受权限和用户设置限制。
+                channel.enableVibration(true); //启用通知震动。
+                channel.setVibrationPattern(informBean.pattern); //使用传入的震动节奏，单位为毫秒，依次为等待、震动时长。
+                channel.enableLights(true); //启用通知指示灯，需要设备支持。
+                channel.setLightColor(Color.RED); //将通知指示灯颜色设为红色。
                 break;
         }
-        //将声音标记为通知提示音，交由系统按通知音量和策略处理。
-        AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .build();
-        //Uri uri = informBean.sound;
-        //builder.setSound(uri);
-        channel.setSound(sound, audioAttributes);
+        //创建渠道
         notificationManager.createNotificationChannel(channel);
-        //创建后重新读取系统保存的渠道，日志不使用创建前对象上的请求值。
-        NotificationChannel createdChannel = notificationManager.getNotificationChannel(channels[2]);
-        boolean isDnd = createdChannel != null && createdChannel.canBypassDnd();
-        Logx.d("InformManager", "channelId:" + channels[2] + " isDnd---->" + isDnd);
     }
 
     //设置跳转activity
     private void setIntent(NotificationCompat.Builder builder, Intent intent, int reqCode) {
-        PendingIntent pendingIntent;
+        //reqCode 请求码（以下以 Intent 的其他标识相同为前提，extras 不参与匹配）。
+        //相同：使用 FLAG_UPDATE_CURRENT 时复用同一个 PendingIntent，更新 extras，旧通知点击时也使用更新后的参数。
+        //不相同：区分为不同的 PendingIntent，各自的点击参数互不覆盖。
+        if (intent == null) {
+            //没有跳转目标，不设置通知的整体点击操作。
+            builder.setContentIntent(null);
+            return;
+        }
         //FLAG_CANCEL_CURRENT: 取消旧的，创建新的，旧引用失效
         //FLAG_UPDATE_CURRENT：保留原来的，更新 extras，旧引用仍可触发
         //FLAG_IMMUTABLE：     执行方触发它时，不能修改其中的 Intent
-        if (intent == null) {
-            //可取消
-            pendingIntent = PendingIntent.getActivity(context, reqCode,
-                    new Intent(), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        } else {
-            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            pendingIntent = PendingIntent.getActivity(context, reqCode,
-                    intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        }
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, reqCode,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         builder.setContentIntent(pendingIntent);
         //Android 8.0之前实现悬挂通知 5.0中新增
         //builder.setFullScreenIntent(pendingIntent,true);
@@ -331,11 +342,20 @@ public class InformManager {
             Logx.d("", "状态栏显示，配置错误");
             return;
         }
-        Notification notification = builder.build();
         if (isResident) {
-            //FLAG_ONGOING_EVENT 在顶部常驻
-            notification.flags = Notification.FLAG_ONGOING_EVENT;
+            //在顶部常驻
+            //true：设置为进行中的通知；false：取消进行中状态，保留其他通知标志。
+            builder.setOngoing(true);
         }
+        Notification notification = builder.build();
+        //这种方式 会覆盖 flags， 要使用上面的方式
+        /*if (isResident) {
+            //FLAG_ONGOING_EVENT 在顶部常驻
+            //覆盖：只保留 FLAG_ONGOING_EVENT，清掉其他标志。
+            // notification.flags = Notification.FLAG_ONGOING_EVENT;
+            //追加：添加 FLAG_ONGOING_EVENT，保留其他标志。
+            notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        }*/
         //设置显示通知时的默认的 震动
         // notification.defaults = Notification.DEFAULT_VIBRATE;
         // 设置显示通知时的默认的 声音

@@ -8,12 +8,15 @@ import android.widget.RemoteViews;
 //通知栏
 public class InformBean {
 
-    //未指定时使用消息提醒渠道，并按 feelingType 选择提醒方式。
+    //渠道id：未指定时使用消息提醒渠道，并按 feelingType 选择提醒方式。
     public String channelId;
 
     //0 消息通知 1 大图 ，2 长文字 3 进度通知 4 自定义通知
     public int informType;//通知类型
     public int informId;//通知id
+    //PendingIntent 请求码（以下以 Intent 的其他标识相同为前提，extras 不参与匹配）。
+    //相同：使用 FLAG_UPDATE_CURRENT 时复用同一个 PendingIntent，更新 extras，旧通知点击时也使用更新后的参数。
+    //不相同：区分为不同的 PendingIntent，各自的点击参数互不覆盖。
     public int informReqCode;
     //true 点击通知自动消失
     public boolean informAutoCancel = true;
