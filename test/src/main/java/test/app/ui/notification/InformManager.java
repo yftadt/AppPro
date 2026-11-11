@@ -8,7 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -17,6 +19,7 @@ import android.os.Vibrator;
 import android.text.TextUtils;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import sj.mblog.Logx;
 import test.app.ui.activity.R;
@@ -62,7 +65,7 @@ public class InformManager {
         String channelId = TextUtils.isEmpty(informBean.channelId)
                 ? alertsChannel[2] : informBean.channelId;
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId);
-        int smallIcon = R.mipmap.ic_launcher;
+        int smallIcon = R.mipmap.push;
         //0 消息通知 1 大图 ，2 长文字 3 进度通知 4 自定义通知
         switch (informBean.informType) {
             case 0:
@@ -96,13 +99,13 @@ public class InformManager {
                 }
                 //保留系统通知头部，自定义布局只负责内容区域。
                 builder.setStyle(new NotificationCompat.DecoratedCustomViewStyle());
-                if (informBean.customSmallIcon != 0) {
-                    smallIcon = informBean.customSmallIcon;
-                }
                 break;
         }
         setIntent(builder, informBean.intent, informBean.informReqCode);
-        setIcon(builder, R.mipmap.push, smallIcon);
+        if (informBean.noticeAppIcon != 0) {
+            smallIcon = informBean.noticeAppIcon;
+        }
+        setIcon(builder, smallIcon, informBean.noticeContentIcon);
         setFeeling(builder, informBean);
         //true 点击消失
         builder.setAutoCancel(informBean.informAutoCancel);
@@ -118,7 +121,9 @@ public class InformManager {
     private void setText(NotificationCompat.Builder builder, String title, String content, String ticker) {
         builder.setContentTitle(title)//标题
                 .setContentText(content)//内容
-                .setTicker(ticker);//旧版状态栏滚动提示文字；现代系统主要用于向无障碍服务提供提示，不能依赖它显示滚动文字
+                //旧版状态栏滚动提示文字；现代系统主要用于向无障碍服务提供提示，不能依赖它显示滚动文字 ticker
+                //ticker 会取代 content
+                .setTicker(ticker);
 
     }
 
@@ -165,10 +170,29 @@ public class InformManager {
 
 
     //设置icon
-    private void setIcon(NotificationCompat.Builder builder, int LargeIcon, int smallicon) {
+    private void setIcon(NotificationCompat.Builder builder, int smallicon, int LargeIcon) {
+        //通知标识小图标	状态栏、通知头部 通常在左边
         builder.setSmallIcon(smallicon);
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), LargeIcon);
-        builder.setLargeIcon(bitmap);
+        //头像、Logo 等内容图片	通知内容旁，通常在右侧
+        if (LargeIcon > 0) {
+            //统一加载位图和矢量 XML，再绘制为通知需要的 Bitmap。
+            Drawable drawable = ContextCompat.getDrawable(context, LargeIcon);
+            if (drawable != null) {
+                int maxWidth = context.getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_width);
+                int maxHeight = context.getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_height);
+                int width = drawable.getIntrinsicWidth() > 0 ? drawable.getIntrinsicWidth() : maxWidth;
+                int height = drawable.getIntrinsicHeight() > 0 ? drawable.getIntrinsicHeight() : maxHeight;
+                //保持比例，限制输出尺寸，小图不放大；无固有尺寸时使用系统通知图标尺寸。
+                float scale = Math.min(1f, Math.min((float) maxWidth / width, (float) maxHeight / height));
+                width = Math.max(1, Math.round(width * scale));
+                height = Math.max(1, Math.round(height * scale));
+                Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                drawable.setBounds(0, 0, width, height);
+                drawable.draw(new Canvas(bitmap));
+                builder.setLargeIcon(bitmap);
+            }
+        }
+
     }
 
 
@@ -423,8 +447,12 @@ public class InformManager {
     //启动一个通知
     private void show(int NotifyId, Notification notification, int badgeCount) {
         if (badgeCount >= 0) {
-            //设置角标
-            BadgeUtil.setBadgeNotification(notification, badgeCount);
+            //角标属于附加功能，厂商适配失败时仍继续发送通知。
+            try {
+                BadgeUtil.setBadgeNotification(notification, badgeCount);
+            } catch (Exception e) {
+                Logx.d("InformManager", "设置角标失败：" + e.getMessage());
+            }
         }
         notificationManager.notify(NotifyId, notification);
     }

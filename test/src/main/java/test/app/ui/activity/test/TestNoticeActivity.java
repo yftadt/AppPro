@@ -1,15 +1,14 @@
 package test.app.ui.activity.test;
 
-import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.View;
 import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
 import test.app.ui.activity.R;
 import test.app.ui.activity.action.NormalActionBar;
-import test.app.ui.activity.databinding.ActivityTestCanvasBinding;
 import test.app.ui.activity.databinding.ActivityTestNoticeBinding;
 import test.app.ui.notification.InformBean;
 import test.app.ui.notification.InformManager;
@@ -82,7 +81,8 @@ public class TestNoticeActivity extends NormalActionBar {
         informManager.show(builder, informBean.informId);
     }
 
-    private int zdt1 = 0;
+    private int zdt0 = 0;
+    private int zdt1 = 1;
     private int zdt2 = 2;
 
     //自定义通知
@@ -90,11 +90,12 @@ public class TestNoticeActivity extends NormalActionBar {
         if (!isNoticeOpen()) {
             return;
         }
+        zdt0 += 1;
         zdt1 += 1;
         zdt2 += 1;
         int id = -1001;
         InformManager informManager = InformManager.getInstance(this);
-        informManager.clearNotifyId(id);
+        //使用相同通知 ID 更新内容，不先删除通知。
         String packageName = getPackageName();
 
         Intent it = new Intent();
@@ -104,13 +105,15 @@ public class TestNoticeActivity extends NormalActionBar {
         //
         InformBean informBean = new InformBean();
         informBean.informType = 4;
-        informBean.msgTitle = "自定义通知";
-        informBean.msgContent = "自定义通知" + zdt1;
-        informBean.customTicker = "自定义通知" + zdt2;
+        informBean.msgTitle = "自定义通知标题" + zdt0;
+        informBean.msgContent = "自定义通知内容" + zdt1;
+        informBean.customTicker = "自定义通知其他区" + zdt2;
         informBean.intent = it;
         informBean.informId = id;
         informBean.informReqCode = id;
         informBean.informAutoCancel = true;
+        informBean.noticeAppIcon = R.mipmap.push;
+        informBean.noticeContentIcon = R.mipmap.chat_keyboard;
         //
         //折叠情况下
         RemoteViews views = new RemoteViews(packageName, R.layout.layout_notice_custom);
@@ -122,13 +125,16 @@ public class TestNoticeActivity extends NormalActionBar {
         bigViews.setTextViewText(R.id.tv_test_1, informBean.msgTitle);
         bigViews.setTextViewText(R.id.tv_test_2, informBean.msgContent);
         informBean.customBigViews = bigViews;
-        informBean.customSmallIcon = R.mipmap.ic_launcher;
+
         NotificationCompat.Builder builder = informManager.setInformContent(informBean);
+        //仅首次发送时提醒，更新已有通知时不重复响铃、震动。
+        builder.setOnlyAlertOnce(true);
         //
         //NotificationCompat.Builder builder = informManager.getBuilder();
         //Notification notification = builder.build();
         //
         informManager.show(builder, informBean.informId);
+        setDataDelayed();
     }
 
     private boolean isNoticeOpen() {
@@ -137,5 +143,18 @@ public class TestNoticeActivity extends NormalActionBar {
             return false;
         }
         return true;
+    }
+
+    private void setDataDelayed() {
+        getHandler().sendEmptyMessageDelayed(1, 10 * 1000);
+    }
+
+    @Override
+    protected void handleMessage(Message msg) {
+        super.handleMessage(msg);
+        if (isDestroyed() || isFinishing()) {
+            return;
+        }
+        test2();
     }
 }

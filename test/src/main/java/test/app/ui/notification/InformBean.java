@@ -22,6 +22,15 @@ public class InformBean {
     public boolean informAutoCancel = true;
     //角标数
     public int badgeCount;
+    //内容图图标 可以不填
+    public int noticeContentIcon;
+    //必填 ：一般使用App图标
+    //必须是有效的 drawable 资源，否则可能出现 no valid small icon 错误。
+    //背景透明，不要带方形底色，否则显示出来可能是一整块方块。
+    //不要依赖彩色细节。Android 5.0 及以上通常根据图标的透明度生成单色图形，再由系统着色。
+    //避免直接使用自适应启动图标，建议单独准备通知图标。
+    //推荐使用 24 × 24 dp 的 VectorDrawable；也可以用对应密度的透明 PNG
+    public int noticeAppIcon;//必填
     //==========消息通知=========
     public String msgTitle;
     public String msgContent;
@@ -47,9 +56,10 @@ public class InformBean {
     public RemoteViews customViews;
     //展开布局，可不设置。
     public RemoteViews customBigViews;
-    public int customSmallIcon;//必填
+
     public String customTicker;
     //=============声音和震动==============
+
     /**
      * 未显式指定 channelId 时生效；自定义声音和震动仅在对应渠道首次创建时设置。
      * 类型

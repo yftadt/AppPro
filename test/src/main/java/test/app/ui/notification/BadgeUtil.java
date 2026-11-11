@@ -185,8 +185,12 @@ public class BadgeUtil {
                 break;
             case 4:
                 //htc HTC
+                launcherClassName = getLauncherClassName(context);
+                if (launcherClassName == null) {
+                    return;
+                }
                 Intent intentNotification = new Intent("com.htc.launcher.action.SET_NOTIFICATION");
-                ComponentName localComponentName = new ComponentName(context.getPackageName(), getLauncherClassName(context));
+                ComponentName localComponentName = new ComponentName(context.getPackageName(), launcherClassName);
                 intentNotification.putExtra("com.htc.launcher.extra.COMPONENT", localComponentName.flattenToShortString());
                 intentNotification.putExtra("com.htc.launcher.extra.COUNT", count);
                 context.sendBroadcast(intentNotification);
@@ -370,6 +374,11 @@ public class BadgeUtil {
         ResolveInfo info = packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
         if (info == null) {
             info = packageManager.resolveActivity(intent, 0);
+        }
+        //未找到启动页面时跳过依赖启动类名的角标操作，不缓存失败结果。
+        if (info == null || info.activityInfo == null) {
+            Logx.d(TAG, "未找到应用启动页面");
+            return null;
         }
         String name = info.activityInfo.name;
         launcherClassName = name;
