@@ -8,6 +8,9 @@ import android.widget.RemoteViews;
 //通知栏
 public class InformBean {
 
+    //未指定时使用消息提醒渠道，并按 feelingType 选择提醒方式。
+    public String channelId;
+
     //0 消息通知 1 大图 ，2 长文字 3 进度通知 4 自定义通知
     public int informType;//通知类型
     public int informId;//通知id
@@ -42,6 +45,7 @@ public class InformBean {
     public String customTicker;
     //=============声音和震动==============
     /**
+     * 未显式指定 channelId 时生效；自定义声音和震动仅在对应渠道首次创建时设置。
      * 类型
      * 1 使用默认声音 和 震动
      * 2 使用默认的震动

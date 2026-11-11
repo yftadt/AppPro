@@ -1,6 +1,5 @@
 package test.app.ui.notification;
 
-import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,8 +9,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Vibrator;
 
 import android.text.TextUtils;
@@ -27,6 +27,17 @@ import test.app.ui.activity.R;
  * Created by gm on 2016/7/7.
  */
 public class InformManager {
+    // [0] 渠道编号，[1] 渠道名称，[2] 渠道 ID。
+    //渠道编号用于 setCreateChannel 的分支选择，不等同于 feelingType；渠道 ID 应保持稳定。
+    public static String[] alertsChannel = new String[]{"1", "消息提醒", "message_alert"};
+    public static String[] downloadProgressChannel = new String[]{"2", "下载进度", "download_progress"};
+    public static String[] patternAlertsChannel = new String[]{"3", "消息声音与震动模式", "message_pattern_alert"};
+    public static String[] vibrationChannel = new String[]{"4", "消息震动", "message_vibration"};
+    public static String[] allAlertsChannel = new String[]{"5", "消息声音、震动与指示灯", "message_all_alerts"};
+    public static String[] customVibrationChannel = new String[]{"6", "自定义消息震动", "message_custom_vibration"};
+    public static String[] customAlertsChannel = new String[]{"7", "自定义消息提醒", "message_custom_alert"};
+
+
     private static InformManager informManager;
     private NotificationManager notificationManager;
     private Context context;
@@ -41,20 +52,15 @@ public class InformManager {
 
     private InformManager(Context context) {
         this.context = context.getApplicationContext();
-        notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT < 26) {
-            return;
-        }
-        boolean buildResult = notificationApi26(notificationManager);
-        if (!buildResult) {
-            Logx.d("InformManager", "创建通知失败");
-        }
+        notificationManager = (NotificationManager) this.context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     /**
      * 设置/构建 通知内容
      */
     public NotificationCompat.Builder setInformContent(InformBean informBean) {
+        String channelId = TextUtils.isEmpty(informBean.channelId)
+                ? alertsChannel[2] : informBean.channelId;
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId);
         int smallIcon = R.mipmap.ic_launcher;
         //0 消息通知 1 大图 ，2 长文字 3 进度通知 4 自定义通知
@@ -136,49 +142,150 @@ public class InformManager {
         builder.setLargeIcon(bitmap);
     }
 
-    //声音和震动 26 以下测试有效
+    /**
+     * 选择通知使用的渠道，具体配置交给 setCreateChannel。
+     * 显式指定 channelId 时优先使用该渠道，否则按 feelingType 选择。
+     */
     private void setFeeling(NotificationCompat.Builder builder, InformBean informBean) {
+        if (!TextUtils.isEmpty(informBean.channelId)) {
+            //内置渠道可以按需创建；非内置渠道由调用方提前创建。
+            String[][] channelList = new String[][]{
+                    alertsChannel, downloadProgressChannel, patternAlertsChannel,
+                    vibrationChannel, allAlertsChannel, customVibrationChannel, customAlertsChannel
+            };
+            for (String[] channels : channelList) {
+                if (informBean.channelId.equals(channels[2])) {
+                    setCreateChannel(channels, builder, informBean);
+                    return;
+                }
+            }
+            //其他显式渠道由调用方提前创建。
+            return;
+        }
+        //未指定提醒类型或类型不匹配时，使用消息提醒渠道。
+        String[] channels = alertsChannel;
         switch (informBean.feelingType) {
             case 1:
-                //使用默认声音 和 震动
-                builder.setDefaults(Notification.DEFAULT_SOUND);
-                pattern = informBean.pattern;
-                builder.setVibrate(pattern);
+                //默认通知声音，震动节奏使用 informBean.pattern。
+                channels = patternAlertsChannel;
                 break;
             case 2:
-                //使用默认的震动
-                builder.setDefaults(Notification.DEFAULT_VIBRATE);
+                //关闭声音，使用渠道的默认震动节奏。
+                channels = vibrationChannel;
                 break;
             case 3:
-                //使用默认的震动和声音
-                builder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
+                //使用消息渠道的公共声音和震动配置。
+                channels = alertsChannel;
                 break;
             case 4:
-                //使用默认的声音、振动、闪光
-                builder.setDefaults(Notification.DEFAULT_ALL);
+                //使用默认声音、震动和红色指示灯。
+                channels = allAlertsChannel;
                 break;
             case 5:
-                //自定义震动模式
-                long[] pattern = informBean.pattern;
-                builder.setVibrate(pattern);
+                //关闭声音，使用自定义震动节奏。
+                channels = customVibrationChannel;
                 break;
             case 6:
-                //自定义声音 和 震动
-                //从raw
-                //Uri sound = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.notificationsound);
-                //Uri sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getPackageName() + "/raw/notificationsound");
-                //Uri sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getPackageName() + "/" + R.raw.notificationsound);
-                //从铃声管理器
-                //Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                //从文件
-                //Uri sound = Uri.fromFile(new File("/sdcard/sound.mp3"));
-                //Uri sound = Uri.parse(new File("/sdcard/sound.mp3").toString()));
-                Uri sound = informBean.sound;
-                builder.setSound(sound);
-                pattern = informBean.pattern;
-                builder.setVibrate(pattern);
+                //使用自定义声音和震动节奏。
+                channels = customAlertsChannel;
+                break;
+            default:
                 break;
         }
+        setCreateChannel(channels, builder, informBean);
+    }
+
+    /**
+     * 将 Builder 绑定到渠道，渠道不存在时才配置并创建。
+     * 声音、震动等是渠道配置，自定义参数仅在首次创建时使用，后续保留系统和用户设置。
+     */
+    private void setCreateChannel(String[] channels, NotificationCompat.Builder builder, InformBean informBean) {
+        //无论渠道是否已存在，本条通知都需要绑定渠道 ID。
+        builder.setChannelId(channels[2]);
+        NotificationChannel existingChannel = notificationManager.getNotificationChannel(channels[2]);
+        if (existingChannel != null) {
+            //读取已保存渠道的免打扰配置，不重新创建或覆盖用户设置。
+            Logx.d("InformManager", "channelId:" + channels[2]
+                    + " isDnd---->" + existingChannel.canBypassDnd());
+            return;
+        }
+        //提醒渠道默认使用普通重要性，下载进度分支会降低重要性。
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel(
+                channels[2], channels[1], importance);
+        //获取系统默认“通知提示音”的 UR
+        Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        //请求绕过优先级免打扰，是否生效取决于权限和用户设置。
+        channel.setBypassDnd(true);
+        //默认以名称作为说明，消息和下载渠道在对应分支中提供更具体的描述。
+        channel.setDescription(channels[1]);
+        //安全锁屏上
+        //VISIBILITY_PUBLIC	显示完整内容
+        //VISIBILITY_PRIVATE	显示通知，但隐藏敏感内容
+        //VISIBILITY_SECRET	完全隐藏通知
+        channel.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
+        //启用通知指示灯，需要设备支持。
+        channel.enableLights(true);
+        //将通知指示灯颜色设为红色，需要灯光已启用且设备支持该颜色。
+        channel.setLightColor(Color.RED);
+        //启用通知震动，具体节奏可通过 setVibrationPattern() 设置。
+        channel.enableVibration(true);
+        //单位为毫秒：等待 100ms 后震动 200ms，自定义分支会覆盖此节奏。
+        channel.setVibrationPattern(new long[]{100, 200});
+        switch (channels[0]) {
+            case "1":
+                //消息提醒：
+                // 沿用公共声音、震动和灯光配置。
+                break;
+            case "2":
+                //下载进度：
+                // 低重要性，无声音、震动、灯光，不请求绕过免打扰。
+                channel.setImportance(NotificationManager.IMPORTANCE_LOW);
+                sound = null;
+                channel.setBypassDnd(false);
+                channel.enableLights(false);
+                channel.enableVibration(false);
+                break;
+            case "3":
+                //消息声音与震动模式:
+                //默认通知声音，自定义震动节奏。
+                channel.setVibrationPattern(informBean.pattern);
+                break;
+            case "4":
+                //消息声音、震动与指示灯:
+                //仅震动：关闭声音，沿用公共震动节奏和灯光配置。
+                sound = null;
+                break;
+            case "5":
+                //消息震动:
+                //声音、震动、灯光已在公共配置中启用，无需重复设置。
+                break;
+            case "6":
+                //自定义消息震动
+                //自定义震动：关闭声音并替换震动节奏。
+                sound = null;
+                channel.setVibrationPattern(informBean.pattern);
+                break;
+            case "7":
+                //自定义消息提醒
+                //自定义声音和震动；sound 为 null 时无声音。
+                sound = informBean.sound;
+                channel.setVibrationPattern(informBean.pattern);
+                break;
+        }
+        //将声音标记为通知提示音，交由系统按通知音量和策略处理。
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+        //Uri uri = informBean.sound;
+        //builder.setSound(uri);
+        channel.setSound(sound, audioAttributes);
+        notificationManager.createNotificationChannel(channel);
+        //创建后重新读取系统保存的渠道，日志不使用创建前对象上的请求值。
+        NotificationChannel createdChannel = notificationManager.getNotificationChannel(channels[2]);
+        boolean isDnd = createdChannel != null && createdChannel.canBypassDnd();
+        Logx.d("InformManager", "channelId:" + channels[2] + " isDnd---->" + isDnd);
     }
 
     //设置跳转activity
@@ -205,51 +312,6 @@ public class InformManager {
     public void setProgress(NotificationCompat.Builder builder, int max, int progress, boolean indeterminate) {
         // indeterminate 一种是有进度刻度的（false）,一种是循环流动的（true）
         builder.setProgress(max, progress, indeterminate);
-    }
-
-
-    //==============================8.0=============================
-    private String channelId = "default_id";
-    //显示在通知管理 相应的医院里
-    private String channelName = "default_channel_name";
-
-    /**
-     * @param notificationManager
-     * @return
-     */
-    @TargetApi(26)
-    private boolean notificationApi26(NotificationManager notificationManager) {
-        //Android O及以上必需的channelID
-        if (notificationManager == null && TextUtils.isEmpty(channelId)) {
-            return false;
-        }
-        //渠道描述
-        String description = "描述";
-        //通知的优先级
-        int importance = NotificationManager.IMPORTANCE_LOW;
-        //Android 8.0 提高等级：悬挂通知
-        //importance= NotificationManager.IMPORTANCE_HIGH;
-        //创建渠道 //channelName：渠道名,有说这个字段对用户可见。
-        NotificationChannel channel = new NotificationChannel(channelId, channelName, importance);
-        channel.setBypassDnd(true); //设置绕过免打扰模式
-        boolean isDnd = channel.canBypassDnd(); //检测是否绕过免打扰模式
-        Logx.d("--", "isDnd---->" + isDnd);
-        channel.setDescription(description);
-        //设置在锁屏界面上显示这条通知
-        channel.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
-        //
-        channel.enableLights(true);
-        //指示灯颜色，这个取决于设备是否支持
-        channel.setLightColor(Color.RED);
-        //是否使用震动
-        channel.enableVibration(true);
-        //震动节奏
-        channel.setVibrationPattern(new long[]{100, 200});
-        //声音
-        channel.setSound(null, null);
-        //将NotificationChannel对象传入NotificationManager
-        notificationManager.createNotificationChannel(channel);
-        return true;
     }
 
 
