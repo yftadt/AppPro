@@ -9,8 +9,8 @@ import android.widget.RemoteViews;
 public class InformBean {
 
     //0 消息通知 1 大图 ，2 长文字 3 进度通知 4 自定义通知
-    public int informType;
-    public int informId;
+    public int informType;//通知类型
+    public int informId;//通知id
     public int informReqCode;
     //true 点击通知自动消失
     public boolean informAutoCancel = true;
@@ -38,7 +38,7 @@ public class InformBean {
     public boolean progressIndeterminate;//进度是确定的
     //=============自定义===============
     public RemoteViews customViews;
-    public int customSmallIcon;
+    public int customSmallIcon;//必填
     public String customTicker;
     //=============声音和震动==============
     /**

@@ -159,6 +159,7 @@ public class TestStartActivity extends NormalActionBar {
         findViewById(R.id.ys_btn).setOnClickListener(this);
         findViewById(R.id.pageview_2_btn).setOnClickListener(this);
         findViewById(R.id.refresh_btn).setOnClickListener(this);
+        findViewById(R.id.notice_btn).setOnClickListener(this);
 
         //
         DateUtile.testLog();
@@ -227,11 +228,11 @@ public class TestStartActivity extends NormalActionBar {
         }
         if (id == R.id.open_app_btn) {
             //打开第三方应用
-            if(true){
+            if (true) {
                 ActivityUtile.startActivityCommon(OpenAppActivity.class);
                 return;
             }
-            if(true){
+            if (true) {
                 ActivityUtile.startNBC2(this);
                 return;
             }
@@ -243,9 +244,9 @@ public class TestStartActivity extends NormalActionBar {
             //&utm_content=ad_001
             //String pck="com.nbaworld.hoops";
             String pck = "com.nbaworld.hoops&utm_source=share&utm_medium=202523&utm_campaign=launch_2026&utm_content=ad_001";
-            String pak2="https://play.google.com/store/apps/details?id=com.nbaworld.hoops&referrer=utm_source%3Dgoogle%26utm_medium%3Dcpc%26utm_campaign%3Dsummer_sale";
-            String pak3="com.nbaworld.hoops&referrer=utm_source%3Dgoogle%26utm_medium%3Dcpc%26utm_campaign%3Dsummer_sale";
-            String url=generateAppBReferrerLink();
+            String pak2 = "https://play.google.com/store/apps/details?id=com.nbaworld.hoops&referrer=utm_source%3Dgoogle%26utm_medium%3Dcpc%26utm_campaign%3Dsummer_sale";
+            String pak3 = "com.nbaworld.hoops&referrer=utm_source%3Dgoogle%26utm_medium%3Dcpc%26utm_campaign%3Dsummer_sale";
+            String url = generateAppBReferrerLink();
             ActivityUtile.openAppPlayGoogleUrl(url);
             //ActivityUtile.startActivityCommon(OpenAppActivity.class);
             return;
@@ -332,13 +333,18 @@ public class TestStartActivity extends NormalActionBar {
             ActivityUtile.startActivityCommon(TestPageActivity.class);
             return;
         }
+        if (id == R.id.notice_btn) {
+            //通知
+            ActivityUtile.startActivityCommon(TestNoticeActivity.class);
+            return;
+        }
 
     }
-     // 生成带自定义参数的应用B推广链接（核心：URL编码）
+    // 生成带自定义参数的应用B推广链接（核心：URL编码）
 
     private String generateAppBReferrerLink() {
-         try {
-            String pck="com.nbaworld.hoops";
+        try {
+            String pck = "com.nbaworld.hoops";
             // 1. 自定义推广参数（应用A要传递给应用B的数据）
             String utmSource = "app_a"; // 标记来源是应用A
             String appAUserId = "user_8888"; // 应用A的用户ID（自定义参数）
@@ -359,6 +365,7 @@ public class TestStartActivity extends NormalActionBar {
             return "";
         }
     }
+
     private void test() {
 
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);

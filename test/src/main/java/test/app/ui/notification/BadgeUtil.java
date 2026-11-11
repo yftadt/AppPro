@@ -141,8 +141,7 @@ public class BadgeUtil {
                 informBean.informId = id;
                 informBean.informReqCode = id;
                 informBean.informAutoCancel = true;
-                informManager.setInformContent(informBean);
-                NotificationCompat.Builder builder = informManager.getBuilder();
+                NotificationCompat.Builder builder = informManager.setInformContent(informBean);
                 Notification notification = builder.build();
                 //
                 setBadgeXM(notification, count);
@@ -150,7 +149,7 @@ public class BadgeUtil {
                 if (!isSupportedBade) {
                     return;
                 }
-                informManager.show(id);
+                informManager.show(builder, id);
                 break;
             case 2:
                 //sony 索尼

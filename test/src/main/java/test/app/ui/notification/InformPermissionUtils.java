@@ -7,7 +7,7 @@ import android.os.Build;
 import android.provider.Settings;
 
 import androidx.core.app.NotificationManagerCompat;
-//检查通知权限
+//检查通知权限  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 public class InformPermissionUtils {
     /**
      * 系统层面通知开关有没有开启

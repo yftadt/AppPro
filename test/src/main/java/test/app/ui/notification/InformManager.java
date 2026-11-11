@@ -31,7 +31,6 @@ public class InformManager {
     private NotificationManager notificationManager;
     private Context context;
 
-    private NotificationCompat.Builder builder;
 
     public static InformManager getInstance(Context context) {
         if (informManager == null) {
@@ -41,7 +40,7 @@ public class InformManager {
     }
 
     private InformManager(Context context) {
-        this.context = context;
+        this.context = context.getApplicationContext();
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT < 26) {
             return;
@@ -53,66 +52,74 @@ public class InformManager {
     }
 
     /**
-     * 设置通知内容
+     * 设置/构建 通知内容
      */
-    public void setInformContent(InformBean informBean) {
-        builder = new NotificationCompat.Builder(context, channelId);
+    public NotificationCompat.Builder setInformContent(InformBean informBean) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId);
+        int smallIcon = R.mipmap.ic_launcher;
         //0 消息通知 1 大图 ，2 长文字 3 进度通知 4 自定义通知
         switch (informBean.informType) {
             case 0:
-                setText(informBean.msgTitle, informBean.msgContent, informBean.msgTicker);
+                setText(builder, informBean.msgTitle, informBean.msgContent, informBean.msgTicker);
                 break;
             case 1:
                 //
-                setText(informBean.msgTitle, informBean.msgContent, informBean.msgTicker);
-                setBigImage(informBean);
+                setText(builder, informBean.msgTitle, informBean.msgContent, informBean.msgTicker);
+                setBigImage(builder, informBean);
                 break;
             case 2:
-                setText(informBean.msgTitle, informBean.msgContent, informBean.msgTicker);
-                setBigText(informBean);
+                setText(builder, informBean.msgTitle, informBean.msgContent, informBean.msgTicker);
+                setBigText(builder, informBean);
                 break;
             case 3:
-                setText(informBean.msgTitle, informBean.msgContent, informBean.msgTicker);
-                setProgress(informBean.progressMax, informBean.progress, informBean.progressIndeterminate);
+                setText(builder, informBean.msgTitle, informBean.msgContent, informBean.msgTicker);
+                setProgress(builder, informBean.progressMax, informBean.progress, informBean.progressIndeterminate);
                 break;
             case 4:
                 //自定义通知
                 builder.setContent(informBean.customViews);
-                builder.setSmallIcon(informBean.customSmallIcon);
+                if (informBean.customSmallIcon != 0) {
+                    smallIcon = informBean.customSmallIcon;
+                }
                 builder.setTicker(informBean.customTicker);
-                return;
+                break;
         }
-        setIntent(informBean.intent, informBean.informReqCode);
-        setIcon(R.mipmap.push, R.mipmap.ic_launcher);
-        setFeeling(informBean);
+        setIntent(builder, informBean.intent, informBean.informReqCode);
+        setIcon(builder, R.mipmap.push, smallIcon);
+        setFeeling(builder, informBean);
         //true 点击消失
         builder.setAutoCancel(informBean.informAutoCancel);
+        return builder;
     }
 
     //设置文本
-    private void setText(String title, String content, String ticker) {
-        builder.setContentTitle(title)
-                .setContentText(content)
-                .setTicker(ticker);
+    private void setText(NotificationCompat.Builder builder, String title, String content, String ticker) {
+        builder.setContentTitle(title)//标题
+                .setContentText(content)//内容
+                .setTicker(ticker);//旧版状态栏滚动提示文字；现代系统主要用于向无障碍服务提供提示，不能依赖它显示滚动文字
 
     }
 
-    //设置大图样式
-    private void setBigText(InformBean informBean) {
+    //设置长文本样式
+    private void setBigText(NotificationCompat.Builder builder, InformBean informBean) {
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle();
-        style.setSummaryText(informBean.bigTxtTitle);
-        style.setBigContentTitle(informBean.bigTxtMsg);
+        //指定展开后的标题,未单独设置时默认沿用 setContentTitle()
+        style.setBigContentTitle(informBean.bigTxtTitle);
+        //指定展开后的长正文，未单独设置时默认沿用 setContentText() 内容
+        style.bigText(informBean.bigTxtMsg);
         builder.setStyle(style);
     }
 
-    private void setBigImage(InformBean informBean) {
+    private void setBigImage(NotificationCompat.Builder builder, InformBean informBean) {
         //设置大视图样式通知
         NotificationCompat.BigPictureStyle style = new NotificationCompat.BigPictureStyle();
+        //指定展开后的标题,未单独设置时默认沿用 setContentTitle()
         style.setBigContentTitle(informBean.bigTxtTitle);
+        //大视图样式的摘要，例如“共 5 条消息”。不能保证仅展开时显示；部分系统模板会把它放到头部，作为未设置 subText 时的补充文字
         style.setSummaryText(informBean.bigTxtMsg);
         Bitmap img = informBean.bigImg;
         if (informBean.bigResIdImg != 0) {
-            img = BitmapFactory.decodeResource(context.getResources(), R.mipmap.push);
+            img = BitmapFactory.decodeResource(context.getResources(), informBean.bigResIdImg);
         }
         if (img != null) {
             style.bigPicture(img);
@@ -122,7 +129,7 @@ public class InformManager {
 
 
     //设置icon
-    private void setIcon(int LargeIcon, int smallicon) {
+    private void setIcon(NotificationCompat.Builder builder, int LargeIcon, int smallicon) {
         builder.setSmallIcon(smallicon);
         builder.setSmallIcon(smallicon, 2);
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), LargeIcon);
@@ -130,7 +137,7 @@ public class InformManager {
     }
 
     //声音和震动 26 以下测试有效
-    private void setFeeling(InformBean informBean) {
+    private void setFeeling(NotificationCompat.Builder builder, InformBean informBean) {
         switch (informBean.feelingType) {
             case 1:
                 //使用默认声音 和 震动
@@ -175,15 +182,19 @@ public class InformManager {
     }
 
     //设置跳转activity
-    private void setIntent(Intent intent, int reqCode) {
+    private void setIntent(NotificationCompat.Builder builder, Intent intent, int reqCode) {
         PendingIntent pendingIntent;
+        //FLAG_CANCEL_CURRENT: 取消旧的，创建新的，旧引用失效
+        //FLAG_UPDATE_CURRENT：保留原来的，更新 extras，旧引用仍可触发
+        //FLAG_IMMUTABLE：     执行方触发它时，不能修改其中的 Intent
         if (intent == null) {
+            //可取消
             pendingIntent = PendingIntent.getActivity(context, reqCode,
-                    new Intent(), PendingIntent.FLAG_CANCEL_CURRENT);
+                    new Intent(), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         } else {
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             pendingIntent = PendingIntent.getActivity(context, reqCode,
-                    intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         }
         builder.setContentIntent(pendingIntent);
         //Android 8.0之前实现悬挂通知 5.0中新增
@@ -191,14 +202,11 @@ public class InformManager {
     }
 
     //设置进度条(更新进度条)
-    public void setProgress(int max, int progress, boolean indeterminate) {
+    public void setProgress(NotificationCompat.Builder builder, int max, int progress, boolean indeterminate) {
         // indeterminate 一种是有进度刻度的（false）,一种是循环流动的（true）
         builder.setProgress(max, progress, indeterminate);
     }
 
-    public NotificationCompat.Builder getBuilder() {
-        return builder;
-    }
 
     //==============================8.0=============================
     private String channelId = "default_id";
@@ -246,19 +254,19 @@ public class InformManager {
 
 
     //启动一个通知
-    public void show(int NotifyId) {
-        show(NotifyId, -1, false);
+    public void show(NotificationCompat.Builder builder, int NotifyId) {
+        show(builder, NotifyId, -1, false);
     }
 
-    public void show(int NotifyId, int badgeCount) {
-        show(NotifyId, badgeCount, false);
+    public void show(NotificationCompat.Builder builder, int NotifyId, int badgeCount) {
+        show(builder, NotifyId, badgeCount, false);
     }
 
     //启动一个通知
     //badgeCount 角标数， isResident true 常驻通知
-    public void show(int NotifyId, int badgeCount, boolean isResident) {
+    public void show(NotificationCompat.Builder builder, int NotifyId, int badgeCount, boolean isResident) {
         if (builder == null) {
-            Logx.d("","状态栏显示，配置错误");
+            Logx.d("", "状态栏显示，配置错误");
             return;
         }
         Notification notification = builder.build();
